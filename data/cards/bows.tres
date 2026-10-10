@@ -1,0 +1,51 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="s_card_effect"]
+[ext_resource type="Resource" path="res://data/buildings/bows.tres" id="b_bows"]
+
+[sub_resource type="Resource" id="cost_0"]
+script = ExtResource("s_resource_cost")
+key = 0
+amount = 14
+
+[sub_resource type="Resource" id="cost_1"]
+script = ExtResource("s_resource_cost")
+key = 4
+amount = 7
+
+[sub_resource type="Resource" id="cost_2"]
+script = ExtResource("s_resource_cost")
+key = 1
+amount = 2
+
+[sub_resource type="Resource" id="effect_0"]
+script = ExtResource("s_card_effect")
+type = 1
+amount = 1.0
+building = ExtResource("b_bows")
+
+[sub_resource type="Resource" id="effect_1"]
+script = ExtResource("s_card_effect")
+type = 0
+key = 5
+amount = 3.0
+
+[resource]
+script = ExtResource("s_card_definition")
+profession = 3
+id = "bows"
+display_name = "简易弓箭图纸"
+kind = 2
+icon = 6
+color = 1
+description = "从投石到弓箭，让幸存者能在更远处拦截感染者。"
+positive = "攻击 +5，射程 +45，攻速略升"
+negative = "制作与试射：噪音 +3"
+reusable = false
+costs = Array[ExtResource("s_resource_cost")]([SubResource("cost_0"), SubResource("cost_1"), SubResource("cost_2")])
+effects = Array[ExtResource("s_card_effect")]([SubResource("effect_0"), SubResource("effect_1")])
+building = ExtResource("b_bows")
+tags = PackedStringArray("武器", "科技")
+labor = 5

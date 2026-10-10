@@ -1,0 +1,54 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
+[ext_resource type="Script" path="res://scripts/resources/building_requirement.gd" id="s_building_requirement"]
+[ext_resource type="Resource" path="res://data/buildings/well.tres" id="b_well"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="s_card_effect"]
+[ext_resource type="Resource" path="res://data/buildings/filter.tres" id="b_filter"]
+
+[sub_resource type="Resource" id="cost_0"]
+script = ExtResource("s_resource_cost")
+key = 0
+amount = 12
+
+[sub_resource type="Resource" id="cost_1"]
+script = ExtResource("s_resource_cost")
+key = 4
+amount = 8
+
+[sub_resource type="Resource" id="requirement_0"]
+script = ExtResource("s_building_requirement")
+level = 1
+building = ExtResource("b_well")
+
+[sub_resource type="Resource" id="effect_0"]
+script = ExtResource("s_card_effect")
+type = 1
+amount = 1.0
+building = ExtResource("b_filter")
+
+[sub_resource type="Resource" id="effect_1"]
+script = ExtResource("s_card_effect")
+type = 0
+key = 2
+amount = -2.0
+
+[resource]
+script = ExtResource("s_card_definition")
+profession = 3
+id = "filter"
+display_name = "净水器图纸"
+kind = 1
+icon = 1
+color = 1
+description = "用炭和砂石净化水源，让工业与水井能够共存。"
+positive = "水井免受污染减产；取水额外 +5"
+negative = "每天材料 -1；建造耗水 2"
+reusable = false
+costs = Array[ExtResource("s_resource_cost")]([SubResource("cost_0"), SubResource("cost_1")])
+prerequisites = Array[ExtResource("s_building_requirement")]([SubResource("requirement_0")])
+effects = Array[ExtResource("s_card_effect")]([SubResource("effect_0"), SubResource("effect_1")])
+building = ExtResource("b_filter")
+tags = PackedStringArray("水源", "科技")
+labor = 4

@@ -1,0 +1,64 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=14 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="definition"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="modifier"]
+[ext_resource type="Script" path="res://scripts/resources/building_requirement.gd" id="requirement"]
+[ext_resource type="Resource" path="res://data/buildings/wall.tres" id="building"]
+
+[sub_resource type="Resource" id="cost_0"]
+script = ExtResource("cost")
+key = 0
+amount = 12
+
+[sub_resource type="Resource" id="cost_1"]
+script = ExtResource("cost")
+key = 4
+amount = 4
+
+[sub_resource type="Resource" id="modifier_0"]
+script = ExtResource("modifier")
+key = 7
+operation = 1
+amount = 1.6
+duration = 2
+
+[sub_resource type="Resource" id="effect_0"]
+script = ExtResource("effect")
+type = 2
+modifier = SubResource("modifier_0")
+
+[sub_resource type="Resource" id="modifier_1"]
+script = ExtResource("modifier")
+key = 3
+operation = 1
+amount = 0.7
+duration = 2
+
+[sub_resource type="Resource" id="effect_1"]
+script = ExtResource("effect")
+type = 2
+modifier = SubResource("modifier_1")
+
+[sub_resource type="Resource" id="requirement"]
+script = ExtResource("requirement")
+building = ExtResource("building")
+level = 1
+
+[resource]
+script = ExtResource("definition")
+id = "hold_position"
+display_name = "固守防线"
+kind = 0
+icon = 5
+color = 1
+profession = 5
+description = "把路口封成狭窄通道。围墙更结实，守卫却难以支援远处。"
+positive = "接下来 2 夜围墙耐久 +60%"
+negative = "接下来 2 夜守卫移动速度 -30%，可叠加"
+reusable = false
+tags = PackedStringArray("临时", "防御")
+costs = Array[ExtResource("cost")]([SubResource("cost_0"), SubResource("cost_1")])
+effects = Array[ExtResource("effect")]([SubResource("effect_0"), SubResource("effect_1")])
+prerequisites = Array[ExtResource("requirement")]([SubResource("requirement")])

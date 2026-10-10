@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="stat"]
+
+[sub_resource type="Resource" id="cost0"]
+script = ExtResource("cost")
+key = 9
+amount = 3
+
+[sub_resource type="Resource" id="effect0"]
+script = ExtResource("effect")
+type = 0
+key = 1
+amount = 0.0
+
+[resource]
+script = ExtResource("card")
+id = "piercing"
+display_name = "穿甲箭头"
+description = "今晚弓手箭矢忽略护甲。零件 -3，仍消耗箭矢"
+positive = "今晚弓手箭矢忽略护甲"
+negative = "零件 -3，仍消耗箭矢"
+kind = 0
+icon = 13
+color = 2
+reusable = false
+strategy = 5
+costs = Array[ExtResource("cost")]([SubResource("cost0")])
+effects = Array[ExtResource("effect")]([SubResource("effect0")])

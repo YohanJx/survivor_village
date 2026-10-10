@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="stat"]
+
+[sub_resource type="Resource" id="cost0"]
+script = ExtResource("cost")
+key = 0
+amount = 12
+
+[sub_resource type="Resource" id="cost1"]
+script = ExtResource("cost")
+key = 2
+amount = 1
+
+[sub_resource type="Resource" id="effect0"]
+script = ExtResource("effect")
+type = 0
+key = 7
+amount = 10.0
+
+[sub_resource type="Resource" id="effect1"]
+script = ExtResource("effect")
+type = 0
+key = 5
+amount = 4.0
+
+[resource]
+script = ExtResource("card")
+id = "woodcut"
+display_name = "伐木运输"
+description = "木材 +10，人数增加提升收益。噪音 +4，出队耗水"
+positive = "木材 +10，人数增加提升收益"
+negative = "噪音 +4，出队耗水"
+kind = 0
+icon = 13
+color = 2
+reusable = true
+labor = 1
+profession = 1
+expedition = true
+crew_stamina = 4
+crew_water = 1
+crew_output = 4
+costs = Array[ExtResource("cost")]([SubResource("cost0"), SubResource("cost1")])
+effects = Array[ExtResource("effect")]([SubResource("effect0"), SubResource("effect1")])

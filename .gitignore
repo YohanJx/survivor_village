@@ -1,0 +1,8 @@
+.godot/
+*.tmp
+.DS_Store
+test-results/
+exports/
+tools/godot/
+/godot.exe
+/Godot*.exe

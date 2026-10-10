@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="DailyEvent" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/daily_event.gd" id="event"]
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Resource" path="res://data/events/options/convoy_0.tres" id="o0"]
+[ext_resource type="Resource" path="res://data/events/options/convoy_1.tres" id="o1"]
+
+[resource]
+script = ExtResource("event")
+id = "convoy"
+display_name = "废车运输队"
+description = "用食物交换零件与燃料，或放行"
+weight = 40
+regions = PackedInt32Array(3)
+labor = 0
+output_multiplier = 1.0
+cost_multiplier = 1.0
+low_mood = false
+options = Array[ExtResource("card")]([ExtResource("o0"), ExtResource("o1")])

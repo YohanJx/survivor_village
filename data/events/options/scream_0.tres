@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="stat"]
+
+[sub_resource type="Resource" id="cost0"]
+script = ExtResource("cost")
+key = 0
+amount = 4
+
+[sub_resource type="Resource" id="effect0"]
+script = ExtResource("effect")
+type = 0
+key = 1
+amount = 0.0
+
+[resource]
+script = ExtResource("card")
+id = "scream_0"
+display_name = "侦察"
+description = "执行事件：侦察揭示今晚特殊尸群；忽略则尸群 +10%。只影响今天与今晚，不消耗行动"
+positive = "执行事件：侦察揭示今晚特殊尸群；忽略则尸群 +10%"
+negative = "只影响今天与今晚，不消耗行动"
+kind = 0
+icon = 13
+color = 2
+reusable = false
+costs = Array[ExtResource("cost")]([SubResource("cost0")])
+effects = Array[ExtResource("effect")]([SubResource("effect0")])

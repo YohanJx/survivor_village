@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="BuildingDefinition" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/building_definition.gd" id="s_building_definition"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="s_stat_modifier"]
+[ext_resource type="Script" path="res://scripts/resources/production_profile.gd" id="s_production_profile"]
+
+[sub_resource type="Resource" id="modifier_0"]
+script = ExtResource("s_stat_modifier")
+key = 8
+amount = 5.0
+
+[sub_resource type="Resource" id="production"]
+script = ExtResource("s_production_profile")
+materials_upkeep = 1
+
+[resource]
+script = ExtResource("s_building_definition")
+id = 11
+display_name = "尖刺陷阱"
+max_level = 2
+visible_on_map = false
+modifiers = Array[ExtResource("s_stat_modifier")]([SubResource("modifier_0")])
+production = SubResource("production")
+footprint = Rect2i(0, 0, 0, 0)

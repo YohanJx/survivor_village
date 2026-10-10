@@ -1,0 +1,243 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/game_overlay.gd" id="ui_script"]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/village_info_panel.tscn" id="village_info"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lgeg4"]
+content_margin_left = 28.0
+content_margin_top = 28.0
+content_margin_right = 28.0
+content_margin_bottom = 28.0
+bg_color = Color(0.10980392, 0.18039216, 0.14117648, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.22352941, 0.29803923, 0.22745098, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[node name="GameOverlay" type="ColorRect"]
+unique_name_in_owner = true
+script = ExtResource("ui_script")
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.015, 0.04, 0.03, 0.88)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(790, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_lgeg4")
+
+[node name="OverlayContent" type="VBoxContainer" parent="Center/Panel"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="HelpContent" type="VBoxContainer" parent="Center/Panel/OverlayContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="NewRunContent" type="VBoxContainer" parent="Center/Panel/OverlayContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="RewardContent" type="VBoxContainer" parent="Center/Panel/OverlayContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="GameOverContent" type="VBoxContainer" parent="Center/Panel/OverlayContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="HelpTitle" type="Label" parent="Center/Panel/OverlayContent/HelpContent"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.8627451, 0.88235295, 0.8627451, 1)
+text = "在废土里，留下一个家"
+
+[node name="HelpText" type="Label" parent="Center/Panel/OverlayContent/HelpContent"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.6392157, 0.6784314, 0.64705884, 1)
+text = "你决定村庄如何发展，幸存者自动战斗。\n\n01  每日先选择黎明事件，不占行动；地图与选择会保存。每天三个时段，每 5 人增加一次时段行动，最低 1 次、最多 4 次。\n02  连续同类劳动产生烦躁，每层让下一张劳动体力 +15%，最多 5 层。轮换防止积累；休整减 2，待命恢复 8 体力并减 1。宣泄演练把烦躁转为今晚攻击。\n03  村庄信息中可在每日第一次行动前调整一次分工，并设置守卫使用弓箭或长矛。可选较小劳动队伍，实际费用与收益见详情。\n04  木材用于围墙与箭，石料用于水井，零件用于工业；柴油机每级每天耗 2 燃料。弓箭不耗电，逐次消耗箭矢，用完改投石。\n05  采集者发现潜伏者；建造者耗木修墙；工程师耗零件维修村庄；医护耗药救治；守卫使用长矛或弓箭。\n06  披甲者减伤，酸液影响站位，尖啸者有限召援，潜伏者需侦察或照明，爆燃者留下火焰。火把与探照灯发现潜伏者，电灯不增强物理攻击。\n07  黄昏行动用完后自动守夜。胜利选择一张奖励，再结算生产和口粮。缺粮缺水伤害村庄；噪音增加威胁，污染影响水井。每七夜有大尸潮与 Boss。\n08  村庄耐久归零或全部幸存者死亡，本局结束。\n\nEnter 确认卡牌；Space 暂停；Esc 关闭窗口。\n每次决策与战后自动保存。夜间继续从同一黄昏重新模拟，电力不重复扣除。"
+
+[node name="HelpClose" type="Button" parent="Center/Panel/OverlayContent/HelpContent"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "回到村庄"
+
+[node name="NewRunTitle" type="Label" parent="Center/Panel/OverlayContent/NewRunContent"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 27
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.8627451, 0.88235295, 0.8627451, 1)
+text = "开启一个新的村庄"
+
+[node name="NewRunText" type="Label" parent="Center/Panel/OverlayContent/NewRunContent"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 15
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.8627451, 0.88235295, 0.8627451, 1)
+text = "新一局的自动存档将替换当前进度。每次生存会有不同地图和奖励。"
+
+[node name="NewRunButtons" type="HBoxContainer" parent="Center/Panel/OverlayContent/NewRunContent"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="NewRunCancel" type="Button" parent="Center/Panel/OverlayContent/NewRunContent/NewRunButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "返回村庄"
+
+[node name="NewRunConfirm" type="Button" parent="Center/Panel/OverlayContent/NewRunContent/NewRunButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "开始新一局"
+
+[node name="RewardTitle" type="Label" parent="Center/Panel/OverlayContent/RewardContent"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 32
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.8627451, 0.88235295, 0.8627451, 1)
+text = "黎明仍会到来"
+
+[node name="RewardSummary" type="Label" parent="Center/Panel/OverlayContent/RewardContent"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 3
+
+[node name="RewardHint" type="Label" parent="Center/Panel/OverlayContent/RewardContent"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.6392157, 0.6784314, 0.64705884, 1)
+text = "选择一张卡牌加入手牌。白天使用时才会生效并消耗资源。"
+
+[node name="RewardRow" type="HBoxContainer" parent="Center/Panel/OverlayContent/RewardContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="DawnHint" type="Label" parent="Center/Panel/OverlayContent/RewardContent"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.6392157, 0.6784314, 0.64705884, 1)
+text = "选择后结算生产与每日消耗，并进入下一天。"
+
+[node name="GameOverTitle" type="Label" parent="Center/Panel/OverlayContent/GameOverContent"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 34
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.8627451, 0.88235295, 0.8627451, 1)
+text = "火光熄灭了"
+
+[node name="GameOverHint" type="Label" parent="Center/Panel/OverlayContent/GameOverContent"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 15
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.8627451, 0.88235295, 0.8627451, 1)
+text = "让这次的经验，成为下一座村庄的基石。"
+
+[node name="GameOverSummary" type="Label" parent="Center/Panel/OverlayContent/GameOverContent"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.8627451, 0.88235295, 0.8627451, 1)
+
+[node name="GameOverRestart" type="Button" parent="Center/Panel/OverlayContent/GameOverContent"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "再建一个村庄"
+
+[node name="VillageInfo" parent="Center/Panel/OverlayContent" instance=ExtResource("village_info")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="EventContent" type="VBoxContainer" parent="Center/Panel/OverlayContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="EventTitle" type="Label" parent="Center/Panel/OverlayContent/EventContent"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "黎明事件"
+autowrap_mode = 3
+
+[node name="EventText" type="Label" parent="Center/Panel/OverlayContent/EventContent"]
+unique_name_in_owner = true
+layout_mode = 2
+text = ""
+autowrap_mode = 3
+
+[node name="EventAccept" type="Button" parent="Center/Panel/OverlayContent/EventContent"]
+unique_name_in_owner = true
+layout_mode = 2
+text = ""
+
+[node name="EventDecline" type="Button" parent="Center/Panel/OverlayContent/EventContent"]
+unique_name_in_owner = true
+layout_mode = 2
+text = ""
+
+[node name="MapChoice" type="OptionButton" parent="Center/Panel/OverlayContent/NewRunContent"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 3
+selected = 1
+popup/item_0/text = "山地农村 · 木石丰富，水源紧张"
+popup/item_0/id = 1
+popup/item_1/text = "平原村庄 · 农业丰富，工业稀缺"
+popup/item_1/id = 2
+popup/item_2/text = "城镇废墟 · 零件燃料丰富，食物稀缺"
+popup/item_2/id = 3

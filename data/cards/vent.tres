@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="stat"]
+
+[sub_resource type="Resource" id="cost0"]
+script = ExtResource("cost")
+key = 0
+amount = 12
+
+[sub_resource type="Resource" id="effect0"]
+script = ExtResource("effect")
+type = 0
+key = 1
+amount = 0.0
+
+[resource]
+script = ExtResource("card")
+id = "vent"
+display_name = "宣泄演练"
+description = "每消耗一层烦躁，今晚攻击 +8%，最多三层。按出牌前烦躁支付体力"
+positive = "每消耗一层烦躁，今晚攻击 +8%，最多三层"
+negative = "按出牌前烦躁支付体力"
+kind = 0
+icon = 13
+color = 2
+reusable = false
+vent = true
+labor = 6
+profession = 5
+reset_labor = true
+costs = Array[ExtResource("cost")]([SubResource("cost0")])
+effects = Array[ExtResource("effect")]([SubResource("effect0")])

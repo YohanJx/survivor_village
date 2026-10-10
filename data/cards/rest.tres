@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="s_card_effect"]
+
+[sub_resource type="Resource" id="cost_0"]
+script = ExtResource("s_resource_cost")
+key = 1
+amount = 3
+
+[sub_resource type="Resource" id="cost_1"]
+script = ExtResource("s_resource_cost")
+key = 2
+amount = 2
+
+[sub_resource type="Resource" id="effect_0"]
+script = ExtResource("s_card_effect")
+type = 0
+key = 0
+amount = 32.0
+
+[sub_resource type="Resource" id="effect_1"]
+script = ExtResource("s_card_effect")
+type = 3
+amount = 8.0
+
+[sub_resource type="Resource" id="effect_2"]
+script = ExtResource("s_card_effect")
+type = 0
+key = 5
+amount = -3.0
+
+[resource]
+script = ExtResource("s_card_definition")
+profession = 0
+id = "rest"
+display_name = "围炉休整"
+kind = 0
+icon = 2
+color = 2
+description = "停下手中的工作，分享一顿热食，恢复明天的希望。"
+positive = "体力 +32，村庄耐久 +8"
+negative = "消耗补给，且占用一次白天行动"
+reusable = true
+costs = Array[ExtResource("s_resource_cost")]([SubResource("cost_0"), SubResource("cost_1")])
+effects = Array[ExtResource("s_card_effect")]([SubResource("effect_0"), SubResource("effect_1"), SubResource("effect_2")])
+tags = PackedStringArray("恢复")
+mood_delta = -2
+reset_labor = true

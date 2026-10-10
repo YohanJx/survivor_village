@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="WeatherDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/weather_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+kind = 0
+display_name = "晴朗"
+description = "晴空，生产与防守不受影响。"
+weight = 40
+water_income = 0
+stamina_recovery = 0
+veil = Color(0, 0, 0, 0)
+rainfall = 0
+fog_density = 0

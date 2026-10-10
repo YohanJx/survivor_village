@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="stat"]
+
+[sub_resource type="Resource" id="stat0"]
+script = ExtResource("stat")
+key = 5
+operation = 1
+amount = 0.9
+duration = 1
+
+[sub_resource type="Resource" id="effect0"]
+script = ExtResource("effect")
+type = 2
+modifier = SubResource("stat0")
+
+[resource]
+script = ExtResource("card")
+id = "road_0"
+display_name = "谨慎出队"
+description = "执行事件：今日出队体力 +20%；今晚尸群 -10%。只影响今天与今晚，不消耗行动"
+positive = "执行事件：今日出队体力 +20%；今晚尸群 -10%"
+negative = "只影响今天与今晚，不消耗行动"
+kind = 0
+icon = 13
+color = 2
+reusable = false
+costs = Array[ExtResource("cost")]([])
+effects = Array[ExtResource("effect")]([SubResource("effect0")])

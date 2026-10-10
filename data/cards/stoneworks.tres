@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="stat"]
+
+[sub_resource type="Resource" id="cost0"]
+script = ExtResource("cost")
+key = 0
+amount = 12
+
+[sub_resource type="Resource" id="cost1"]
+script = ExtResource("cost")
+key = 8
+amount = 6
+
+[sub_resource type="Resource" id="stat0"]
+script = ExtResource("stat")
+key = 7
+operation = 0
+amount = 70.0
+duration = 2
+
+[sub_resource type="Resource" id="effect0"]
+script = ExtResource("effect")
+type = 2
+modifier = SubResource("stat0")
+
+[resource]
+script = ExtResource("card")
+id = "stoneworks"
+display_name = "石料加固"
+description = "两夜围墙耐久 +70，缓解爆燃伤害。石料 -6、体力 -12"
+positive = "两夜围墙耐久 +70，缓解爆燃伤害"
+negative = "石料 -6、体力 -12"
+kind = 0
+icon = 13
+color = 2
+reusable = false
+labor = 4
+profession = 2
+costs = Array[ExtResource("cost")]([SubResource("cost0"), SubResource("cost1")])
+effects = Array[ExtResource("effect")]([SubResource("effect0")])

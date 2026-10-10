@@ -1,0 +1,191 @@
+class_name VillageDashboard
+extends Control
+## 固定 HUD 的展示与输入转发；状态与战斗由入口注入。
+
+signal card_selected(uid: int)
+signal execute_requested
+signal skip_requested
+signal pause_requested
+signal speed_requested
+signal save_requested
+signal load_requested
+signal new_run_requested
+signal help_requested
+
+var _resource_labels: Array[Label] = []
+
+@onready var detail: VillageDetailPanel = %DetailPanel
+@onready var hand_panel: VillageHandPanel = %HandPanel
+@onready var overlay: VillageGameOverlay = %GameOverlay
+@onready var _village_map: VillageMap = %VillageMap
+@onready var _day_label: Label = %DayLabel
+@onready var _phase_label: Label = %PhaseLabel
+@onready var _population_label: Label = %PopulationLabel
+@onready var _core_label: Label = %CoreLabel
+@onready var _risk_label: Label = %RiskLabel
+@onready var _map_title: Label = %MapTitle
+@onready var _map_hint: Label = %MapHint
+@onready var _status_label: Label = %StatusLabel
+@onready var _notification: Label = %Notification
+@onready var _pause_button: Button = %PauseButton
+@onready var _speed_button: Button = %SpeedButton
+@onready var _save_button: Button = %SaveButton
+@onready var _background: ColorRect = $Background
+@onready var _material_caption: Label = %MaterialsCaption
+@onready var _weather_label: Label = %WeatherLabel
+
+
+func _ready() -> void:
+	_resource_labels = [%Stock0, %Stock1, %Stock2, %Stock3, %Stock4]
+	(%ProgressLine as Button).pressed.connect(overlay.show_village)
+	hand_panel.card_selected.connect(card_selected.emit)
+	hand_panel.skip_requested.connect(skip_requested.emit)
+	detail.execute_requested.connect(execute_requested.emit)
+	_pause_button.pressed.connect(pause_requested.emit)
+	_speed_button.pressed.connect(speed_requested.emit)
+	_save_button.pressed.connect(save_requested.emit)
+	(%LoadButton as Button).pressed.connect(load_requested.emit)
+	(%NewRunButton as Button).pressed.connect(new_run_requested.emit)
+	(%VillageInfoButton as Button).pressed.connect(overlay.show_village)
+	(%HelpButton as Button).pressed.connect(help_requested.emit)
+	(%MapFocusButton as Button).pressed.connect(_village_map.focus_village)
+	(%MapFitButton as Button).pressed.connect(_village_map.fit_world)
+	(%MapZoomIn as Button).pressed.connect(_village_map.zoom_in)
+	(%MapZoomOut as Button).pressed.connect(_village_map.zoom_out)
+
+
+func bind(state: VillageState, battle: BattleSimulation) -> void:
+	_village_map.bind(state, battle)
+
+
+func update_view(state: VillageState, battle: BattleSimulation, selected_uid: int) -> void:
+	_background.color = state.catalog.library.weather_rules.background_colors[
+		state.environment_period()
+	]
+	var event: DailyEvent = LaborRules.event_for(state)
+	var event_name: String = event.display_name if event != null else "旧版规则"
+	(%ProgressLine as Button).text = (
+		"%s · 烦躁 %d/5 · 今日：%s · 木 %d 石 %d 零件 %d 燃料 %d 箭 %d 药 %d"
+		% [
+			GameTypes.REGION_NAMES[state.progress.region],
+			state.progress.frustration,
+			event_name,
+			state.resources[7],
+			state.resources[8],
+			state.resources[9],
+			state.resources[10],
+			state.resources[11],
+			state.resources[12]
+		]
+	)
+	if state.progress.scouting:
+		var special_names: PackedStringArray = []
+		for kind: int in SpecialEnemies.new().types_for(state.day, state.progress.region):
+			special_names.append(GameTypes.ENEMY_NAMES[kind])
+		(%ProgressLine as Button).text += (
+			" · 侦察：" + ("、".join(special_names) if not special_names.is_empty() else "普通尸群")
+		)
+	_weather_label.text = "天气：" + state.weather.display_name
+	_weather_label.tooltip_text = state.weather.description
+	_day_label.text = "第 %02d 日" % state.day
+	_phase_label.text = (
+		"今晚：大尸潮 / BOSS" if state.day % 7 == 0 else "距离大尸潮还有 %d 天" % (7 - state.day % 7)
+	)
+	_map_title.text = ("月下守望  /  自动防守" if state.phase == GameTypes.Phase.NIGHT else "村庄与周围林地")
+	match state.phase:
+		GameTypes.Phase.DAY:
+			_map_hint.text = (
+				"%s / %d / 3 时段 · 剩余 %d 次"
+				% [
+					VillageState.SLOT_NAMES[state.slot],
+					state.slot + 1,
+					state.actions_per_slot - state.actions_used,
+				]
+			)
+			_status_label.text = (
+				(
+					"●  防线平静  ·  今晚预计 %d 名感染者%s"
+					if state.progress.region == GameTypes.Region.LEGACY
+					else "●  今晚威胁预算 %d · 特殊敌人折算%s"
+				)
+				% [
+					state.wave_count(),
+					"，含 BOSS" if state.day % 7 == 0 else "",
+				]
+			)
+			_status_label.add_theme_color_override("font_color", UiElements.POSITIVE)
+		GameTypes.Phase.REWARD:
+			_map_hint.text = "守夜结束  /  选择奖励"
+		GameTypes.Phase.GAME_OVER:
+			_map_hint.text = "防线失守"
+	_save_button.disabled = state.phase == GameTypes.Phase.NIGHT
+	_pause_button.disabled = state.phase != GameTypes.Phase.NIGHT
+	_speed_button.disabled = state.phase != GameTypes.Phase.NIGHT
+	update_resources(state, battle)
+	hand_panel.update_view(state, selected_uid, overlay.blocks_simulation())
+	detail.update_view(state, selected_uid)
+	overlay.update_view(state)
+
+
+func update_resources(state: VillageState, battle: BattleSimulation) -> void:
+	for key: int in range(GameTypes.Stock.MATERIALS + 1):
+		_resource_labels[key].text = str(state.resources[key])
+	_material_caption.text = "材料" if state.progress.region == GameTypes.Region.LEGACY else "木材"
+	if state.progress.region != GameTypes.Region.LEGACY:
+		_resource_labels[GameTypes.Stock.MATERIALS].text = str(
+			state.resources[GameTypes.Stock.WOOD]
+		)
+	_resource_labels[GameTypes.Stock.STAMINA].text += " / 100"
+	_population_label.text = str(battle.guards.size() if battle.active else state.population)
+	_core_label.text = (
+		"%d / %d"
+		% [
+			battle.core_health if battle.active else state.core_health,
+			state.core_max_health,
+		]
+	)
+	_risk_label.text = (
+		"%d / %d"
+		% [
+			state.resources[GameTypes.Stock.NOISE],
+			state.resources[GameTypes.Stock.POLLUTION],
+		]
+	)
+
+
+func update_playback(
+	state: VillageState, battle: BattleSimulation, paused: bool, speed: float
+) -> void:
+	_pause_button.text = "继续" if paused else "暂停"
+	_speed_button.text = "%d×" % int(speed)
+	if state.phase != GameTypes.Phase.NIGHT:
+		return
+	_map_hint.text = (
+		"%.0f 秒  /  击退 %d / %d"
+		% [
+			battle.elapsed,
+			battle.kills,
+			battle.total_to_spawn,
+		]
+	)
+	_status_label.text = (
+		"%s  %s  ·  入场 %d / %d  ·  场上敌人 %d"
+		% [
+			"Ⅱ" if paused else "●",
+			"已暂停" if paused else "尸潮来袭" if state.day % 7 == 0 else "自动防守中",
+			battle.spawned,
+			battle.total_to_spawn,
+			battle.enemies.size(),
+		]
+	)
+	(
+		_status_label
+		. add_theme_color_override(
+			"font_color",
+			UiElements.NEGATIVE if state.day % 7 == 0 else UiElements.EMPHASIS,
+		)
+	)
+
+
+func notify(message: String) -> void:
+	_notification.text = message

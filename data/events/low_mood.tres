@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="DailyEvent" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/daily_event.gd" id="event"]
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Resource" path="res://data/events/options/low_mood_0.tres" id="o0"]
+[ext_resource type="Resource" path="res://data/events/options/low_mood_1.tres" id="o1"]
+
+[resource]
+script = ExtResource("event")
+id = "low_mood"
+display_name = "情绪低落"
+description = "获得 8 体力，代价是今日首次重复劳动额外烦躁 +1；也可保持原计划"
+weight = 30
+regions = PackedInt32Array()
+labor = 0
+output_multiplier = 1.0
+cost_multiplier = 1.0
+low_mood = true
+options = Array[ExtResource("card")]([ExtResource("o0"), ExtResource("o1")])

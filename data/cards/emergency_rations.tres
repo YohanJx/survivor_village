@@ -1,0 +1,51 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="definition"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="modifier"]
+
+[sub_resource type="Resource" id="cost_0"]
+script = ExtResource("cost")
+key = 0
+amount = 6
+
+[sub_resource type="Resource" id="effect_0"]
+script = ExtResource("effect")
+type = 0
+key = 1
+amount = 18.0
+
+[sub_resource type="Resource" id="effect_1"]
+script = ExtResource("effect")
+type = 0
+key = 2
+amount = -6.0
+
+[sub_resource type="Resource" id="modifier_2"]
+script = ExtResource("modifier")
+key = 4
+operation = 1
+amount = 0.8
+duration = 2
+
+[sub_resource type="Resource" id="effect_2"]
+script = ExtResource("effect")
+type = 2
+modifier = SubResource("modifier_2")
+
+[resource]
+script = ExtResource("definition")
+id = "emergency_rations"
+display_name = "脱水口粮"
+kind = 0
+icon = 13
+color = 2
+profession = 0
+description = "把储备饮水用来处理干粮。能填饱肚子，却会让守夜的人虚弱。"
+positive = "食物 +18"
+negative = "水 -6；接下来 2 夜守卫生命 -20%，可叠加"
+reusable = false
+tags = PackedStringArray("临时", "补给")
+costs = Array[ExtResource("cost")]([SubResource("cost_0")])
+effects = Array[ExtResource("effect")]([SubResource("effect_0"), SubResource("effect_1"), SubResource("effect_2")])

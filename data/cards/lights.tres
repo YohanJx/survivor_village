@@ -1,0 +1,59 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=13 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
+[ext_resource type="Script" path="res://scripts/resources/building_requirement.gd" id="s_building_requirement"]
+[ext_resource type="Resource" path="res://data/buildings/generator.tres" id="b_generator"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="s_card_effect"]
+[ext_resource type="Resource" path="res://data/buildings/lights.tres" id="b_lights"]
+
+[sub_resource type="Resource" id="cost_0"]
+script = ExtResource("s_resource_cost")
+key = 0
+amount = 12
+
+[sub_resource type="Resource" id="cost_1"]
+script = ExtResource("s_resource_cost")
+key = 4
+amount = 6
+
+[sub_resource type="Resource" id="cost_2"]
+script = ExtResource("s_resource_cost")
+key = 3
+amount = 3
+
+[sub_resource type="Resource" id="requirement_0"]
+script = ExtResource("s_building_requirement")
+level = 1
+building = ExtResource("b_generator")
+
+[sub_resource type="Resource" id="effect_0"]
+script = ExtResource("s_card_effect")
+type = 1
+amount = 1.0
+building = ExtResource("b_lights")
+
+[sub_resource type="Resource" id="effect_1"]
+script = ExtResource("s_card_effect")
+type = 0
+key = 5
+amount = 4.0
+
+[resource]
+script = ExtResource("s_card_definition")
+profession = 3
+id = "lights"
+display_name = "探照灯图纸"
+kind = 1
+icon = 8
+color = 2
+description = "光束扫过夜色。供电充足时，整支守夜队都能看得更远。"
+positive = "有电时：攻击 +25%，射程 +25"
+negative = "每夜耗电 4；亮光使噪音 +4"
+reusable = false
+costs = Array[ExtResource("s_resource_cost")]([SubResource("cost_0"), SubResource("cost_1"), SubResource("cost_2")])
+prerequisites = Array[ExtResource("s_building_requirement")]([SubResource("requirement_0")])
+effects = Array[ExtResource("s_card_effect")]([SubResource("effect_0"), SubResource("effect_1")])
+building = ExtResource("b_lights")
+tags = PackedStringArray("防御", "电力")
+labor = 4

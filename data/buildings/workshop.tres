@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="BuildingDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/building_definition.gd" id="s_building_definition"]
+[ext_resource type="Script" path="res://scripts/resources/production_profile.gd" id="s_production_profile"]
+
+[sub_resource type="Resource" id="production"]
+script = ExtResource("s_production_profile")
+materials = 3
+noise = 2
+food_upkeep = 1
+
+[resource]
+script = ExtResource("s_building_definition")
+id = 9
+display_name = "修造工坊"
+max_level = 2
+visible_on_map = true
+production = SubResource("production")
+footprint = Rect2i(16, 7, 2, 2)

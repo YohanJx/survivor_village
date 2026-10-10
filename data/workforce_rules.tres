@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="WorkforceRules" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/workforce_rules.gd" id="script"]
+
+[resource]
+script = ExtResource("script")
+people_per_action = 5
+max_actions_per_slot = 4
+missing_profession_multiplier = 1.5
+reduction_per_extra_worker = 0.1
+minimum_multiplier = 0.6
+initial_roster = PackedInt32Array(0, 1, 1, 1, 1, 1)

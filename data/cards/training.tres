@@ -1,0 +1,75 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=14 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="s_card_effect"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="s_stat_modifier"]
+
+[sub_resource type="Resource" id="cost_0"]
+script = ExtResource("s_resource_cost")
+key = 0
+amount = 18
+
+[sub_resource type="Resource" id="cost_1"]
+script = ExtResource("s_resource_cost")
+key = 1
+amount = 3
+
+[sub_resource type="Resource" id="stat_0"]
+script = ExtResource("s_stat_modifier")
+key = 0
+operation = 1
+amount = 1.4
+duration = 1
+
+[sub_resource type="Resource" id="effect_0"]
+script = ExtResource("s_card_effect")
+type = 2
+modifier = SubResource("stat_0")
+
+[sub_resource type="Resource" id="stat_1"]
+script = ExtResource("s_stat_modifier")
+key = 3
+operation = 0
+amount = 10.0
+duration = 1
+
+[sub_resource type="Resource" id="effect_1"]
+script = ExtResource("s_card_effect")
+type = 2
+modifier = SubResource("stat_1")
+
+[sub_resource type="Resource" id="stat_2"]
+script = ExtResource("s_stat_modifier")
+key = 4
+operation = 0
+amount = -10.0
+duration = 1
+
+[sub_resource type="Resource" id="effect_2"]
+script = ExtResource("s_card_effect")
+type = 2
+modifier = SubResource("stat_2")
+
+[sub_resource type="Resource" id="effect_3"]
+script = ExtResource("s_card_effect")
+type = 0
+key = 5
+amount = 4.0
+
+[resource]
+script = ExtResource("s_card_definition")
+profession = 5
+id = "training"
+display_name = "守夜演练"
+kind = 0
+icon = 6
+color = 3
+description = "一遍遍练习投掷、瞄准和队形，今晚才能少流一点血。"
+positive = "今晚攻击 +40%，移动速度 +10"
+negative = "今晚每名守卫生命 -10，噪音 +4"
+reusable = false
+costs = Array[ExtResource("s_resource_cost")]([SubResource("cost_0"), SubResource("cost_1")])
+effects = Array[ExtResource("s_card_effect")]([SubResource("effect_0"), SubResource("effect_1"), SubResource("effect_2"), SubResource("effect_3")])
+tags = PackedStringArray("临时", "防御")
+labor = 6

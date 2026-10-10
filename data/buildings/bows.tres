@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="BuildingDefinition" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/building_definition.gd" id="s_building_definition"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="s_stat_modifier"]
+
+[sub_resource type="Resource" id="modifier_0"]
+script = ExtResource("s_stat_modifier")
+key = 0
+amount = 5.0
+
+[sub_resource type="Resource" id="modifier_1"]
+script = ExtResource("s_stat_modifier")
+key = 1
+amount = 45.0
+
+[sub_resource type="Resource" id="modifier_2"]
+script = ExtResource("s_stat_modifier")
+key = 2
+amount = -0.1
+
+[resource]
+script = ExtResource("s_building_definition")
+id = 3
+display_name = "弓箭"
+max_level = 2
+visible_on_map = false
+modifiers = Array[ExtResource("s_stat_modifier")]([SubResource("modifier_0"), SubResource("modifier_1"), SubResource("modifier_2")])
+footprint = Rect2i(0, 0, 0, 0)

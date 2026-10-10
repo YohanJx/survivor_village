@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/card_button.gd" id="script"]
+
+[node name="CardButton" type="Button"]
+script = ExtResource("script")
+
+[node name="Keywords" type="RichTextLabel" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_right = 1.0
+offset_left = 14.0
+offset_top = 98.0
+offset_right = -14.0
+offset_bottom = 122.0
+mouse_filter = 1
+theme_override_font_sizes/normal_font_size = 13
+bbcode_enabled = true
+scroll_active = false

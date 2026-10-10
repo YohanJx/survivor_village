@@ -1,0 +1,46 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="s_card_effect"]
+[ext_resource type="Resource" path="res://data/buildings/traps.tres" id="b_traps"]
+
+[sub_resource type="Resource" id="cost_0"]
+script = ExtResource("s_resource_cost")
+key = 0
+amount = 14
+
+[sub_resource type="Resource" id="cost_1"]
+script = ExtResource("s_resource_cost")
+key = 4
+amount = 7
+
+[sub_resource type="Resource" id="effect_0"]
+script = ExtResource("s_card_effect")
+type = 1
+amount = 1.0
+building = ExtResource("b_traps")
+
+[sub_resource type="Resource" id="effect_1"]
+script = ExtResource("s_card_effect")
+type = 0
+key = 5
+amount = 2.0
+
+[resource]
+script = ExtResource("s_card_definition")
+profession = 2
+id = "traps"
+display_name = "尖刺陷阱图纸"
+kind = 1
+icon = 10
+color = 3
+description = "藏在栅栏外的尖刺会伤害并减速经过的僵尸。"
+positive = "外围陷阱持续伤害、减速敌人"
+negative = "每天维护材料 -1 / 等级，噪音 +2"
+reusable = false
+costs = Array[ExtResource("s_resource_cost")]([SubResource("cost_0"), SubResource("cost_1")])
+effects = Array[ExtResource("s_card_effect")]([SubResource("effect_0"), SubResource("effect_1")])
+building = ExtResource("b_traps")
+tags = PackedStringArray("防御", "建筑")
+labor = 4

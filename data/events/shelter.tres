@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="DailyEvent" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/daily_event.gd" id="event"]
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Resource" path="res://data/events/options/shelter_0.tres" id="o0"]
+[ext_resource type="Resource" path="res://data/events/options/shelter_1.tres" id="o1"]
+
+[resource]
+script = ExtResource("event")
+id = "shelter"
+display_name = "地下室发现"
+description = "今日拆解基础产出 +25%，一次探索机会"
+weight = 40
+regions = PackedInt32Array()
+labor = 3
+output_multiplier = 1.25
+cost_multiplier = 1.0
+low_mood = false
+options = Array[ExtResource("card")]([ExtResource("o0"), ExtResource("o1")])

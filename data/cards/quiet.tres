@@ -1,0 +1,69 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=13 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="s_card_effect"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="s_stat_modifier"]
+
+[sub_resource type="Resource" id="cost_0"]
+script = ExtResource("s_resource_cost")
+key = 0
+amount = 8
+
+[sub_resource type="Resource" id="effect_0"]
+script = ExtResource("s_card_effect")
+type = 0
+key = 5
+amount = -14.0
+
+[sub_resource type="Resource" id="stat_1"]
+script = ExtResource("s_stat_modifier")
+key = 5
+operation = 1
+amount = 0.8
+duration = 1
+
+[sub_resource type="Resource" id="effect_1"]
+script = ExtResource("s_card_effect")
+type = 2
+modifier = SubResource("stat_1")
+
+[sub_resource type="Resource" id="stat_2"]
+script = ExtResource("s_stat_modifier")
+key = 0
+operation = 1
+amount = 0.85
+duration = 1
+
+[sub_resource type="Resource" id="effect_2"]
+script = ExtResource("s_card_effect")
+type = 2
+modifier = SubResource("stat_2")
+
+[sub_resource type="Resource" id="stat_3"]
+script = ExtResource("s_stat_modifier")
+key = 6
+operation = 0
+amount = 1.0
+duration = 1
+
+[sub_resource type="Resource" id="effect_3"]
+script = ExtResource("s_card_effect")
+type = 2
+modifier = SubResource("stat_3")
+
+[resource]
+script = ExtResource("s_card_definition")
+profession = 5
+id = "quiet"
+display_name = "熄灯隐蔽"
+kind = 0
+icon = 11
+color = 1
+description = "压低声音，盖住火光。越少被发现，越容易活下来。"
+positive = "噪音 -14；今晚尸群数量 -20%"
+negative = "今晚守卫攻击 -15%，探照灯停用"
+reusable = false
+costs = Array[ExtResource("s_resource_cost")]([SubResource("cost_0")])
+effects = Array[ExtResource("s_card_effect")]([SubResource("effect_0"), SubResource("effect_1"), SubResource("effect_2"), SubResource("effect_3")])
+tags = PackedStringArray("临时", "隐蔽")

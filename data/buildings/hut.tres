@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="BuildingDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/building_definition.gd" id="s_building_definition"]
+
+
+
+[resource]
+script = ExtResource("s_building_definition")
+id = 1
+display_name = "住屋"
+max_level = 1
+visible_on_map = true
+footprint = Rect2i(16, 10, 2, 2)

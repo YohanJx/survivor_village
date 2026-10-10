@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="UnitDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/unit_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+kind = 1
+attack_multiplier = 0.75
+health_multiplier = 0.8
+speed_multiplier = 1.25
+range_multiplier = 1.0

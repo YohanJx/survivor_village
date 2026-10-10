@@ -1,0 +1,128 @@
+[gd_resource type="Resource" script_class="KeywordLibrary" load_steps=27 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_library.gd" id="library"]
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="definition"]
+
+[sub_resource type="Resource" id="term_0"]
+script = ExtResource("definition")
+title = "采集"
+description = "获得食物、水或材料；费用与产出以这张卡的说明为准。"
+
+[sub_resource type="Resource" id="term_1"]
+script = ExtResource("definition")
+title = "食物"
+description = "黎明按幸存人口消耗。短缺会损伤村庄，并降低体力恢复。"
+
+[sub_resource type="Resource" id="term_2"]
+script = ExtResource("definition")
+title = "水"
+description = "黎明按幸存人口消耗；污染会削弱水井产量。"
+
+[sub_resource type="Resource" id="term_3"]
+script = ExtResource("definition")
+title = "噪音"
+description = "每 4 点噪音约增加 1 名敌人，日常结算会降低 3 点。"
+
+[sub_resource type="Resource" id="term_4"]
+script = ExtResource("definition")
+title = "污染"
+description = "降低水井产出。建造净水器可以消除这项减产。"
+
+[sub_resource type="Resource" id="term_5"]
+script = ExtResource("definition")
+title = "材料"
+description = "用于建筑、科技和修补；部分设施每天还需要维护材料。"
+
+[sub_resource type="Resource" id="term_6"]
+script = ExtResource("definition")
+title = "电力"
+description = "黄昏统一供电，优先用于探照灯，其次用于灌溉。夜间重读不会重复扣电。"
+
+[sub_resource type="Resource" id="term_7"]
+script = ExtResource("definition")
+title = "防御"
+description = "强化村庄防线；建造栅栏、陷阱或修补损伤有不同效果。"
+
+[sub_resource type="Resource" id="term_8"]
+script = ExtResource("definition")
+title = "恢复"
+description = "恢复体力、村庄耐久或围墙状态；具体恢复量以卡牌效果为准。"
+
+[sub_resource type="Resource" id="term_9"]
+script = ExtResource("definition")
+title = "建筑"
+description = "建造或升级设施，可能增加产出、消耗、噪音或污染。"
+
+[sub_resource type="Resource" id="term_10"]
+script = ExtResource("definition")
+title = "科技"
+description = "解锁技术或设施效果，仍需要满足卡牌的前置条件。"
+
+[sub_resource type="Resource" id="term_11"]
+script = ExtResource("definition")
+title = "武器"
+description = "改变守卫的攻击能力；夜间守卫会自行寻路和攻击。"
+
+[sub_resource type="Resource" id="term_12"]
+script = ExtResource("definition")
+title = "生产"
+description = "黎明统一结算设施生产与每日消耗。"
+
+[sub_resource type="Resource" id="term_13"]
+script = ExtResource("definition")
+title = "联动"
+description = "满足特定设施组合或供电条件时才生效的额外加成。"
+
+[sub_resource type="Resource" id="term_14"]
+script = ExtResource("definition")
+title = "临时"
+description = "只持续卡牌标注的夜数，黎明结算后扣除剩余持续时间。"
+
+[sub_resource type="Resource" id="term_15"]
+script = ExtResource("definition")
+title = "人口"
+description = "增加每日补给消耗；每 5 人增加 1 次时段行动，最多 4 次，下个黎明更新。"
+
+[sub_resource type="Resource" id="term_16"]
+script = ExtResource("definition")
+title = "训练"
+description = "提高守卫战斗属性，可能伴随额外消耗或临时副作用。"
+
+[sub_resource type="Resource" id="term_17"]
+script = ExtResource("definition")
+title = "体力"
+description = "执行卡牌的费用之一，职业人数会改变体力费用，其他资源费用不变。"
+
+[sub_resource type="Resource" id="term_18"]
+script = ExtResource("definition")
+title = "常驻"
+description = "执行后保留在手牌中，可以在后续行动再次使用。"
+
+[sub_resource type="Resource" id="term_19"]
+script = ExtResource("definition")
+title = "单次"
+description = "成功执行后从手牌中移除。"
+
+[sub_resource type="Resource" id="term_20"]
+script = ExtResource("definition")
+title = "水源"
+description = "获得或生产饮水，人口与设施会消耗水。"
+
+[sub_resource type="Resource" id="term_21"]
+script = ExtResource("definition")
+title = "隐蔽"
+description = "临时降低尸群规模，同时可能降低守卫攻击。"
+
+[sub_resource type="Resource" id="term_22"]
+script = ExtResource("definition")
+title = "事件"
+description = "一次性的发展机会；执行后消耗该卡，收益与风险同时结算。"
+
+[sub_resource type="Resource" id="term_23"]
+script = ExtResource("definition")
+title = "补给"
+description = "提供或消耗食物、水和材料，具体数量见卡牌。"
+
+[resource]
+script = ExtResource("library")
+definitions = Array[ExtResource("definition")]([SubResource("term_0"), SubResource("term_1"), SubResource("term_2"), SubResource("term_3"), SubResource("term_4"), SubResource("term_5"), SubResource("term_6"), SubResource("term_7"), SubResource("term_8"), SubResource("term_9"), SubResource("term_10"), SubResource("term_11"), SubResource("term_12"), SubResource("term_13"), SubResource("term_14"), SubResource("term_15"), SubResource("term_16"), SubResource("term_17"), SubResource("term_18"), SubResource("term_19"), SubResource("term_20"), SubResource("term_21"), SubResource("term_22"), SubResource("term_23")])

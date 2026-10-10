@@ -1,0 +1,54 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="stat"]
+
+[sub_resource type="Resource" id="cost0"]
+script = ExtResource("cost")
+key = 0
+amount = 14
+
+[sub_resource type="Resource" id="cost1"]
+script = ExtResource("cost")
+key = 2
+amount = 2
+
+[sub_resource type="Resource" id="effect0"]
+script = ExtResource("effect")
+type = 0
+key = 10
+amount = 6.0
+
+[sub_resource type="Resource" id="effect1"]
+script = ExtResource("effect")
+type = 0
+key = 6
+amount = 3.0
+
+[sub_resource type="Resource" id="effect2"]
+script = ExtResource("effect")
+type = 0
+key = 5
+amount = 5.0
+
+[resource]
+script = ExtResource("card")
+id = "oil"
+display_name = "抽取油料"
+description = "燃料 +6，城镇丰度更高。污染 +3、噪音 +5"
+positive = "燃料 +6，城镇丰度更高"
+negative = "污染 +3、噪音 +5"
+kind = 0
+icon = 13
+color = 2
+reusable = true
+labor = 3
+profession = 3
+expedition = true
+crew_stamina = 5
+crew_water = 2
+crew_output = 2
+costs = Array[ExtResource("cost")]([SubResource("cost0"), SubResource("cost1")])
+effects = Array[ExtResource("effect")]([SubResource("effect0"), SubResource("effect1"), SubResource("effect2")])

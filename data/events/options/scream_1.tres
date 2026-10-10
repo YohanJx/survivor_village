@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="stat"]
+
+[sub_resource type="Resource" id="stat0"]
+script = ExtResource("stat")
+key = 5
+operation = 1
+amount = 1.1
+duration = 1
+
+[sub_resource type="Resource" id="effect0"]
+script = ExtResource("effect")
+type = 2
+modifier = SubResource("stat0")
+
+[resource]
+script = ExtResource("card")
+id = "scream_1"
+display_name = "保持原计划"
+description = "无费用继续。忽略尖叫时今晚尸群 +10%"
+positive = "无费用继续"
+negative = "忽略尖叫时今晚尸群 +10%"
+kind = 0
+icon = 13
+color = 2
+reusable = false
+costs = Array[ExtResource("cost")]([])
+effects = Array[ExtResource("effect")]([SubResource("effect0")])

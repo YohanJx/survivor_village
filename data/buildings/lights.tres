@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="BuildingDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/building_definition.gd" id="s_building_definition"]
+[ext_resource type="Script" path="res://scripts/resources/synergies/light_synergy.gd" id="s_synergies_light_synergy"]
+
+[sub_resource type="Resource" id="synergy"]
+script = ExtResource("s_synergies_light_synergy")
+priority = 10
+
+[resource]
+script = ExtResource("s_building_definition")
+id = 7
+display_name = "探照灯"
+max_level = 1
+visible_on_map = true
+synergy = SubResource("synergy")
+footprint = Rect2i(25, 10, 1, 1)

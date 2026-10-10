@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="WeatherRules" load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/weather_rules.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/weather_definition.gd" id="2"]
+[ext_resource type="Resource" path="res://data/weather/clear.tres" id="w0"]
+[ext_resource type="Resource" path="res://data/weather/cloudy.tres" id="w1"]
+[ext_resource type="Resource" path="res://data/weather/rain.tres" id="w2"]
+[ext_resource type="Resource" path="res://data/weather/thunderstorm.tres" id="w3"]
+[ext_resource type="Resource" path="res://data/weather/fog.tres" id="w4"]
+
+[resource]
+script = ExtResource("1")
+definitions = Array[ExtResource("2")]([ExtResource("w0"), ExtResource("w1"), ExtResource("w2"), ExtResource("w3"), ExtResource("w4")])
+ground_colors = PackedColorArray(0.27, 0.37, 0.28, 1, 0.21, 0.31, 0.23, 1, 0.32, 0.26, 0.22, 1, 0.09, 0.17, 0.21, 1)
+background_colors = PackedColorArray(0.085, 0.125, 0.10, 1, 0.067, 0.11, 0.09, 1, 0.12, 0.09, 0.075, 1, 0.045, 0.075, 0.10, 1)
+light_colors = PackedColorArray(0.92, 0.76, 0.48, 0.055, 0, 0, 0, 0, 0.77, 0.30, 0.10, 0.17, 0.025, 0.065, 0.16, 0.26)

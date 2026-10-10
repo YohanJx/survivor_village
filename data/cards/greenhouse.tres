@@ -1,0 +1,71 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=17 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
+[ext_resource type="Script" path="res://scripts/resources/building_requirement.gd" id="s_building_requirement"]
+[ext_resource type="Resource" path="res://data/buildings/farm.tres" id="b_farm"]
+[ext_resource type="Resource" path="res://data/buildings/well.tres" id="b_well"]
+[ext_resource type="Resource" path="res://data/buildings/generator.tres" id="b_generator"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="s_card_effect"]
+[ext_resource type="Resource" path="res://data/buildings/greenhouse.tres" id="b_greenhouse"]
+
+[sub_resource type="Resource" id="cost_0"]
+script = ExtResource("s_resource_cost")
+key = 0
+amount = 18
+
+[sub_resource type="Resource" id="cost_1"]
+script = ExtResource("s_resource_cost")
+key = 4
+amount = 10
+
+[sub_resource type="Resource" id="cost_2"]
+script = ExtResource("s_resource_cost")
+key = 3
+amount = 4
+
+[sub_resource type="Resource" id="requirement_0"]
+script = ExtResource("s_building_requirement")
+level = 1
+building = ExtResource("b_farm")
+
+[sub_resource type="Resource" id="requirement_1"]
+script = ExtResource("s_building_requirement")
+level = 1
+building = ExtResource("b_well")
+
+[sub_resource type="Resource" id="requirement_2"]
+script = ExtResource("s_building_requirement")
+level = 1
+building = ExtResource("b_generator")
+
+[sub_resource type="Resource" id="effect_0"]
+script = ExtResource("s_card_effect")
+type = 1
+amount = 1.0
+building = ExtResource("b_greenhouse")
+
+[sub_resource type="Resource" id="effect_1"]
+script = ExtResource("s_card_effect")
+type = 0
+key = 6
+amount = 3.0
+
+[resource]
+script = ExtResource("s_card_definition")
+profession = 2
+id = "greenhouse"
+display_name = "灌溉系统图纸"
+kind = 2
+icon = 0
+color = 0
+description = "把水井与菜圃连接起来，形成可持续的补给循环。"
+positive = "供电时：菜圃产量 +50%，不再额外耗水"
+negative = "每夜耗电 3；污染 +3"
+reusable = false
+costs = Array[ExtResource("s_resource_cost")]([SubResource("cost_0"), SubResource("cost_1"), SubResource("cost_2")])
+prerequisites = Array[ExtResource("s_building_requirement")]([SubResource("requirement_0"), SubResource("requirement_1"), SubResource("requirement_2")])
+effects = Array[ExtResource("s_card_effect")]([SubResource("effect_0"), SubResource("effect_1")])
+building = ExtResource("b_greenhouse")
+tags = PackedStringArray("联动", "生产")
+labor = 5

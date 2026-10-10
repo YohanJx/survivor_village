@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="MapDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/map_definition.gd" id="s"]
+
+[resource]
+script = ExtResource("s")
+kind = 0
+display_name = "旧村庄"
+description = "兼容旧材料、布局与库存"
+initial_resources = PackedInt32Array(70, 24, 24, 0, 18, 0, 0, 0, 0, 0, 0, 0, 0)
+abundance = PackedFloat64Array(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0)
+barriers = Array[Rect2i]([])
+ground_tint = Color(1, 1, 1, 1)

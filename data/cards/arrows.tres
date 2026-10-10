@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="stat"]
+
+[sub_resource type="Resource" id="cost0"]
+script = ExtResource("cost")
+key = 0
+amount = 8
+
+[sub_resource type="Resource" id="cost1"]
+script = ExtResource("cost")
+key = 7
+amount = 3
+
+[sub_resource type="Resource" id="effect0"]
+script = ExtResource("effect")
+type = 0
+key = 11
+amount = 30.0
+
+[sub_resource type="Resource" id="effect1"]
+script = ExtResource("effect")
+type = 0
+key = 5
+amount = 1.0
+
+[resource]
+script = ExtResource("card")
+id = "arrows"
+display_name = "制作箭矢"
+description = "箭矢 +30。木材 -3，噪音 +1"
+positive = "箭矢 +30"
+negative = "木材 -3，噪音 +1"
+kind = 0
+icon = 13
+color = 2
+reusable = true
+labor = 5
+profession = 2
+costs = Array[ExtResource("cost")]([SubResource("cost0"), SubResource("cost1")])
+effects = Array[ExtResource("effect")]([SubResource("effect0"), SubResource("effect1")])

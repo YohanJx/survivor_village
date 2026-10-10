@@ -1,0 +1,139 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/detail_panel.gd" id="ui_script"]
+
+[node name="DetailPanel" type="PanelContainer"]
+unique_name_in_owner = true
+script = ExtResource("ui_script")
+custom_minimum_size = Vector2(320, 0)
+
+[node name="Content" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="CardDecisionHeading" type="Label" parent="Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "卡牌决策"
+
+[node name="DetailScroll" type="ScrollContainer" parent="Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="DetailContainer" type="VBoxContainer" parent="Content/DetailScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 11
+
+[node name="EmptyHint" type="Label" parent="Content/DetailScroll/DetailContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 15
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.8627451, 0.88235295, 0.8627451, 1)
+
+[node name="CardDetail" type="VBoxContainer" parent="Content/DetailScroll/DetailContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+size_flags_horizontal = 3
+
+[node name="CardKind" type="RichTextLabel" parent="Content/DetailScroll/DetailContainer/CardDetail"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/normal_font_size = 13
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+theme_override_colors/default_color = Color(0.6392157, 0.6784314, 0.64705884, 1)
+
+[node name="CardTitle" type="Label" parent="Content/DetailScroll/DetailContainer/CardDetail"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 23
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.8627451, 0.88235295, 0.8627451, 1)
+
+[node name="Description" type="RichTextLabel" parent="Content/DetailScroll/DetailContainer/CardDetail"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/normal_font_size = 14
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+theme_override_colors/default_color = Color(0.6392157, 0.6784314, 0.64705884, 1)
+
+[node name="PositiveHeading" type="Label" parent="Content/DetailScroll/DetailContainer/CardDetail"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.61960784, 0.73725490, 0.59607843, 1)
+text = "＋ 收益"
+
+[node name="Positive" type="RichTextLabel" parent="Content/DetailScroll/DetailContainer/CardDetail"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/normal_font_size = 14
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+theme_override_colors/default_color = Color(0.61960784, 0.73725490, 0.59607843, 1)
+
+[node name="Requirement" type="Label" parent="Content/DetailScroll/DetailContainer/CardDetail"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.81176471, 0.70588235, 0.46666667, 1)
+
+[node name="Preview" type="Label" parent="Content/DetailScroll/DetailContainer/CardDetail"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.8627451, 0.88235295, 0.8627451, 1)
+
+[node name="Negative" type="RichTextLabel" parent="Content"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/normal_font_size = 14
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+theme_override_colors/default_color = Color(0.80392157, 0.59215686, 0.52941176, 1)
+
+[node name="Cost" type="Label" parent="Content"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.8627451, 0.88235295, 0.8627451, 1)
+
+[node name="Reason" type="Label" parent="Content"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.80392157, 0.59215686, 0.52941176, 1)
+
+[node name="ExecuteButton" type="Button" parent="Content"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "确认执行卡牌"

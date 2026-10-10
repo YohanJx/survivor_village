@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="WeatherDefinition" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/weather_definition.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="2"]
+
+[sub_resource type="Resource" id="Modifier0"]
+script = ExtResource("2")
+key = 1
+operation = 1
+amount = 0.75
+
+[sub_resource type="Resource" id="Modifier1"]
+script = ExtResource("2")
+key = 5
+operation = 1
+amount = 0.9
+
+[resource]
+script = ExtResource("1")
+kind = 4
+display_name = "雾天"
+description = "雾气遮蔽村庄：尸群规模 -10%；守卫射程 -25%。"
+weight = 8
+water_income = 0
+stamina_recovery = 0
+modifiers = Array[ExtResource("2")]([SubResource("Modifier0"), SubResource("Modifier1")])
+veil = Color(0.6, 0.65, 0.66, 0.08)
+rainfall = 0
+fog_density = 0.65

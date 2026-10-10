@@ -1,0 +1,51 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="s_card_effect"]
+[ext_resource type="Resource" path="res://data/buildings/farm.tres" id="b_farm"]
+
+[sub_resource type="Resource" id="cost_0"]
+script = ExtResource("s_resource_cost")
+key = 0
+amount = 15
+
+[sub_resource type="Resource" id="cost_1"]
+script = ExtResource("s_resource_cost")
+key = 4
+amount = 6
+
+[sub_resource type="Resource" id="cost_2"]
+script = ExtResource("s_resource_cost")
+key = 2
+amount = 4
+
+[sub_resource type="Resource" id="effect_0"]
+script = ExtResource("s_card_effect")
+type = 1
+amount = 1.0
+building = ExtResource("b_farm")
+
+[sub_resource type="Resource" id="effect_1"]
+script = ExtResource("s_card_effect")
+type = 0
+key = 5
+amount = 2.0
+
+[resource]
+script = ExtResource("s_card_definition")
+profession = 2
+id = "farm"
+display_name = "菜圃图纸"
+kind = 1
+icon = 0
+color = 0
+description = "在空地播种。从这一天起，食物开始稳定产出。"
+positive = "每天食物 +7 / 等级"
+negative = "每天额外耗水 3 / 等级，噪音 +2"
+reusable = false
+costs = Array[ExtResource("s_resource_cost")]([SubResource("cost_0"), SubResource("cost_1"), SubResource("cost_2")])
+effects = Array[ExtResource("s_card_effect")]([SubResource("effect_0"), SubResource("effect_1")])
+building = ExtResource("b_farm")
+tags = PackedStringArray("生产", "食物")
+labor = 4

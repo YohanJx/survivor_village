@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="WeatherDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/weather_definition.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="2"]
+
+[sub_resource type="Resource" id="Modifier0"]
+script = ExtResource("2")
+key = 1
+operation = 1
+amount = 0.95
+
+[resource]
+script = ExtResource("1")
+kind = 2
+display_name = "降雨"
+description = "收集雨水：每日水 +5；湿冷：体力恢复 -2，守卫射程 -5%。"
+weight = 20
+water_income = 5
+stamina_recovery = -2
+modifiers = Array[ExtResource("2")]([SubResource("Modifier0")])
+veil = Color(0.23, 0.3, 0.38, 0.16)
+rainfall = 0.5
+fog_density = 0

@@ -1,0 +1,52 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="s_card_effect"]
+[ext_resource type="Resource" path="res://data/buildings/generator.tres" id="b_generator"]
+
+[sub_resource type="Resource" id="cost_0"]
+script = ExtResource("s_resource_cost")
+key = 0
+amount = 18
+
+[sub_resource type="Resource" id="cost_1"]
+script = ExtResource("s_resource_cost")
+key = 4
+amount = 10
+
+[sub_resource type="Resource" id="effect_0"]
+script = ExtResource("s_card_effect")
+type = 1
+amount = 1.0
+building = ExtResource("b_generator")
+
+[sub_resource type="Resource" id="effect_1"]
+script = ExtResource("s_card_effect")
+type = 0
+key = 3
+amount = 8.0
+
+[sub_resource type="Resource" id="effect_2"]
+script = ExtResource("s_card_effect")
+type = 0
+key = 5
+amount = 5.0
+
+[resource]
+script = ExtResource("s_card_definition")
+profession = 3
+id = "generator"
+display_name = "柴油机图纸"
+kind = 1
+icon = 7
+color = 2
+description = "重新点亮一台旧机器。电力带来便利，也带来危险。"
+positive = "每天电力 +8 / 等级"
+negative = "每天材料 -1、噪音 +5、污染 +2 / 等级"
+reusable = false
+costs = Array[ExtResource("s_resource_cost")]([SubResource("cost_0"), SubResource("cost_1")])
+effects = Array[ExtResource("s_card_effect")]([SubResource("effect_0"), SubResource("effect_1"), SubResource("effect_2")])
+building = ExtResource("b_generator")
+tags = PackedStringArray("生产", "电力")
+labor = 4

@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="s_card_effect"]
+
+[sub_resource type="Resource" id="cost_0"]
+script = ExtResource("s_resource_cost")
+key = 0
+amount = 12
+
+[sub_resource type="Resource" id="cost_1"]
+script = ExtResource("s_resource_cost")
+key = 4
+amount = 5
+
+[sub_resource type="Resource" id="effect_0"]
+script = ExtResource("s_card_effect")
+type = 3
+amount = 50.0
+
+[sub_resource type="Resource" id="effect_1"]
+script = ExtResource("s_card_effect")
+type = 4
+
+[sub_resource type="Resource" id="effect_2"]
+script = ExtResource("s_card_effect")
+type = 0
+key = 5
+amount = 2.0
+
+[resource]
+script = ExtResource("s_card_definition")
+profession = 2
+id = "repair"
+display_name = "修补村庄"
+kind = 0
+icon = 4
+color = 0
+description = "把摇摇欲坠的墙体重新加固，让避难所撑过下一晚。"
+positive = "村庄耐久 +50，修复所有围墙"
+negative = "施工噪音 +2"
+reusable = true
+costs = Array[ExtResource("s_resource_cost")]([SubResource("cost_0"), SubResource("cost_1")])
+effects = Array[ExtResource("s_card_effect")]([SubResource("effect_0"), SubResource("effect_1"), SubResource("effect_2")])
+tags = PackedStringArray("恢复", "防御")
+labor = 4

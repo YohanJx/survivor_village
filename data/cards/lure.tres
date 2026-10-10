@@ -1,0 +1,62 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="definition"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="modifier"]
+
+[sub_resource type="Resource" id="cost_0"]
+script = ExtResource("cost")
+key = 0
+amount = 18
+
+[sub_resource type="Resource" id="cost_1"]
+script = ExtResource("cost")
+key = 2
+amount = 3
+
+[sub_resource type="Resource" id="effect_0"]
+script = ExtResource("effect")
+type = 0
+key = 4
+amount = 24.0
+
+[sub_resource type="Resource" id="effect_1"]
+script = ExtResource("effect")
+type = 0
+key = 1
+amount = 12.0
+
+[sub_resource type="Resource" id="effect_2"]
+script = ExtResource("effect")
+type = 0
+key = 5
+amount = 12.0
+
+[sub_resource type="Resource" id="modifier_3"]
+script = ExtResource("modifier")
+key = 5
+operation = 1
+amount = 1.5
+duration = 1
+
+[sub_resource type="Resource" id="effect_3"]
+script = ExtResource("effect")
+type = 2
+modifier = SubResource("modifier_3")
+
+[resource]
+script = ExtResource("definition")
+id = "lure"
+display_name = "喧闹搜刮"
+kind = 0
+icon = 3
+color = 3
+profession = 1
+description = "砸开封死的仓库，搬走物资。感染者也会循声赶来。"
+positive = "材料 +24，食物 +12"
+negative = "噪音 +12；今晚尸群规模 +50%，可叠加"
+reusable = false
+tags = PackedStringArray("临时", "采集")
+costs = Array[ExtResource("cost")]([SubResource("cost_0"), SubResource("cost_1")])
+effects = Array[ExtResource("effect")]([SubResource("effect_0"), SubResource("effect_1"), SubResource("effect_2"), SubResource("effect_3")])

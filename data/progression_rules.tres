@@ -1,0 +1,46 @@
+[gd_resource type="Resource" script_class="ProgressionRules" load_steps=34 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/progression_rules.gd" id="s"]
+[ext_resource type="Script" path="res://scripts/resources/map_definition.gd" id="map"]
+[ext_resource type="Script" path="res://scripts/resources/daily_event.gd" id="event"]
+[ext_resource type="Resource" path="res://data/maps/legacy.tres" id="m0"]
+[ext_resource type="Resource" path="res://data/maps/mountain.tres" id="m1"]
+[ext_resource type="Resource" path="res://data/maps/rural.tres" id="m2"]
+[ext_resource type="Resource" path="res://data/maps/ruins.tres" id="m3"]
+[ext_resource type="Resource" path="res://data/events/settle.tres" id="esettle"]
+[ext_resource type="Resource" path="res://data/events/harvest.tres" id="eharvest"]
+[ext_resource type="Resource" path="res://data/events/road.tres" id="eroad"]
+[ext_resource type="Resource" path="res://data/events/low_mood.tres" id="elow_mood"]
+[ext_resource type="Resource" path="res://data/events/fletcher.tres" id="efletcher"]
+[ext_resource type="Resource" path="res://data/events/scream.tres" id="escream"]
+[ext_resource type="Resource" path="res://data/events/convoy.tres" id="econvoy"]
+[ext_resource type="Resource" path="res://data/events/shelter.tres" id="eshelter"]
+
+[ext_resource type="Resource" path="res://data/units/unit_0.tres" id="units_0"]
+[ext_resource type="Resource" path="res://data/units/unit_1.tres" id="units_1"]
+[ext_resource type="Resource" path="res://data/units/unit_2.tres" id="units_2"]
+[ext_resource type="Resource" path="res://data/units/unit_3.tres" id="units_3"]
+[ext_resource type="Resource" path="res://data/units/unit_4.tres" id="units_4"]
+[ext_resource type="Resource" path="res://data/units/unit_5.tres" id="units_5"]
+[ext_resource type="Resource" path="res://data/units/unit_6.tres" id="units_6"]
+[ext_resource type="Resource" path="res://data/enemies/enemy_0.tres" id="enemies_0"]
+[ext_resource type="Resource" path="res://data/enemies/enemy_1.tres" id="enemies_1"]
+[ext_resource type="Resource" path="res://data/enemies/enemy_2.tres" id="enemies_2"]
+[ext_resource type="Resource" path="res://data/enemies/enemy_3.tres" id="enemies_3"]
+[ext_resource type="Resource" path="res://data/enemies/enemy_4.tres" id="enemies_4"]
+[ext_resource type="Resource" path="res://data/enemies/enemy_5.tres" id="enemies_5"]
+[ext_resource type="Resource" path="res://data/enemies/enemy_6.tres" id="enemies_6"]
+[ext_resource type="Resource" path="res://data/enemies/enemy_7.tres" id="enemies_7"]
+[ext_resource type="Resource" path="res://data/enemies/enemy_8.tres" id="enemies_8"]
+
+[ext_resource type="Script" path="res://scripts/resources/unit_definition.gd" id="unit_script"]
+[ext_resource type="Script" path="res://scripts/resources/enemy_definition.gd" id="enemy_script"]
+
+[resource]
+script = ExtResource("s")
+maps = Array[ExtResource("map")]([ExtResource("m0"), ExtResource("m1"), ExtResource("m2"), ExtResource("m3")])
+events = Array[ExtResource("event")]([ExtResource("esettle"), ExtResource("eharvest"), ExtResource("eroad"), ExtResource("elow_mood"), ExtResource("efletcher"), ExtResource("escream"), ExtResource("econvoy"), ExtResource("eshelter")])
+
+units = Array[ExtResource("unit_script")]([ExtResource("units_0"), ExtResource("units_1"), ExtResource("units_2"), ExtResource("units_3"), ExtResource("units_4"), ExtResource("units_5"), ExtResource("units_6")])
+
+enemies = Array[ExtResource("enemy_script")]([ExtResource("enemies_0"), ExtResource("enemies_1"), ExtResource("enemies_2"), ExtResource("enemies_3"), ExtResource("enemies_4"), ExtResource("enemies_5"), ExtResource("enemies_6"), ExtResource("enemies_7"), ExtResource("enemies_8")])

@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="stat"]
+
+[sub_resource type="Resource" id="cost0"]
+script = ExtResource("cost")
+key = 1
+amount = 6
+
+[sub_resource type="Resource" id="effect0"]
+script = ExtResource("effect")
+type = 0
+key = 9
+amount = 8.0
+
+[sub_resource type="Resource" id="effect1"]
+script = ExtResource("effect")
+type = 0
+key = 10
+amount = 3.0
+
+[resource]
+script = ExtResource("card")
+id = "convoy_0"
+display_name = "交换物资"
+description = "执行事件：支付 6 食物，立即获得 8 零件、3 燃料。不消耗行动；立即获得的物资保留"
+positive = "执行事件：支付 6 食物，立即获得 8 零件、3 燃料"
+negative = "不消耗行动；立即获得的物资保留"
+kind = 0
+icon = 13
+color = 2
+reusable = false
+costs = Array[ExtResource("cost")]([SubResource("cost0")])
+effects = Array[ExtResource("effect")]([SubResource("effect0"), SubResource("effect1")])

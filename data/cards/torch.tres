@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="stat"]
+
+[sub_resource type="Resource" id="cost0"]
+script = ExtResource("cost")
+key = 7
+amount = 2
+
+[sub_resource type="Resource" id="effect0"]
+script = ExtResource("effect")
+type = 0
+key = 5
+amount = 2.0
+
+[resource]
+script = ExtResource("card")
+id = "torch"
+display_name = "布置火把"
+description = "今晚火把发现附近潜伏者。木材 -2，噪音 +2"
+positive = "今晚火把发现附近潜伏者"
+negative = "木材 -2，噪音 +2"
+kind = 0
+icon = 13
+color = 2
+reusable = false
+strategy = 4
+costs = Array[ExtResource("cost")]([SubResource("cost0")])
+effects = Array[ExtResource("effect")]([SubResource("effect0")])

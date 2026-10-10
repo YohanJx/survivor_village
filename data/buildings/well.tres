@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="BuildingDefinition" load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/building_definition.gd" id="s_building_definition"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="s_stat_modifier"]
+[ext_resource type="Script" path="res://scripts/resources/production_profile.gd" id="s_production_profile"]
+[ext_resource type="Script" path="res://scripts/resources/synergies/water_synergy.gd" id="s_synergies_water_synergy"]
+
+[sub_resource type="Resource" id="modifier_0"]
+script = ExtResource("s_stat_modifier")
+key = 9
+amount = -2.0
+
+[sub_resource type="Resource" id="production"]
+script = ExtResource("s_production_profile")
+water = 8
+
+[sub_resource type="Resource" id="synergy"]
+script = ExtResource("s_synergies_water_synergy")
+priority = 0
+
+[resource]
+script = ExtResource("s_building_definition")
+id = 5
+display_name = "集水井"
+max_level = 3
+visible_on_map = true
+modifiers = Array[ExtResource("s_stat_modifier")]([SubResource("modifier_0")])
+production = SubResource("production")
+synergy = SubResource("synergy")
+footprint = Rect2i(23, 9, 1, 1)
