@@ -26,7 +26,19 @@ run_windows.bat "D:\Applications\Godot\Godot_v4.5-stable_win64.exe"
 
 脚本支持带空格和中文的项目路径。其他 Godot 版本及 Windows 实机运行尚未验收；当前启动流程仅在 macOS 上验证了等效的 Godot 导入与主场景启动。
 
-在这台 Mac 上也可以运行：
+### macOS 一键启动
+
+根目录 `run_macos.command` 使用系统 Bash，提交时保留可执行权限，支持 Finder 双击。查找顺序为显式参数、`GODOT_EXE`、项目内 `Godot*.app` / `godot`、`tools/godot/`、系统及用户的 Applications、PATH 中的 `godot`。app 使用 `Contents/MacOS/Godot`；路径均加引号，支持中文和空格。
+
+启动时先导入资源，再打开主场景；失败显示错误，交互终端中等待回车。缺少引擎时打开官方 macOS 下载页，提示下载 4.5 标准版后重试。不自动下载引擎或修改系统安全设置。Git 忽略项目内引擎。
+
+指定 app 或可执行文件时，在项目根目录运行；后续参数传给游戏进程，可用于短暂启动验证：
+
+```sh
+./run_macos.command /Applications/Godot4.5.app --quit-after 5
+```
+
+下载 ZIP 后若系统未保留执行权限，可运行 `chmod +x run_macos.command`。也可以直接用本机引擎运行：
 
 ```sh
 /Applications/Godot4.5.app/Contents/MacOS/Godot --path .

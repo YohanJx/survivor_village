@@ -2,6 +2,15 @@
 
 日期：2026-10-08。基线：Godot `4.5.stable.mono.official.876b29033`，macOS / Apple M1，Compatibility 渲染。下方保留历史整改记录，最新人口职业、卡牌确认与词条功能分别说明改动范围和实际验证。
 
+## macOS 启动入口（2026-10-10）
+
+新增可执行的 `run_macos.command`，自动查找 app 或命令行引擎，先导入再启动；引擎缺失时打开官方 macOS 下载页，错误时显示信息并在交互终端等待回车。README 仅添加玩家启动步骤，查找优先级与命令参数放在开发指南；Git 忽略项目内引擎。
+
+- `python3 tools/check_conventions.py`：74 个脚本，0 项问题；`bash -n run_macos.command`：语法通过。
+- 实际执行 `./run_macos.command /Applications/Godot4.5.app --quit-after 5`：导入成功、图形主场景启动并自动退出，退出码 0。日志为 `test-results/macos_launcher.log`，无脚本或资源错误；macOS / Apple M1 / OpenGL Compatibility，有系统 IMK 消息。不执行玩家决策。
+- 临时目录隔离检查：缺失项目、无效路径、app 与可执行文件、中文空格目录及不同工作目录、参数转发、环境变量与项目内自动查找、导入失败阻止启动、运行失败均通过。缺少引擎分支通过隔离系统搜索和替代 `open` 确认请求打开正确官方 URL，没有改变本机 Godot 或浏览器。
+- 文档相对链接、Markdown 围栏、差异空白及脚本可执行权限已检查。未测试 Finder 双击、下载 ZIP 后的权限保留或其他 Mac；本次未改玩法，未重跑全量规则与 UI 交互回归。
+
 ## README 玩家介绍整理（2026-10-10）
 
 README 改为游戏简介、特色、下载启动、玩法、生存建议、操作、保存与当前版本说明。原有开发规范、项目结构、扩展卡牌、存档实现和测试命令迁至 [开发指南](development_guide.md)，调整相对链接；根目录只保留简短开发入口。按用户要求在 AGENTS.md 与完整规范同步约定文档职责。

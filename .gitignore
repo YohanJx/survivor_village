@@ -6,3 +6,5 @@ exports/
 tools/godot/
 /godot.exe
 /Godot*.exe
+/Godot*.app/
+/godot

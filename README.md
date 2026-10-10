@@ -25,7 +25,13 @@
 
 如果 Godot 已经放在其他位置，可以直接把它的 exe 拖到 `run_windows.bat` 上。无需下载 .NET 版或导出模板。
 
-### macOS / Linux
+### macOS
+
+双击项目根目录的 `run_macos.command`。脚本会自动查找 Godot 并启动游戏；未找到时打开官网下载页。下载 Godot 4.5 标准版，将解压后的 `Godot.app` 放入“应用程序”或项目根目录，再次双击启动。
+
+如果下载的脚本无法双击运行，在终端输入 `chmod +x `（末尾留一个空格），将 `run_macos.command` 拖入终端，按回车后再双击。
+
+### Linux
 
 用 Godot 4.5 标准版打开解压目录中的 `project.godot`，按 **F5** 启动游戏。
 
