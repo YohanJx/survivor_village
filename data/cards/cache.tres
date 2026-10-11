@@ -1,10 +1,16 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=13 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
 [ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="s_card_effect"]
 
 [ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="s_stat_modifier"]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/event.tres" id="kw_event"]
+[ext_resource type="Resource" path="res://data/keywords/supplies.tres" id="kw_supplies"]
+[ext_resource type="Resource" path="res://data/keywords/gatherer.tres" id="kw_gatherer"]
+[ext_resource type="Resource" path="res://data/keywords/ruins.tres" id="kw_ruins"]
 
 [sub_resource type="Resource" id="cost_0"]
 script = ExtResource("s_resource_cost")
@@ -67,4 +73,8 @@ negative = "污染 +4、噪音 +5；接下来 2 夜守卫生命 -15%，可叠加
 reusable = false
 costs = Array[ExtResource("s_resource_cost")]([SubResource("cost_0")])
 effects = Array[ExtResource("s_card_effect")]([SubResource("effect_0"), SubResource("effect_1"), SubResource("effect_2"), SubResource("effect_3"), SubResource("effect_4"), SubResource("effect_5")])
-tags = PackedStringArray("事件", "补给")
+
+
+required_cards = PackedStringArray("salvage")
+
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_event"), ExtResource("kw_supplies"), ExtResource("kw_gatherer"), ExtResource("kw_ruins")])

@@ -1,9 +1,15 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=9 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
 [ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="s_card_effect"]
 [ext_resource type="Resource" path="res://data/buildings/well.tres" id="b_well"]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/production.tres" id="kw_production"]
+[ext_resource type="Resource" path="res://data/keywords/water_source.tres" id="kw_water_source"]
+[ext_resource type="Resource" path="res://data/keywords/builder.tres" id="kw_builder"]
+[ext_resource type="Resource" path="res://data/keywords/groundwater_site.tres" id="kw_groundwater_site"]
 
 [sub_resource type="Resource" id="cost_0"]
 script = ExtResource("s_resource_cost")
@@ -17,7 +23,7 @@ amount = 7
 
 [sub_resource type="Resource" id="effect_0"]
 script = ExtResource("s_card_effect")
-type = 1
+type = 9
 amount = 1.0
 building = ExtResource("b_well")
 
@@ -31,16 +37,20 @@ amount = 2.0
 script = ExtResource("s_card_definition")
 profession = 2
 id = "well"
-display_name = "集水井图纸"
+display_name = "打井"
 kind = 1
 icon = 1
 color = 1
-description = "在村内收集地下水。污染会压低未经处理的产量。"
-positive = "每天水 +8 / 等级"
+description = "先制作工具并勘探井位，再尝试打井。失败仍消耗材料和行动；继续勘探提高成功率。"
+positive = "成功后建井，每天水 +8 / 等级"
 negative = "每天体力恢复 -2 / 等级，噪音 +2"
-reusable = false
+reusable = true
 costs = Array[ExtResource("s_resource_cost")]([SubResource("cost_0"), SubResource("cost_1")])
 effects = Array[ExtResource("s_card_effect")]([SubResource("effect_0"), SubResource("effect_1")])
 building = ExtResource("b_well")
-tags = PackedStringArray("生产", "水源")
 labor = 4
+
+guaranteed_unlock = true
+
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_production"), ExtResource("kw_water_source"), ExtResource("kw_builder"), ExtResource("kw_groundwater_site")])
+required_cards = PackedStringArray("well_survey")

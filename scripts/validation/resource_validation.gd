@@ -26,6 +26,11 @@ static func modifier_error(modifier: StatModifier, runtime: bool = false) -> Str
 static func library_error(library: CardLibrary) -> String:
 	if library == null:
 		return "缺少卡牌库资源"
+	if library.keyword_library == null:
+		return "缺少关键词库"
+	var keyword_error: String = library.keyword_library.validation_error()
+	if not keyword_error.is_empty():
+		return keyword_error
 	if library.weather_rules == null:
 		return "缺少天气规则资源"
 	var weather_error: String = library.weather_rules.validation_error()
@@ -54,6 +59,9 @@ static func library_error(library: CardLibrary) -> String:
 		var error: String = card_error(card, buildings)
 		if not error.is_empty():
 			return "%s：%s" % [card.id if card != null else "空卡牌", error]
+		var registered_error: String = KeywordRules.registered_error(card, library.keyword_library)
+		if not registered_error.is_empty():
+			return registered_error
 		if cards.has(card.id):
 			return "重复卡牌 ID：" + card.id
 		cards[card.id] = card
@@ -62,8 +70,11 @@ static func library_error(library: CardLibrary) -> String:
 	for card: CardDefinition in library.starting_cards:
 		if card == null or cards.get(card.id) != card:
 			return "初始手牌未引用库中的卡牌"
+	var dependency_error: String = TerrainValidation.card_graph_error(cards)
+	if not dependency_error.is_empty():
+		return dependency_error
 	var progression_error: String = ProgressionValidation.rules_error(
-		library.progression_rules, buildings
+		library.progression_rules, buildings, library.keyword_library
 	)
 	return progression_error if not progression_error.is_empty() else _technology_error(library)
 
@@ -89,6 +100,14 @@ static func card_error(card: CardDefinition, buildings: Array[BuildingDefinition
 		or abs(card.mood_delta) > 5
 	):
 		return "队伍或情绪参数非法"
+	var required_ids: Dictionary[String, bool] = {}
+	for id: String in card.required_cards:
+		if id.is_empty() or id == card.id or required_ids.has(id):
+			return "卡牌前置为空、自引用或重复"
+		required_ids[id] = true
+	var keyword_error: String = KeywordRules.card_error(card)
+	if not keyword_error.is_empty():
+		return keyword_error
 	for region: int in card.regions:
 		if region < 0 or region >= GameTypes.Region.COUNT:
 			return "地图限定非法"
@@ -111,6 +130,16 @@ static func card_error(card: CardDefinition, buildings: Array[BuildingDefinition
 		if requirement.level < 1 or requirement.level > requirement.building.max_level:
 			return "前置等级超出上限"
 	for effect: CardEffect in card.effects:
+		if effect != null and effect.type == CardEffect.Type.SURVEY:
+			if (
+				card.effects.size() != 1
+				or card.profession != GameTypes.Profession.GENERAL
+				or not card.reusable
+				or not card.required_cards.is_empty()
+				or card.keywords.any(_is_requirement_keyword)
+				or not card.prerequisites.is_empty()
+			):
+				return "地形勘探必须是无职业限制的独立可复用行动"
 		var error: String = _effect_error(effect, buildings)
 		if not error.is_empty():
 			return error
@@ -127,14 +156,23 @@ static func _registered(building: BuildingDefinition, buildings: Array[BuildingD
 
 
 static func _effect_error(effect: CardEffect, buildings: Array[BuildingDefinition]) -> String:
-	if effect == null or effect.type < 0 or effect.type > CardEffect.Type.POPULATION:
+	if effect == null or effect.type < 0 or effect.type > CardEffect.Type.DRILL:
 		return "效果为空或类型非法"
 	if not is_finite(effect.amount):
 		return "效果数值必须有限"
 	if effect.required_building != null and not _registered(effect.required_building, buildings):
 		return "条件建筑未注册"
-	if effect.type != CardEffect.Type.BUILD and effect.building != null:
+	if (
+		effect.type not in [CardEffect.Type.BUILD, CardEffect.Type.DRILL]
+		and effect.building != null
+	):
 		return "非建造效果携带建筑字段"
+	if (
+		effect.type == CardEffect.Type.DRILL
+		and effect.building != null
+		and effect.building.id != GameTypes.Building.WELL
+	):
+		return "打井效果必须引用水井"
 	if effect.type != CardEffect.Type.MODIFIER and effect.modifier != null:
 		return "非修正效果携带修正器字段"
 	match effect.type:
@@ -143,13 +181,16 @@ static func _effect_error(effect: CardEffect, buildings: Array[BuildingDefinitio
 				return "效果资源枚举非法"
 			if effect.amount != floor(effect.amount) or absf(effect.amount) > 999:
 				return "资源效果必须是范围内整数"
-		CardEffect.Type.BUILD:
+		CardEffect.Type.BUILD, CardEffect.Type.DRILL:
 			if not _registered(effect.building, buildings):
 				return "建造效果缺少已注册建筑"
 			if effect.amount < 1 or effect.amount > effect.building.max_level:
 				return "建造等级增量非法"
 			if effect.amount != floor(effect.amount):
 				return "建造等级必须为整数"
+		CardEffect.Type.SURVEY, CardEffect.Type.WELL_TOOLS, CardEffect.Type.WELL_SURVEY:
+			if effect.amount != 0.0 or effect.required_building != null:
+				return "勘探与工具效果不能携带数值或条件建造"
 		CardEffect.Type.MODIFIER:
 			var error: String = modifier_error(effect.modifier)
 			if not error.is_empty():
@@ -171,6 +212,11 @@ static func _buildings_error(buildings: Array[BuildingDefinition]) -> String:
 	for building: BuildingDefinition in buildings:
 		if building.display_name.is_empty() or building.max_level < 1 or building.max_level > 10:
 			return "建筑名称或等级非法"
+		if building.storage.size() != 3:
+			return "存储配置不完整"
+		for capacity: int in building.storage:
+			if capacity < 0 or capacity > 999:
+				return "存储容量非法"
 		for modifier: StatModifier in building.modifiers:
 			var error: String = modifier_error(modifier)
 			if not error.is_empty():
@@ -230,7 +276,7 @@ static func _technology_error(library: CardLibrary) -> String:
 			if not eligible:
 				continue
 			for effect: CardEffect in card.effects:
-				if effect.type != CardEffect.Type.BUILD:
+				if effect.type not in [CardEffect.Type.BUILD, CardEffect.Type.DRILL]:
 					continue
 				if effect.required_building != null and reachable[effect.required_building.id] == 0:
 					continue
@@ -250,3 +296,7 @@ static func _technology_error(library: CardLibrary) -> String:
 			if effect.required_building != null and reachable[effect.required_building.id] == 0:
 				return "不可达条件建筑：" + card.id
 	return ""
+
+
+static func _is_requirement_keyword(keyword: KeywordDefinition) -> bool:
+	return keyword.category != KeywordDefinition.Category.TOPIC

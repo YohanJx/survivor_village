@@ -7,6 +7,8 @@ static func run(check: Callable) -> void:
 	var state: VillageState = VillageState.new()
 	state.persistence_enabled = false
 	state.new_run(12345)
+	SurvivalTestSetup.developed(state)
+	state.buildings[GameTypes.Building.WATER_TANK] = 1
 	_test_sequence(state, check)
 	_test_effects(state, check)
 	_test_save_and_dawn(state, check)
@@ -131,7 +133,7 @@ static func _test_save_and_dawn(state: VillageState, check: Callable) -> void:
 		state.resources[GameTypes.Stock.WATER] == settled,
 		"Duplicate dawn cannot repeat rain income"
 	)
-	check.call(state.weather == rules.for_day(state.run_seed, 2), "Next dawn chooses next weather")
+	check.call(state.weather == rules.for_day(state.run_seed, 3), "Next dawn chooses next weather")
 	data = state.snapshot()
 	data.actions_per_slot = 2
 	data.actions_used = 1

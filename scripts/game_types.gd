@@ -60,7 +60,10 @@ enum Building {
 	CLINIC = 10,
 	TRAPS = 11,
 	GREENHOUSE = 12,
-	COUNT = 13,
+	FOOD_STORE = 13,
+	WATER_TANK = 14,
+	BATTERY = 15,
+	COUNT = 16,
 }
 enum Enemy {
 	WALKER = 0,
@@ -124,6 +127,17 @@ enum Strategy {
 	CANAL = 6,
 	COUNT = 7,
 }
+enum Discovery {
+	RIVER = 0,
+	FORAGE = 1,
+	WOODLAND = 2,
+	STONE = 3,
+	RUINS = 4,
+	FUEL = 5,
+	FARMLAND = 6,
+	COUNT = 7,
+}
+
 enum Unit {
 	VILLAGER = 0,
 	SCOUT = 1,
@@ -134,6 +148,7 @@ enum Unit {
 	ARCHER = 6,
 	COUNT = 7,
 }
+const DISCOVERY_NAMES: PackedStringArray = ["河流", "可采集食物", "林地", "石料露头", "可拆解废墟", "油料点", "耕地"]
 const LABOR_NAMES: PackedStringArray = ["非劳动", "采集", "取水", "拆解", "建造", "技术", "训练"]
 const REGION_NAMES: PackedStringArray = ["旧村庄", "山地聚落", "河谷农村", "城镇废墟"]
 const UNIT_NAMES: PackedStringArray = ["村民", "侦察员", "维修者", "机修员", "救护员", "长矛卫", "弓手"]
@@ -148,7 +163,22 @@ const STAT_NAMES: PackedStringArray = [
 	"攻击", "射程", "攻击间隔", "速度", "生命", "尸群规模", "隐蔽", "围墙耐久", "陷阱伤害", "体力恢复"
 ]
 const BUILDING_NAMES: PackedStringArray = [
-	"避难所", "住屋", "木栅栏", "弓箭", "菜圃", "集水井", "柴油机", "探照灯", "净水器", "修造工坊", "医疗站", "尖刺陷阱", "灌溉系统"
+	"避难所",
+	"住屋",
+	"木栅栏",
+	"弓箭",
+	"菜圃",
+	"集水井",
+	"柴油机",
+	"探照灯",
+	"净水器",
+	"修造工坊",
+	"医疗站",
+	"尖刺陷阱",
+	"灌溉系统",
+	"粮仓",
+	"储水罐",
+	"蓄电池"
 ]
 const STOCK_LIMITS: PackedInt32Array = [
 	100, 999, 999, 999, 999, 100, 100, 999, 999, 999, 999, 999, 999

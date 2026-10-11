@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="KeywordDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="definition"]
+
+[resource]
+script = ExtResource("definition")
+id = "water"
+title = "水"
+description = "黎明按幸存人口消耗，污染会削弱井水产量。河畔取水先发现河流；剩余水需储水罐才能跨日保留。"

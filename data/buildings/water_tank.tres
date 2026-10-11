@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="BuildingDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/building_definition.gd" id="s"]
+
+[resource]
+script = ExtResource("s")
+id = 14
+display_name = "储水罐"
+max_level = 1
+visible_on_map = true
+footprint = Rect2i(20, 15, 2, 2)
+storage = PackedInt32Array(0, 40, 0)

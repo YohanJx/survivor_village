@@ -1,9 +1,12 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=6 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
 [ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
 [ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="stat"]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/event.tres" id="kw_event"]
 
 [sub_resource type="Resource" id="effect0"]
 script = ExtResource("effect")
@@ -15,8 +18,8 @@ amount = 0.0
 script = ExtResource("card")
 id = "settle_0"
 display_name = "开始今天"
-description = "执行事件：清点补给，今天先建立基础防线。只影响今天与今晚，不消耗行动"
-positive = "执行事件：清点补给，今天先建立基础防线"
+description = "执行事件：清点随身补给，今天只勘探地形。只影响今天与今晚，不消耗行动"
+positive = "执行事件：清点随身补给，今天只勘探地形"
 negative = "只影响今天与今晚，不消耗行动"
 kind = 0
 icon = 13
@@ -24,3 +27,5 @@ color = 2
 reusable = false
 costs = Array[ExtResource("cost")]([])
 effects = Array[ExtResource("effect")]([SubResource("effect0")])
+
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_event")])

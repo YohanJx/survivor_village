@@ -1,9 +1,13 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=10 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="definition"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
 [ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
 [ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="modifier"]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/temporary.tres" id="kw_temporary"]
+[ext_resource type="Resource" path="res://data/keywords/supplies.tres" id="kw_supplies"]
 
 [sub_resource type="Resource" id="cost_0"]
 script = ExtResource("cost")
@@ -46,6 +50,7 @@ description = "把储备饮水用来处理干粮。能填饱肚子，却会让�
 positive = "食物 +18"
 negative = "水 -6；接下来 2 夜守卫生命 -20%，可叠加"
 reusable = false
-tags = PackedStringArray("临时", "补给")
 costs = Array[ExtResource("cost")]([SubResource("cost_0")])
 effects = Array[ExtResource("effect")]([SubResource("effect_0"), SubResource("effect_1"), SubResource("effect_2")])
+
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_temporary"), ExtResource("kw_supplies")])

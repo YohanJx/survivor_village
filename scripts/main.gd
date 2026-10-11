@@ -22,6 +22,7 @@ func _ready() -> void:
 		set_process(false)
 		return
 	_dashboard.bind(state, battle)
+	_dashboard.exploration_requested.connect(_on_exploration_requested)
 	_dashboard.card_selected.connect(_on_card_selected)
 	_dashboard.execute_requested.connect(_on_execute_pressed)
 	_dashboard.skip_requested.connect(_on_skip_pressed)
@@ -72,6 +73,9 @@ func _process(delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	if not event is InputEventKey or _dashboard.overlay.visible:
 		return
+	var focused: Control = get_viewport().gui_get_focus_owner()
+	if focused is OptionButton:
+		return
 	if event.is_action(&"execute_card"):
 		# 确认快捷键不再同时触发有焦点的手牌 Button；松键与重复事件也消费。
 		get_viewport().set_input_as_handled()
@@ -109,6 +113,7 @@ func _on_card_selected(uid: int) -> void:
 		return
 	_selected_uid = uid
 	_dashboard.hand_panel.update_view(state, uid, false)
+	_dashboard.update_view(state, battle, uid)
 	_dashboard.detail.update_view(state, uid, true)
 
 
@@ -199,3 +204,14 @@ func _on_jobs_requested(counts: PackedInt32Array, archers: bool) -> void:
 
 func _on_crew_requested(size: int) -> void:
 	state.set_crew(size)
+
+
+func _on_exploration_requested(cell: Vector2i) -> void:
+	if _dashboard.overlay.visible:
+		return
+	if not state.select_exploration(cell):
+		return
+	for entry: CardInstance in state.hand:
+		if SurvivalRules.is_survey(entry.definition):
+			_on_card_selected(entry.uid)
+			break

@@ -1,9 +1,15 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=10 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
 [ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="s_card_effect"]
 [ext_resource type="Resource" path="res://data/buildings/farm.tres" id="b_farm"]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/production.tres" id="kw_production"]
+[ext_resource type="Resource" path="res://data/keywords/food.tres" id="kw_food"]
+[ext_resource type="Resource" path="res://data/keywords/builder.tres" id="kw_builder"]
+[ext_resource type="Resource" path="res://data/keywords/farmland.tres" id="kw_farmland"]
 
 [sub_resource type="Resource" id="cost_0"]
 script = ExtResource("s_resource_cost")
@@ -47,5 +53,7 @@ reusable = false
 costs = Array[ExtResource("s_resource_cost")]([SubResource("cost_0"), SubResource("cost_1"), SubResource("cost_2")])
 effects = Array[ExtResource("s_card_effect")]([SubResource("effect_0"), SubResource("effect_1")])
 building = ExtResource("b_farm")
-tags = PackedStringArray("生产", "食物")
 labor = 4
+
+
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_production"), ExtResource("kw_food"), ExtResource("kw_builder"), ExtResource("kw_farmland")])

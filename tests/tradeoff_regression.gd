@@ -163,6 +163,7 @@ static func _fresh() -> VillageState:
 	var state: VillageState = VillageState.new()
 	state.persistence_enabled = false
 	state.new_run(12345)
+	SurvivalTestSetup.developed(state)
 	state.weather = state.catalog.library.weather_rules.for_kind(WeatherDefinition.Kind.CLEAR)
 	return state
 

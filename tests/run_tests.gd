@@ -13,6 +13,10 @@ func _initialize() -> void:
 
 func _run() -> void:
 	_test_catalog()
+	VillagePresentationRegression.run(_check)
+	KeywordRegression.run(_check)
+	TerrainRegression.run(_check)
+	SurvivalRegression.run(_check)
 	ValidationRegression.run(_check)
 	WorkforceRegression.run(_check)
 	WeatherRegression.run(_check)
@@ -39,6 +43,7 @@ func _fresh(seed_value: int = 12345) -> VillageState:
 	var state: VillageState = VillageState.new()
 	state.persistence_enabled = false
 	state.new_run(seed_value)
+	SurvivalTestSetup.developed(state)
 	return state
 
 
@@ -77,7 +82,7 @@ func _hand_ids(hand: Array[CardInstance]) -> PackedStringArray:
 func _test_catalog() -> void:
 	var state: VillageState = _fresh()
 	_check(state.catalog.library is CardLibrary, "Native Resource library loaded")
-	_check(state.catalog.library.cards.size() == 40, "All 40 authored cards registered")
+	_check(state.catalog.library.cards.size() == 47, "All 47 authored cards registered")
 	_check(
 		state.catalog.library.buildings.size() == GameTypes.Building.COUNT,
 		"Building enum registration complete"
@@ -139,15 +144,15 @@ func _test_transactions() -> void:
 	state.finish_night(_win_report(state))
 	_check(state.total_kills == kills_before, "Duplicate battle completion does not pay twice")
 	state.advance_dawn()
-	_check(state.day == 1, "Dawn blocked until a reward is chosen")
+	_check(state.day == 2, "Dawn blocked until a reward is chosen")
 	_check(state.choose_reward(0), "Reward chosen")
 	_check(
-		state.day == 2 and state.slot == 0 and state.phase == GameTypes.Phase.DAY,
+		state.day == 3 and state.slot == 0 and state.phase == GameTypes.Phase.DAY,
 		"Reward advances to next dawn"
 	)
-	_check(not state.choose_reward(0) and state.day == 2, "Duplicate reward rejected")
+	_check(not state.choose_reward(0) and state.day == 3, "Duplicate reward rejected")
 	state.advance_dawn()
-	_check(state.day == 2, "Duplicate dawn rejected")
+	_check(state.day == 3, "Duplicate dawn rejected")
 	_check(
 		state.hand.any(func(entry: CardInstance) -> bool: return entry.definition == reward),
 		"Reward joins hand before use"
@@ -273,6 +278,9 @@ func _test_synergies() -> void:
 func _test_dawn() -> void:
 	var state: VillageState = _fresh()
 	state.resources[GameTypes.Stock.FOOD] = 20
+	state.buildings[GameTypes.Building.FOOD_STORE] = 1
+	state.buildings[GameTypes.Building.WATER_TANK] = 1
+	state.buildings[GameTypes.Building.BATTERY] = 1
 	state.resources[GameTypes.Stock.WATER] = 20
 	state.resources[GameTypes.Stock.POWER] = 7
 	for building: int in [
@@ -293,7 +301,7 @@ func _test_dawn() -> void:
 	)
 	state.finish_night(_win_report(state))
 	state.choose_reward(0)
-	_check(state.resources[GameTypes.Stock.FOOD] == 27, "Dawn uses frozen irrigation yield")
+	_check(state.resources[GameTypes.Stock.FOOD] == 25, "Dawn uses frozen irrigation yield")
 	_check(
 		(
 			state.resources[GameTypes.Stock.WATER] == 23
@@ -356,7 +364,7 @@ func _test_snapshots_and_save() -> void:
 		state.save_game(TEST_SAVE_PATH) and loaded.load_game(TEST_SAVE_PATH),
 		"Overwriting a save bypasses stale loader cache"
 	)
-	_check(loaded.day == 2, "Latest saved state read from disk")
+	_check(loaded.day == 3, "Latest saved state read from disk")
 	var first: VillageState = _fresh()
 	var second: VillageState = _fresh()
 	first.generate_rewards()

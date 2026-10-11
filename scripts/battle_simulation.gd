@@ -53,7 +53,7 @@ func start(game_state: VillageState) -> void:
 	total_to_spawn = state.wave_count()
 	started_survivors = state.population
 	core_health = state.core_health
-	_terrain = WorldLayout.terrain(state.run_seed, state.progress.region)
+	_terrain = WorldLayout.terrain(state.terrain_grid)
 	_buildings = WorldLayout.active_structures(state)
 	_setup_navigation()
 	for i: int in state.population:

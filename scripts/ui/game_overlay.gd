@@ -12,6 +12,7 @@ enum Mode {
 	HELP,
 	NEW_RUN,
 	VILLAGE,
+	CARD,
 }
 
 const REWARD_CARD_SCENE: PackedScene = preload("res://scenes/ui/reward_card.tscn")
@@ -19,8 +20,12 @@ const REWARD_CARD_SCENE: PackedScene = preload("res://scenes/ui/reward_card.tscn
 var _state: VillageState
 var _mode: Mode = Mode.NONE
 var _offers: Array[CardDefinition] = []
+var _inspection_uid: int = -1
+var _inspection_progress: VillageProgress
 
 @onready var _event: VBoxContainer = %EventContent
+@onready var _panel: PanelContainer = $Center/Panel
+@onready var _inspection: CardInspectionPanel = %CardInspection
 
 @onready var _village_info: VillageInfoPanel = %VillageInfo
 @onready var _help: VBoxContainer = %HelpContent
@@ -40,11 +45,40 @@ func _ready() -> void:
 	(%NewRunCancel as Button).pressed.connect(close_modal)
 	(%NewRunConfirm as Button).pressed.connect(_on_restart_pressed)
 	(%GameOverRestart as Button).pressed.connect(_on_restart_pressed)
+	_inspection.close_requested.connect(close_modal)
+
+
+func _gui_input(event: InputEvent) -> void:
+	if _mode != Mode.CARD or not event is InputEventMouseButton:
+		return
+	var mouse: InputEventMouseButton = event as InputEventMouseButton
+	var point: Vector2 = get_global_transform_with_canvas() * mouse.position
+	if mouse.pressed and mouse.button_index == MOUSE_BUTTON_LEFT:
+		if not _panel.get_global_rect().has_point(point):
+			accept_event()
+			close_modal()
 
 
 func update_view(state: VillageState) -> void:
 	_state = state
+	if (
+		_mode == Mode.CARD
+		and (_inspection_progress != state.progress or state.find_card(_inspection_uid) == null)
+	):
+		close_modal()
+		return
 	_refresh_overlay()
+
+
+func show_card(uid: int) -> void:
+	if visible or _state == null or _state.find_card(uid) == null:
+		return
+	_inspection_uid = uid
+	_inspection_progress = _state.progress
+	_mode = Mode.CARD
+	_inspection.reset_scroll()
+	_refresh_overlay()
+	modal_changed.emit()
 
 
 func show_help() -> void:
@@ -67,6 +101,8 @@ func request_new_run() -> void:
 
 func close_modal() -> void:
 	_mode = Mode.NONE
+	_inspection_uid = -1
+	_inspection_progress = null
 	_refresh_overlay()
 	modal_changed.emit()
 
@@ -87,6 +123,9 @@ func _on_reward_selected(index: int) -> void:
 func _refresh_overlay() -> void:
 	if _state == null:
 		return
+	_inspection.visible = _mode == Mode.CARD
+	if _inspection.visible:
+		_inspection.update_view(_state, _inspection_uid)
 	_village_info.visible = _mode == Mode.VILLAGE
 	if _village_info.visible:
 		_village_info.update_view(_state)
@@ -103,6 +142,7 @@ func _refresh_overlay() -> void:
 		_refresh_event()
 	visible = (
 		_event.visible
+		or _inspection.visible
 		or _village_info.visible
 		or _help.visible
 		or _new_run.visible

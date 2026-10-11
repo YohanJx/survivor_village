@@ -1,7 +1,7 @@
 class_name VillageSaveData
 extends Resource
 
-const CURRENT_VERSION: int = 5
+const CURRENT_VERSION: int = 7
 const WORKFORCE_VERSION: int = 3
 const LEGACY_VERSION: int = 2
 

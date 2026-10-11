@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="KeywordDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="definition"]
+
+[resource]
+script = ExtResource("definition")
+id = "population"
+title = "人口"
+description = "增加每日补给消耗；每 5 人增加 1 次时段行动，最多 4 次，下个黎明更新。"

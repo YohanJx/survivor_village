@@ -1,0 +1,46 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Resource" path="res://data/buildings/battery.tres" id="building"]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/engineer.tres" id="kw_engineer"]
+
+[sub_resource type="Resource" id="stamina"]
+script = ExtResource("cost")
+key = 0
+amount = 8
+
+[sub_resource type="Resource" id="materials"]
+script = ExtResource("cost")
+key = 9
+amount = 8
+
+[sub_resource type="Resource" id="result"]
+script = ExtResource("effect")
+type = 1
+amount = 1.0
+building = ExtResource("building")
+
+[resource]
+script = ExtResource("card")
+id = "battery"
+display_name = "建造蓄电池"
+profession = 3
+kind = 1
+icon = 13
+color = 1
+description = "当日结算后，最多保存 24 份电力。"
+positive = "当日结算后，最多保存 24 份电力。"
+negative = "消耗体力和一次行动"
+reusable = false
+guaranteed_unlock = true
+costs = Array[ExtResource("cost")]([SubResource("stamina"), SubResource("materials")])
+effects = Array[ExtResource("effect")]([SubResource("result")])
+building = ExtResource("building")
+
+required_cards = PackedStringArray("workshop")
+
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_engineer")])

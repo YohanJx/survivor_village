@@ -8,6 +8,10 @@ enum Type {
 	HEAL = 3,
 	REPAIR_WALLS = 4,
 	POPULATION = 5,
+	SURVEY = 6,
+	WELL_TOOLS = 7,
+	WELL_SURVEY = 8,
+	DRILL = 9,
 }
 
 @export var type: Type = Type.RESOURCE

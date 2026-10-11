@@ -16,6 +16,7 @@ static func _fresh(region: GameTypes.Region = GameTypes.Region.RURAL) -> Village
 	var state: VillageState = VillageState.new()
 	state.persistence_enabled = false
 	state.new_run(59172, region)
+	SurvivalTestSetup.developed(state)
 	state.choose_daily_event(1)
 	state.actions_per_slot = 4
 	return state
@@ -435,8 +436,16 @@ static func _test_special_effects(check: Callable) -> void:
 	acid.pos = WorldLayout.to_point(Vector2i(3, 4))
 	guard.pos = WorldLayout.to_point(Vector2i(8, 4))
 	battle.state.progress.region = GameTypes.Region.RUINS
+	battle.state.terrain_grid.generate(
+		battle.state.run_seed,
+		battle.state.catalog.library.progression_rules.map_for(GameTypes.Region.RUINS)
+	)
 	battle.start(battle.state)
-	check.call(battle.enemy_grid.is_point_solid(Vector2i(5, 4)), "Ruins block navigation")
+	var obstacles: Array[Vector2i] = WorldLayout.terrain(battle.state.terrain_grid)
+	check.call(
+		not obstacles.is_empty() and battle.enemy_grid.is_point_solid(obstacles[0]),
+		"Generated ruins terrain blocks navigation"
+	)
 	var fire: CombatActor = CombatActor.new()
 	fire.kind = GameTypes.Enemy.BURNER
 	fire.hp = 0

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=13 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=17 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
@@ -6,6 +6,11 @@
 [ext_resource type="Resource" path="res://data/buildings/generator.tres" id="b_generator"]
 [ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="s_card_effect"]
 [ext_resource type="Resource" path="res://data/buildings/lights.tres" id="b_lights"]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/defense.tres" id="kw_defense"]
+[ext_resource type="Resource" path="res://data/keywords/power.tres" id="kw_power"]
+[ext_resource type="Resource" path="res://data/keywords/engineer.tres" id="kw_engineer"]
 
 [sub_resource type="Resource" id="cost_0"]
 script = ExtResource("s_resource_cost")
@@ -55,5 +60,6 @@ costs = Array[ExtResource("s_resource_cost")]([SubResource("cost_0"), SubResourc
 prerequisites = Array[ExtResource("s_building_requirement")]([SubResource("requirement_0")])
 effects = Array[ExtResource("s_card_effect")]([SubResource("effect_0"), SubResource("effect_1")])
 building = ExtResource("b_lights")
-tags = PackedStringArray("防御", "电力")
 labor = 4
+
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_defense"), ExtResource("kw_power"), ExtResource("kw_engineer")])

@@ -2,6 +2,8 @@ class_name VillageDashboard
 extends Control
 ## 固定 HUD 的展示与输入转发；状态与战斗由入口注入。
 
+signal exploration_requested(cell: Vector2i)
+
 signal card_selected(uid: int)
 signal execute_requested
 signal skip_requested
@@ -39,6 +41,7 @@ func _ready() -> void:
 	_resource_labels = [%Stock0, %Stock1, %Stock2, %Stock3, %Stock4]
 	(%ProgressLine as Button).pressed.connect(overlay.show_village)
 	hand_panel.card_selected.connect(card_selected.emit)
+	hand_panel.inspect_requested.connect(overlay.show_card)
 	hand_panel.skip_requested.connect(skip_requested.emit)
 	detail.execute_requested.connect(execute_requested.emit)
 	_pause_button.pressed.connect(pause_requested.emit)
@@ -56,9 +59,16 @@ func _ready() -> void:
 
 func bind(state: VillageState, battle: BattleSimulation) -> void:
 	_village_map.bind(state, battle)
+	_village_map.exploration_requested.connect(exploration_requested.emit)
 
 
 func update_view(state: VillageState, battle: BattleSimulation, selected_uid: int) -> void:
+	_village_map.set_exploration_mode(
+		(
+			state.phase == GameTypes.Phase.DAY
+			and (state.day == 1 or SurvivalRules.is_survey(state.find_card(selected_uid)))
+		)
+	)
 	_background.color = state.catalog.library.weather_rules.background_colors[
 		state.environment_period()
 	]
@@ -91,7 +101,15 @@ func update_view(state: VillageState, battle: BattleSimulation, selected_uid: in
 	_phase_label.text = (
 		"今晚：大尸潮 / BOSS" if state.day % 7 == 0 else "距离大尸潮还有 %d 天" % (7 - state.day % 7)
 	)
-	_map_title.text = ("月下守望  /  自动防守" if state.phase == GameTypes.Phase.NIGHT else "村庄与周围林地")
+	_map_title.text = (
+		"月下守望  /  自动防守"
+		if state.phase == GameTypes.Phase.NIGHT
+		else (
+			"逐格勘探 / 选择亮边未知区域"
+			if _village_map.exploration_mode
+			else "营地 / " + GameTypes.REGION_NAMES[state.progress.region]
+		)
+	)
 	match state.phase:
 		GameTypes.Phase.DAY:
 			_map_hint.text = (
@@ -135,6 +153,15 @@ func update_resources(state: VillageState, battle: BattleSimulation) -> void:
 		_resource_labels[GameTypes.Stock.MATERIALS].text = str(
 			state.resources[GameTypes.Stock.WOOD]
 		)
+	var upkeep: PackedInt32Array = EffectResolver.daily_upkeep(state)
+	for stock: int in [GameTypes.Stock.FOOD, GameTypes.Stock.WATER, GameTypes.Stock.POWER]:
+		var label: Label = _resource_labels[stock]
+		var capacity: int = SurvivalRules.storage_capacity(state, stock as GameTypes.Stock)
+		if stock == GameTypes.Stock.POWER:
+			label.text = "%d/%d" % [state.resources[stock], capacity]
+		else:
+			label.text = "%d(-%d)/%d" % [state.resources[stock], upkeep[stock], capacity]
+		label.tooltip_text = "当前库存 / 跨日容量；括号为每日总消耗。容量只限制结算后的保留量。"
 	_resource_labels[GameTypes.Stock.STAMINA].text += " / 100"
 	_population_label.text = str(battle.guards.size() if battle.active else state.population)
 	_core_label.text = (

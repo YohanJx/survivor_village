@@ -1,21 +1,24 @@
 class_name VillageMap
 extends Control
 
+signal exploration_requested(cell: Vector2i)
+
+var exploration_mode: bool = false
 var view_camera: MapViewCamera = MapViewCamera.new()
 var state: VillageState
 var battle: BattleSimulation
+var _press_position: Vector2 = Vector2.ZERO
+var _drag_distance: float = 0.0
 var _clock_time: float = 0
-var _decoration_points: PackedVector2Array = []
-var _decoration_kinds: PackedInt32Array = []
 var _trees: Array[Vector2i] = []
 var _idle_guards: Array[CombatActor] = []
 var _structures: Array[StructurePlacement] = []
+var _camp_areas: Array[Rect2] = []
+var _last_phase: GameTypes.Phase = GameTypes.Phase.DAY
 var _wall_cells: Array[Vector2i] = []
 var _wall_health: float = 90
 var _last_seed: int = -1
 var _last_region: GameTypes.Region = GameTypes.Region.LEGACY
-var _barriers: Array[Rect2i] = []
-var _barrier_cells: Dictionary[Vector2i, bool] = {}
 var _drag_button: MouseButton = MOUSE_BUTTON_NONE
 
 @onready var _atmosphere: MapAtmosphere = %MapAtmosphere
@@ -43,6 +46,7 @@ func _gui_input(event: InputEvent) -> void:
 		_handle_mouse_button(event as InputEventMouseButton)
 	elif event is InputEventMouseMotion and _drag_button != MOUSE_BUTTON_NONE:
 		var motion: InputEventMouseMotion = event as InputEventMouseMotion
+		_drag_distance += motion.relative.length()
 		view_camera.pan_by(motion.relative, size)
 		accept_event()
 	elif event is InputEventMagnifyGesture:
@@ -71,51 +75,16 @@ func _draw() -> void:
 			* state.catalog.library.progression_rules.map_for(state.progress.region).ground_tint
 		)
 	)
+	if exploration_mode and not night:
+		TerrainMapRenderer.draw_survey(self, state, view_camera)
+		_draw_compass()
+		draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+		return
+	TerrainMapRenderer.draw_ground(self, state, night, _camp_areas, view_camera)
+	_draw_terrain_obstacles(night)
 	if battle.active:
 		for hazard: CombatHazard in battle.special.hazards:
 			draw_circle(hazard.pos, hazard.radius, Color(0.7, 0.55, 0.18, 0.3))
-	# Subtle terrain patches and crossing roads form a readable top-down map.
-	for index: int in _decoration_points.size():
-		var point: Vector2 = _decoration_points[index]
-		if _decoration_kinds[index] == 0:
-			draw_circle(point, 9, Color(0.55, 0.64, 0.38, 0.04))
-		elif _decoration_kinds[index] < 3:
-			draw_line(point, point + Vector2(2, -4), Color(0.65, 0.73, 0.47, 0.17), 1)
-		else:
-			draw_circle(point, 1.0, Color(0.8, 0.79, 0.58, 0.17))
-	draw_polyline(
-		PackedVector2Array(
-			[
-				Vector2(0, 298),
-				Vector2(294, 286),
-				Vector2(492, 300),
-				Vector2(730, 285),
-				Vector2(960, 293)
-			]
-		),
-		Color("4c5140") if not night else Color("2f3b34"),
-		36,
-		true
-	)
-	draw_polyline(
-		PackedVector2Array(
-			[
-				Vector2(493, 0),
-				Vector2(494, 165),
-				Vector2(492, 300),
-				Vector2(516, 423),
-				Vector2(493, 576)
-			]
-		),
-		Color("4c5140") if not night else Color("2f3b34"),
-		35,
-		true
-	)
-	draw_rect(Rect2(353, 179, 290, 244), Color(0.54, 0.57, 0.35, 0.06))
-	for cell: Vector2i in _trees:
-		if not _barrier_cells.has(cell):
-			_draw_tree(WorldLayout.to_point(cell), int(cell.x + cell.y) % 3, night)
-	_draw_map_barriers()
 	if state.buildings[GameTypes.Building.TRAPS] > 0:
 		for x: int in range(13, 28):
 			for y: int in [5, 19]:
@@ -207,7 +176,7 @@ func _draw() -> void:
 		draw_string(
 			get_theme_default_font(),
 			Vector2(24, 550),
-			"林地 / 北部废弃居民区",
+			state.catalog.library.progression_rules.map_for(state.progress.region).display_name,
 			HORIZONTAL_ALIGNMENT_LEFT,
 			-1,
 			13,
@@ -215,6 +184,29 @@ func _draw() -> void:
 		)
 	_draw_compass()
 	draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+
+
+func _on_state_changed() -> void:
+	_atmosphere.update_view(state)
+	_structures = WorldLayout.active_structures(state)
+	_camp_areas = WorldLayout.camp_areas(_structures)
+	if state.phase == GameTypes.Phase.NIGHT and _last_phase != state.phase:
+		focus_village()
+	_last_phase = state.phase
+	_wall_cells = WorldLayout.wall_cells()
+	_wall_health = EffectResolver.derive(state).wall_health
+	_idle_guards.clear()
+	for index: int in state.population:
+		var actor: CombatActor = CombatActor.new()
+		actor.id = index
+		if (
+			state.progress.region != GameTypes.Region.LEGACY
+			and index < state.progress.survivors.size()
+		):
+			actor.unit = CombatSupport.kind_for(
+				state.progress.survivors[index], state.buildings[GameTypes.Building.BOWS] > 0
+			)
+		_idle_guards.append(actor)
 
 
 func bind(game_state: VillageState, simulation: BattleSimulation) -> void:
@@ -247,15 +239,43 @@ func zoom_out() -> void:
 	queue_redraw()
 
 
+func set_exploration_mode(enabled: bool) -> void:
+	if exploration_mode == enabled:
+		return
+	exploration_mode = enabled
+	if enabled:
+		fit_world()
+	else:
+		focus_village()
+	tooltip_text = "点击亮边未知格选择目标 · 右侧确认勘探 · 拖动查看 · 滚轮缩放" if enabled else "拖动查看 · 滚轮缩放 · 双击回到村庄"
+	queue_redraw()
+
+
 func _handle_mouse_button(event: InputEventMouseButton) -> void:
 	match event.button_index:
 		MOUSE_BUTTON_LEFT, MOUSE_BUTTON_MIDDLE:
 			if event.double_click and event.pressed:
 				focus_village()
 			elif event.pressed:
+				_press_position = event.position
+				_drag_distance = 0.0
 				_drag_button = event.button_index
 				mouse_default_cursor_shape = Control.CURSOR_DRAG
 			elif _drag_button == event.button_index:
+				if (
+					event.button_index == MOUSE_BUTTON_LEFT
+					and _drag_distance < 6.0
+					and exploration_mode
+				):
+					var point: Vector2 = view_camera.view_to_world(_press_position, size)
+					var cell: Vector2i = Vector2i(
+						floori(point.x / TerrainGrid.CELL), floori(point.y / TerrainGrid.CELL)
+					)
+					if (
+						state.phase == GameTypes.Phase.DAY
+						and TerrainGrid.is_frontier(cell, state.progress.explored_cells)
+					):
+						exploration_requested.emit(cell)
 				_stop_drag()
 		MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN:
 			if event.pressed:
@@ -276,21 +296,11 @@ func _stop_drag() -> void:
 func _prepare_map() -> void:
 	_last_seed = state.run_seed
 	_last_region = state.progress.region
-	_barriers = state.catalog.library.progression_rules.map_for(_last_region).barriers.duplicate()
-	_barrier_cells.clear()
-	for barrier: Rect2i in _barriers:
-		for x: int in range(barrier.position.x, barrier.end.x):
-			for y: int in range(barrier.position.y, barrier.end.y):
-				_barrier_cells[Vector2i(x, y)] = true
-	focus_village()
-	_trees = WorldLayout.terrain(state.run_seed, state.progress.region)
-	_decoration_points.clear()
-	_decoration_kinds.clear()
-	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
-	rng.seed = state.run_seed + 18
-	for i: int in 470:
-		_decoration_points.append(Vector2(rng.randf_range(0, 960), rng.randf_range(0, 576)))
-		_decoration_kinds.append(rng.randi_range(0, 4))
+	if exploration_mode:
+		fit_world()
+	else:
+		focus_village()
+	_trees = WorldLayout.terrain(state.terrain_grid)
 
 
 func _draw_tree(point: Vector2, variation: int, night: bool) -> void:
@@ -526,48 +536,13 @@ func _draw_compass() -> void:
 	)
 
 
-func _on_state_changed() -> void:
-	_atmosphere.update_view(state)
-	_structures = WorldLayout.active_structures(state)
-	_wall_cells = WorldLayout.wall_cells()
-	_wall_health = EffectResolver.derive(state).wall_health
-	_idle_guards.clear()
-	for index: int in state.population:
-		var actor: CombatActor = CombatActor.new()
-		actor.id = index
-		if (
-			state.progress.region != GameTypes.Region.LEGACY
-			and index < state.progress.survivors.size()
-		):
-			actor.unit = CombatSupport.kind_for(
-				state.progress.survivors[index], state.buildings[GameTypes.Building.BOWS] > 0
-			)
-		_idle_guards.append(actor)
-
-
-func _draw_map_barriers() -> void:
-	for barrier: Rect2i in _barriers:
-		var area: Rect2 = Rect2(
-			Vector2(barrier.position) * WorldLayout.CELL, Vector2(barrier.size) * WorldLayout.CELL
-		)
-		var color: Color = (
-			Color("666b66")
-			if _last_region == GameTypes.Region.RUINS
-			else Color("7c7b64") if _last_region == GameTypes.Region.MOUNTAIN else Color("627947")
-		)
-		draw_rect(area, color)
-		draw_rect(area.grow(-5), color.lightened(0.12), false, 3)
-		var title: String = (
-			"残楼"
-			if _last_region == GameTypes.Region.RUINS
-			else "岩壁" if _last_region == GameTypes.Region.MOUNTAIN else "密林"
-		)
-		draw_string(
-			ThemeDB.fallback_font,
-			area.get_center(),
-			title,
-			HORIZONTAL_ALIGNMENT_CENTER,
-			-1,
-			13,
-			UiElements.TEXT_PRIMARY
-		)
+func _draw_terrain_obstacles(night: bool) -> void:
+	for cell: Vector2i in _trees:
+		var coarse: Vector2i = Vector2i(int(cell.x / 4.0), int(cell.y / 4.0))
+		if not state.progress.explored_cells.has(TerrainGrid.index(coarse)):
+			continue
+		var kind: TerrainGrid.Biome = state.terrain_grid.biome(coarse)
+		if kind == TerrainGrid.Biome.FOREST:
+			_draw_tree(WorldLayout.to_point(cell), int(cell.x + cell.y) % 3, night)
+		else:
+			TerrainMapRenderer.draw_obstacle(self, cell, kind)

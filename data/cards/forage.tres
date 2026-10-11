@@ -1,8 +1,14 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=8 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
 [ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="s_card_effect"]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/gather.tres" id="kw_gather"]
+[ext_resource type="Resource" path="res://data/keywords/food.tres" id="kw_food"]
+[ext_resource type="Resource" path="res://data/keywords/gatherer.tres" id="kw_gatherer"]
+[ext_resource type="Resource" path="res://data/keywords/forage_site.tres" id="kw_forage_site"]
 
 [sub_resource type="Resource" id="cost_0"]
 script = ExtResource("s_resource_cost")
@@ -41,9 +47,11 @@ negative = "动静引来窥伺：噪音 +3"
 reusable = true
 costs = Array[ExtResource("s_resource_cost")]([SubResource("cost_0")])
 effects = Array[ExtResource("s_card_effect")]([SubResource("effect_0"), SubResource("effect_1"), SubResource("effect_2")])
-tags = PackedStringArray("采集", "食物")
 labor = 1
 expedition = true
 crew_stamina = 4
 crew_water = 1
 crew_output = 5
+
+
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_gather"), ExtResource("kw_food"), ExtResource("kw_gatherer"), ExtResource("kw_forage_site")])

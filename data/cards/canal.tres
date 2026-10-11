@@ -1,9 +1,16 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=8 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
 [ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
 [ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="stat"]
+
+[ext_resource type="Script" path="res://scripts/resources/building_requirement.gd" id="requirement"]
+[ext_resource type="Resource" path="res://data/buildings/farm.tres" id="farm"]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/builder.tres" id="kw_builder"]
+[ext_resource type="Resource" path="res://data/keywords/river.tres" id="kw_river"]
 
 [sub_resource type="Resource" id="cost0"]
 script = ExtResource("cost")
@@ -20,6 +27,11 @@ script = ExtResource("effect")
 type = 0
 key = 2
 amount = 8.0
+
+[sub_resource type="Resource" id="farm_required"]
+script = ExtResource("requirement")
+building = ExtResource("farm")
+level = 1
 
 [resource]
 script = ExtResource("card")
@@ -38,3 +50,7 @@ profession = 2
 regions = PackedInt32Array(1, 2)
 costs = Array[ExtResource("cost")]([SubResource("cost0"), SubResource("cost1")])
 effects = Array[ExtResource("effect")]([SubResource("effect0")])
+
+prerequisites = Array[ExtResource("requirement")]([SubResource("farm_required")])
+
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_builder"), ExtResource("kw_river")])

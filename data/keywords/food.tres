@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="KeywordDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="definition"]
+
+[resource]
+script = ExtResource("definition")
+id = "food"
+title = "食物"
+description = "黎明按幸存人口消耗，短缺会损伤村庄与体力恢复。当日结算后的余量需粮仓才能跨日保留。"

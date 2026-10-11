@@ -9,7 +9,7 @@
 script = ExtResource("event")
 id = "settle"
 display_name = "安顿村庄"
-description = "清点补给，今天先建立基础防线"
+description = "清点随身补给，今天只勘探地形"
 weight = 30
 regions = PackedInt32Array()
 labor = 0

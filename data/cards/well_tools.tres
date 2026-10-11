@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+
+[ext_resource type="Resource" path="res://data/keywords/water_source.tres" id="kw_water_source"]
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/builder.tres" id="kw_builder"]
+[ext_resource type="Resource" path="res://data/keywords/groundwater_site.tres" id="kw_groundwater_site"]
+
+[sub_resource type="Resource" id="stamina"]
+script = ExtResource("cost")
+key = 0
+amount = 8
+
+[sub_resource type="Resource" id="materials"]
+script = ExtResource("cost")
+key = 4
+amount = 4
+
+[sub_resource type="Resource" id="result"]
+script = ExtResource("effect")
+type = 7
+
+[resource]
+script = ExtResource("card")
+id = "well_tools"
+display_name = "制作挖井工具"
+profession = 2
+kind = 0
+icon = 13
+color = 1
+description = "制作可重复使用的挖井工具，之后才能勘探井位。"
+positive = "制作可重复使用的挖井工具，之后才能勘探井位。"
+negative = "消耗体力和一次行动"
+reusable = false
+guaranteed_unlock = true
+costs = Array[ExtResource("cost")]([SubResource("stamina"), SubResource("materials")])
+effects = Array[ExtResource("effect")]([SubResource("result")])
+
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_water_source"), ExtResource("kw_builder"), ExtResource("kw_groundwater_site")])

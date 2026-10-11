@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="KeywordDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="definition"]
+
+[resource]
+script = ExtResource("definition")
+id = "reusable"
+title = "常驻"
+description = "执行后保留在手牌中，可以在后续行动再次使用。"

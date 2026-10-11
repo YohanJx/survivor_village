@@ -23,11 +23,16 @@ func _run() -> void:
 	root.add_child(_game)
 	_dashboard = _game.get_node("Dashboard") as VillageDashboard
 	_test_font_settings()
+	await SurvivalUiRegression.run(self, _game, _check, _capture)
 	await ProgressionUiRegression.run(self, _game, _check, _capture)
 	_game.state.new_run(12345)
+	SurvivalTestSetup.developed(_game.state)
+	_game.state.changed.emit()
 	await WeatherUiRegression.run(self, _game, _check, _capture)
 	await _test_tradeoffs()
 	_game.state.new_run(12345)
+	SurvivalTestSetup.developed(_game.state)
+	_game.state.changed.emit()
 	await _test_window_layouts()
 	root.size = Vector2i(1440, 960)
 	await process_frame
@@ -36,6 +41,7 @@ func _run() -> void:
 	var map_tests: MapInteractionTests = MapInteractionTests.new()
 	await map_tests.run(self, _dashboard, _check, _capture)
 	await CardUiRegression.run(self, _dashboard, _check, _capture)
+	await CardInspectionUiRegression.run(self, _game, _check, _capture)
 	_check(_game.state.phase == GameTypes.Phase.DAY, "Main scene starts in day phase")
 	_check(
 		(
@@ -149,14 +155,14 @@ func _run() -> void:
 	var reward_view: VillageRewardCard = row.get_child(0) as VillageRewardCard
 	(reward_view.get_node("%SelectButton") as Button).pressed.emit()
 	_check(
-		_game.state.day == 2 and _game.state.hand.size() == hand_size + 1,
+		_game.state.day == 3 and _game.state.hand.size() == hand_size + 1,
 		"Reward click adds a card and settles dawn"
 	)
 	_check(not _dashboard.overlay.visible, "Reward modal closes at dawn")
 	_dashboard.new_run_requested.emit()
 	_check(_dashboard.overlay.visible, "New village asks through its modal")
 	(_dashboard.overlay.get_node("%NewRunCancel") as Button).pressed.emit()
-	_check(_game.state.day == 2 and not _dashboard.overlay.visible, "Cancel keeps current progress")
+	_check(_game.state.day == 3 and not _dashboard.overlay.visible, "Cancel keeps current progress")
 	root.size = Vector2i(1100, 760)
 	await process_frame
 	await _capture("ui_small_window")

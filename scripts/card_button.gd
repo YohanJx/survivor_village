@@ -1,7 +1,15 @@
 class_name VillageCardButton
 extends Button
 
-var card: CardDefinition
+signal inspect_requested
+
+var card: CardDefinition:
+	set(value):
+		card = value
+		if is_node_ready():
+			_keywords.text = (
+				KeywordText.format_text(" · ".join(card.keyword_names())) if card != null else ""
+			)
 var cost: String = ""
 var is_selected: bool = false
 var locked: bool = false
@@ -12,7 +20,7 @@ var _background: StyleBoxFlat = StyleBoxFlat.new()
 
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(187, 191)
+	custom_minimum_size = Vector2(187, 214)
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	tooltip_text = (
 		"%s\n收益：%s\n代价：%s\n消耗：%s" % [card.display_name, card.positive, card.negative, cost]
@@ -21,8 +29,17 @@ func _ready() -> void:
 	mouse_exited.connect(queue_redraw)
 	focus_entered.connect(queue_redraw)
 	focus_exited.connect(queue_redraw)
-	_keywords.text = KeywordText.format_text(" · ".join(card.tags))
+	_keywords.text = KeywordText.format_text(" · ".join(card.keyword_names()))
 	_keywords.add_theme_color_override("default_color", UiElements.TEXT_SECONDARY)
+
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mouse: InputEventMouseButton = event as InputEventMouseButton
+		if mouse.button_index == MOUSE_BUTTON_RIGHT:
+			accept_event()
+			if mouse.pressed and not disabled:
+				inspect_requested.emit()
 
 
 func _draw() -> void:
@@ -58,13 +75,13 @@ func _draw() -> void:
 		19,
 		UiElements.TEXT_PRIMARY
 	)
-	draw_line(Vector2(14, 130), Vector2(size.x - 14, 130), Color("3b4d3a"), 1)
+	draw_line(Vector2(14, 148), Vector2(size.x - 14, 148), Color("3b4d3a"), 1)
 	var cost_parts: PackedStringArray = cost.split(" · ")
 	var first: String = " · ".join(cost_parts.slice(0, 2))
 	var second: String = " · ".join(cost_parts.slice(2))
 	draw_string(
 		font,
-		Vector2(14, 151),
+		Vector2(14, 169),
 		first,
 		HORIZONTAL_ALIGNMENT_LEFT,
 		size.x - 26,
@@ -73,8 +90,8 @@ func _draw() -> void:
 	)
 	draw_string(
 		font,
-		Vector2(14, 172),
-		second if not second.is_empty() else ("点击查看效果" if not locked else "条件尚未满足"),
+		Vector2(14, 190),
+		second if not second.is_empty() else "右键查看详情",
 		HORIZONTAL_ALIGNMENT_LEFT,
 		size.x - 26,
 		13,

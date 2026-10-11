@@ -1,9 +1,14 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=8 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
 [ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="s_card_effect"]
 [ext_resource type="Resource" path="res://data/buildings/workshop.tres" id="b_workshop"]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/production.tres" id="kw_production"]
+[ext_resource type="Resource" path="res://data/keywords/materials.tres" id="kw_materials"]
+[ext_resource type="Resource" path="res://data/keywords/engineer.tres" id="kw_engineer"]
 
 [sub_resource type="Resource" id="cost_0"]
 script = ExtResource("s_resource_cost")
@@ -36,5 +41,10 @@ reusable = false
 costs = Array[ExtResource("s_resource_cost")]([SubResource("cost_0"), SubResource("cost_1")])
 effects = Array[ExtResource("s_card_effect")]([SubResource("effect_0")])
 building = ExtResource("b_workshop")
-tags = PackedStringArray("生产", "材料")
 labor = 4
+
+guaranteed_unlock = true
+
+required_cards = PackedStringArray("salvage")
+
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_production"), ExtResource("kw_materials"), ExtResource("kw_engineer")])

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="KeywordDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="definition"]
+
+[resource]
+script = ExtResource("definition")
+id = "defense"
+title = "防御"
+description = "强化村庄防线；建造栅栏、陷阱或修补损伤有不同效果。"

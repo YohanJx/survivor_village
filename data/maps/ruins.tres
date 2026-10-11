@@ -9,5 +9,6 @@ display_name = "城镇废墟"
 description = "零件燃料丰富，巷道限制射线"
 initial_resources = PackedInt32Array(70, 18, 18, 0, 0, 0, 0, 18, 10, 8, 3, 50, 3)
 abundance = PackedFloat64Array(1.0, 0.75, 0.8, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.3, 1.5, 1.0, 1.0)
-barriers = Array[Rect2i]([Rect2i(5, 4, 3, 6), Rect2i(31, 4, 3, 6), Rect2i(5, 15, 3, 5), Rect2i(31, 15, 3, 5)])
 ground_tint = Color(0.75, 0.85, 0.9, 1)
+
+discoveries = PackedInt32Array(1, 2, 3, 4, 5)

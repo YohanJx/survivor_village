@@ -1,0 +1,76 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=17 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="s_card_effect"]
+[ext_resource type="Resource" path="res://data/buildings/filter.tres" id="b_filter"]
+
+[ext_resource type="Script" path="res://scripts/resources/building_requirement.gd" id="requirement"]
+
+[ext_resource type="Resource" path="res://data/buildings/well.tres" id="b_well"]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/gather.tres" id="kw_gather"]
+[ext_resource type="Resource" path="res://data/keywords/water_source.tres" id="kw_water_source"]
+[ext_resource type="Resource" path="res://data/keywords/gatherer.tres" id="kw_gatherer"]
+
+[sub_resource type="Resource" id="cost_0"]
+script = ExtResource("s_resource_cost")
+key = 0
+amount = 10
+
+[sub_resource type="Resource" id="cost_1"]
+script = ExtResource("s_resource_cost")
+key = 1
+amount = 1
+
+[sub_resource type="Resource" id="effect_0"]
+script = ExtResource("s_card_effect")
+type = 0
+key = 2
+amount = 13.0
+
+[sub_resource type="Resource" id="effect_1"]
+script = ExtResource("s_card_effect")
+type = 0
+key = 2
+amount = 5.0
+required_building = ExtResource("b_filter")
+
+[sub_resource type="Resource" id="effect_2"]
+script = ExtResource("s_card_effect")
+type = 0
+key = 5
+amount = 2.0
+
+[sub_resource type="Resource" id="well_required"]
+script = ExtResource("requirement")
+building = ExtResource("b_well")
+level = 1
+
+[resource]
+script = ExtResource("s_card_definition")
+profession = 1
+id = "well_water"
+display_name = "井中取水"
+kind = 0
+icon = 1
+color = 1
+description = "从已经打成的井提水，净水器可以改善供水。"
+positive = "水 +13；有净水器时额外 +5"
+negative = "来回搬运：噪音 +2"
+reusable = true
+costs = Array[ExtResource("s_resource_cost")]([SubResource("cost_0"), SubResource("cost_1")])
+effects = Array[ExtResource("s_card_effect")]([SubResource("effect_0"), SubResource("effect_1"), SubResource("effect_2")])
+labor = 2
+expedition = false
+crew_stamina = 4
+crew_water = 1
+crew_output = 5
+
+
+
+prerequisites = Array[ExtResource("requirement")]([SubResource("well_required")])
+guaranteed_unlock = true
+
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_gather"), ExtResource("kw_water_source"), ExtResource("kw_gatherer")])

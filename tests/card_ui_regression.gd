@@ -9,19 +9,39 @@ static func run(
 	tree.root.grab_focus()
 	await tree.process_frame
 	var row: HBoxContainer = dashboard.hand_panel.get_node("%HandContainer") as HBoxContainer
-	var card: VillageCardButton = row.get_child(0) as VillageCardButton
+	var card: VillageCardButton
+	for child: Node in row.get_children():
+		var candidate: VillageCardButton = child as VillageCardButton
+		if candidate.card.id == "forage":
+			card = candidate
+			break
 	var hand_scroll: ScrollContainer = row.get_parent() as ScrollContainer
 	hand_scroll.ensure_control_visible(card)
 	await tree.process_frame
 	await tree.process_frame
 	var keywords: RichTextLabel = card.get_node("%Keywords") as RichTextLabel
 	var point: Vector2 = keywords.get_global_transform_with_canvas() * Vector2(8, 8)
+	var away: InputEventMouseMotion = InputEventMouseMotion.new()
+	away.position = Vector2(5, 5)
+	away.global_position = away.position
+	tree.root.warp_mouse(away.position)
+	tree.root.push_input(away, true)
+	await tree.process_frame
 	var motion: InputEventMouseMotion = InputEventMouseMotion.new()
 	motion.position = point
 	motion.global_position = point
+	tree.root.warp_mouse(point)
 	tree.root.push_input(motion, true)
-	await tree.create_timer(0.8).timeout
 	var explanation: KeywordDefinition = KeywordText.definition("采集")
+	check.call(
+		keywords.get_tooltip(Vector2(8, 8)).contains(explanation.description),
+		"Hovered word resolves the configured explanation"
+	)
+	for attempt: int in 8:
+		if _has_tooltip(tree.root, explanation.description):
+			break
+		# 保持光标静止；重复移动会重启原生提示的悬停计时。
+		await tree.create_timer(0.25).timeout
 	check.call(
 		_has_tooltip(tree.root, explanation.description),
 		"Keyword hover creates the actual explanation tooltip"

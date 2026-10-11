@@ -10,6 +10,7 @@ signal phase_changed(phase: GameTypes.Phase)
 const SAVE_PATH: String = "user://village_save.tres"
 const SAVE_VERSION: int = VillageSaveData.CURRENT_VERSION
 const SLOT_NAMES: PackedStringArray = ["清晨", "午后", "黄昏"]
+var terrain_grid: TerrainGrid = TerrainGrid.new()
 var progress: VillageProgress = VillageProgress.new()
 var catalog: CardCatalog = CardCatalog.new()
 var rng: RandomNumberGenerator = RandomNumberGenerator.new()
@@ -61,6 +62,8 @@ func new_run(seed_value: int = 0, region: GameTypes.Region = GameTypes.Region.LE
 	last_error = ""
 	run_seed = seed_value if seed_value != 0 else int(Time.get_unix_time_from_system())
 	rng.seed = run_seed
+	terrain_grid.generate(run_seed, catalog.library.progression_rules.map_for(region))
+	progress.explored_cells = PackedInt32Array([TerrainGrid.index(TerrainGrid.CAMP)])
 	day = 1
 	weather = catalog.library.weather_rules.for_day(run_seed, day)
 	slot = 0
@@ -82,11 +85,10 @@ func new_run(seed_value: int = 0, region: GameTypes.Region = GameTypes.Region.LE
 	last_report = null
 	next_uid = 1
 	total_kills = 0
-	for definition: CardDefinition in catalog.library.starting_cards:
-		add_card(definition)
+	SurvivalRules.grant_available(self)
 	PopulationRules.reconcile(self)
 	ProgressionEconomy.start_day(self)
-	log_event("五位幸存者在村庄落脚。先用石块守夜，再决定未来。")
+	log_event("五位幸存者在村庄落脚。第一天只勘探地形，随身补给供今日使用。")
 	_publish_changes(true)
 
 
@@ -116,11 +118,15 @@ func can_play(uid: int) -> String:
 	var configuration_error: String = ResourceValidation.card_error(card, catalog.buildings)
 	if not configuration_error.is_empty():
 		return configuration_error
-	for requirement: BuildingRequirement in card.prerequisites:
-		if buildings[requirement.building.id] < requirement.level:
-			return "需要 %s Lv.%d" % [requirement.building.display_name, requirement.level]
+	var unlock_error: String = SurvivalRules.unlock_error(self, card)
+	if not unlock_error.is_empty():
+		return unlock_error
 	if card.building != null and buildings[card.building.id] >= card.building.max_level:
 		return "该建筑已达到最高等级"
+	if SurvivalRules.is_survey(card):
+		var target_error: String = exploration_error()
+		if not target_error.is_empty():
+			return target_error
 	var build_error: String = EffectResolver.construction_error(self, card)
 	if not build_error.is_empty():
 		return build_error
@@ -143,13 +149,18 @@ func play_card(uid: int) -> bool:
 	if not can_play(uid).is_empty():
 		return false
 	var card: CardDefinition = find_card(uid)
+	var previous_level: int = buildings[card.building.id] if card.building != null else -1
 	EffectResolver.apply(self, card, true)
+	var completed: bool = card.building == null or buildings[card.building.id] > previous_level
+	if completed and not progress.completed_cards.has(card.id):
+		progress.completed_cards.append(card.id)
 	log_event("%s · %s：%s；%s" % [SLOT_NAMES[slot], card.display_name, card.positive, card.negative])
 	if not card.reusable:
 		for i: int in hand.size():
 			if hand[i].uid == uid:
 				hand.remove_at(i)
 				break
+	SurvivalRules.grant_available(self)
 	_advance_slot()
 	return true
 
@@ -217,8 +228,10 @@ func finish_night(report: BattleReport) -> void:
 			),
 			3 + int(report.kills / 5.0)
 		)
-		add_resource(GameTypes.Stock.FOOD, 2)
 		generate_rewards()
+		if rewards.is_empty():
+			advance_dawn()
+			return
 		log_event(
 			(
 				"守住第 %d 夜！击退 %d，幸存 %d / %d。选择一份新的发展机会。"
@@ -233,18 +246,15 @@ func generate_rewards() -> void:
 	rewards.clear()
 	var pool: Array[CardDefinition] = []
 	for card: CardDefinition in catalog.library.cards:
-		if card.reusable:
+		if card.reusable or card.guaranteed_unlock:
+			continue
+		if not SurvivalRules.unlock_error(self, card, day + 1).is_empty():
 			continue
 		if not card.regions.is_empty() and not card.regions.has(progress.region):
 			continue
 		if card.building != null and buildings[card.building.id] >= card.building.max_level:
 			continue
-		var eligible: bool = true
-		for requirement: BuildingRequirement in card.prerequisites:
-			if buildings[requirement.building.id] < requirement.level:
-				eligible = false
-		if eligible:
-			pool.append(card)
+		pool.append(card)
 	while rewards.size() < 3 and not pool.is_empty():
 		var index: int = rng.randi_range(0, pool.size() - 1)
 		rewards.append(pool[index])
@@ -271,6 +281,7 @@ func advance_dawn() -> void:
 		return
 	EffectResolver.expire_after_night(self)
 	var shortage: int = 0
+	var daily_upkeep: PackedInt32Array = EffectResolver.daily_upkeep(self)
 	for key: int in [
 		GameTypes.Stock.FOOD,
 		GameTypes.Stock.WATER,
@@ -282,9 +293,7 @@ func advance_dawn() -> void:
 		GameTypes.Stock.ARROWS,
 		GameTypes.Stock.MEDICINE
 	]:
-		var upkeep: int = night_stats.upkeep[key]
-		if key in [GameTypes.Stock.FOOD, GameTypes.Stock.WATER]:
-			upkeep -= last_report.started_survivors - population
+		var upkeep: int = daily_upkeep[key]
 		var balance: int = resources[key] + night_stats.income[key] - upkeep
 		if balance < 0 and key in [GameTypes.Stock.FOOD, GameTypes.Stock.WATER]:
 			shortage -= balance
@@ -298,6 +307,7 @@ func advance_dawn() -> void:
 	if shortage > 0:
 		core_health = maxf(0, core_health - shortage * 3)
 		log_event("补给短缺 %d：村庄耐久 -%d，恢复体力减少。" % [shortage, shortage * 3])
+	SurvivalRules.close_day(self)
 	day += 1
 	weather = catalog.library.weather_rules.for_day(run_seed, day)
 	slot = 0
@@ -305,6 +315,7 @@ func advance_dawn() -> void:
 	actions_per_slot = catalog.library.workforce_rules.action_capacity(population)
 	phase = GameTypes.Phase.DAY if core_health > 0 else GameTypes.Phase.GAME_OVER
 	ProgressionEconomy.start_day(self)
+	SurvivalRules.grant_available(self)
 	log_event("第 %d 日清晨：结算生产与消耗，体力恢复。" % day)
 	log_event("今日天气：%s。%s" % [weather.display_name, weather.description])
 	_publish_changes(true)
@@ -340,7 +351,7 @@ func preview_card(card: CardDefinition) -> VillageStats:
 	preview_state.persistence_enabled = false
 	if not preview_state.restore(snapshot()):
 		return EffectResolver.derive(self)
-	EffectResolver.apply(preview_state, card, true)
+	EffectResolver.apply(preview_state, card, true, true)
 	return EffectResolver.derive(preview_state)
 
 
@@ -410,6 +421,7 @@ func restore(data: VillageSaveData) -> bool:
 	)
 	core_health = data.core_health
 	buildings = data.buildings.duplicate()
+	buildings.resize(GameTypes.Building.COUNT)
 	modifiers.clear()
 	for modifier: StatModifier in data.modifiers:
 		modifiers.append(modifier.copy_runtime())
@@ -430,6 +442,20 @@ func restore(data: VillageSaveData) -> bool:
 	if data.version < 5:
 		progress.event_choice = 1
 		PopulationRules.reconcile(self)
+	if data.version < 6:
+		progress.terrain_surveys = 3
+		progress.discoveries = (
+			catalog.library.progression_rules.map_for(progress.region).discoveries.duplicate()
+		)
+		progress.well_tools = buildings[GameTypes.Building.WELL] > 0
+		progress.well_surveys = 1 if progress.well_tools else 0
+		for entry: CardInstance in hand:
+			if not progress.granted_cards.has(entry.definition.id):
+				progress.granted_cards.append(entry.definition.id)
+	terrain_grid.generate(run_seed, catalog.library.progression_rules.map_for(progress.region))
+	if data.version < 7:
+		TerrainGrid.migrate_progress(progress, terrain_grid)
+		SurvivalRules.migrate_completions(self)
 	ProgressionEconomy.expand_snapshot(night_stats)
 	_publish_changes(true)
 	return true
@@ -488,6 +514,7 @@ func assign_jobs(counts: PackedInt32Array, archers: bool = true) -> bool:
 	for person: SurvivorRecord in progress.survivors:
 		person.archer = archers
 	progress.assigned_today = true
+	SurvivalRules.grant_available(self)
 	_publish_changes(false)
 	autosave()
 	return true
@@ -523,6 +550,28 @@ func load_game(path: String = "") -> bool:
 func autosave() -> void:
 	if persistence_enabled and not save_game():
 		persistence_failed.emit(last_error)
+
+
+func select_exploration(cell: Vector2i) -> bool:
+	if _publishing_changes or phase != GameTypes.Phase.DAY:
+		return false
+	if not TerrainGrid.is_frontier(cell, progress.explored_cells):
+		return false
+	progress.exploration_target = TerrainGrid.index(cell)
+	_publish_changes(false)
+	return true
+
+
+func exploration_error() -> String:
+	if progress.explored_cells.size() == TerrainGrid.SIZE.x * TerrainGrid.SIZE.y:
+		return "全部区域已探索"
+	if progress.exploration_target < 0:
+		return "请在地图上选择与已探索区域毗邻的未知格子"
+	if not TerrainGrid.is_frontier(
+		TerrainGrid.position(progress.exploration_target), progress.explored_cells
+	):
+		return "目标必须是与已探索区域毗邻的未知格子"
+	return ""
 
 
 func _advance_slot() -> void:

@@ -6,6 +6,8 @@ const CELL: float = 24.0
 const WORLD: Vector2 = Vector2(960, 576)
 const EXTRA_HUT: Rect2i = Rect2i(23, 13, 2, 2)
 const CENTER: Vector2 = Vector2(492, 300)
+const CAMP_PADDING: float = 18.0
+const FIRE_CLEARING: Rect2 = Rect2(468, 324, 48, 48)
 
 
 static func to_cell(point: Vector2) -> Vector2i:
@@ -18,30 +20,17 @@ static func to_point(cell: Vector2i) -> Vector2:
 	return (Vector2(cell) + Vector2(0.5, 0.5)) * CELL
 
 
-static func terrain(
-	seed_value: int, region: GameTypes.Region = GameTypes.Region.LEGACY
-) -> Array[Vector2i]:
-	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
-	rng.seed = seed_value + 7187
+static func terrain(grid: TerrainGrid) -> Array[Vector2i]:
 	var cells: Array[Vector2i] = []
-	for i: int in 110:
-		var cell: Vector2i = Vector2i(rng.randi_range(2, 37), rng.randi_range(2, 21))
-		if cell.x >= 12 and cell.x <= 28 and cell.y >= 4 and cell.y <= 20:
-			continue
-		# Four open approach roads keep every spawn region connected.
-		if cell.x in [19, 20, 21] or cell.y in [11, 12, 13]:
-			continue
-		if not cells.has(cell):
-			cells.append(cell)
-	var map: MapDefinition = (
-		(preload("res://data/progression_rules.tres") as ProgressionRules).map_for(region)
-	)
-	for barrier: Rect2i in map.barriers:
-		for x: int in range(barrier.position.x, barrier.end.x):
-			for y: int in range(barrier.position.y, barrier.end.y):
-				var cell: Vector2i = Vector2i(x, y)
-				if not cells.has(cell):
-					cells.append(cell)
+	for x: int in range(2, GRID.x - 2):
+		for y: int in range(2, GRID.y - 2):
+			if Rect2i(12, 4, 17, 17).has_point(Vector2i(x, y)):
+				continue
+			if x in [19, 20, 21] or y in [11, 12, 13]:
+				continue
+			var coarse: Vector2i = Vector2i(int(x / 4.0), int(y / 4.0))
+			if grid.biome(coarse) != TerrainGrid.Biome.PLAIN and (x + y) % 3 == 0:
+				cells.append(Vector2i(x, y))
 	return cells
 
 
@@ -60,6 +49,17 @@ static func active_structures(state: VillageState) -> Array[StructurePlacement]:
 		StructurePlacement.new(state.catalog.buildings[GameTypes.Building.HUT], EXTRA_HUT)
 	)
 	return result
+
+
+## 已建设施周围的清理地面；只描述现有建设，不授予地形发现或可建设资格。
+static func camp_areas(structures: Array[StructurePlacement]) -> Array[Rect2]:
+	var areas: Array[Rect2] = [FIRE_CLEARING]
+	for structure: StructurePlacement in structures:
+		var footprint: Rect2 = Rect2(
+			Vector2(structure.rect.position) * CELL, Vector2(structure.rect.size) * CELL
+		)
+		areas.append(footprint.grow(CAMP_PADDING))
+	return areas
 
 
 static func wall_cells() -> Array[Vector2i]:

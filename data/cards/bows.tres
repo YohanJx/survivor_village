@@ -1,9 +1,14 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=10 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
 [ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="s_card_effect"]
 [ext_resource type="Resource" path="res://data/buildings/bows.tres" id="b_bows"]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/weapon.tres" id="kw_weapon"]
+[ext_resource type="Resource" path="res://data/keywords/technology.tres" id="kw_technology"]
+[ext_resource type="Resource" path="res://data/keywords/engineer.tres" id="kw_engineer"]
 
 [sub_resource type="Resource" id="cost_0"]
 script = ExtResource("s_resource_cost")
@@ -47,5 +52,8 @@ reusable = false
 costs = Array[ExtResource("s_resource_cost")]([SubResource("cost_0"), SubResource("cost_1"), SubResource("cost_2")])
 effects = Array[ExtResource("s_card_effect")]([SubResource("effect_0"), SubResource("effect_1")])
 building = ExtResource("b_bows")
-tags = PackedStringArray("武器", "科技")
 labor = 5
+
+required_cards = PackedStringArray("workshop")
+
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_weapon"), ExtResource("kw_technology"), ExtResource("kw_engineer")])

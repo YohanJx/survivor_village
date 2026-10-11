@@ -53,7 +53,7 @@ run_windows.bat "D:\Applications\Godot\Godot_v4.5-stable_win64.exe"
 | `scripts/ui/map_atmosphere.gd` | 地图光照、雨幕、闪电与雾层，仅负责展示 |
 | `data/progression_rules.tres`、`data/maps/`、`data/events/`、`data/units/`、`data/enemies/` | 地图、每日事件与职业/敌人原生配置 |
 | `scripts/progression/`、`scripts/combat/` | 劳动/人口发展规则、夜战辅助与有限区域 |
-| `data/cards/*.tres` | 40 张卡牌的名称、分类、费用、正负说明、前置、效果和标签 |
+| `data/cards/*.tres` | 47 张卡牌的名称、分类、费用、正负说明、前置、效果和标签 |
 | `data/buildings/*.tres` | 建筑等级上限、占地、产出、修正器和联动配置 |
 | `scripts/resources/` | 类型化资源定义、运行时快照及设施联动规则 |
 | `scripts/card_catalog.gd` | 全库校验后发布的卡牌与建筑索引 |
@@ -61,7 +61,9 @@ run_windows.bat "D:\Applications\Godot\Godot_v4.5-stable_win64.exe"
 | `scripts/game_state.gd` | 白天 / 夜晚 / 奖励 / 失败状态机、事务校验、昼夜结算、随机奖励与存档 |
 | `scripts/effect_resolver.gd` | 唯一的效果与联动结算入口、派生属性和持续时间 |
 | `scripts/battle_simulation.gd` | 固定步长自动战斗、寻路、攻击、Boss、围墙破坏 |
-| `scripts/world_layout.gd` | 地图网格、静态障碍、建筑占地和围墙位置 |
+| `scripts/world_layout.gd` | 局部战场网格、生成地形障碍、建筑占地和围墙位置 |
+| `scripts/progression/terrain_grid.gd` | 当局噪声地图、区域坐标、发现与方向报告 |
+| `scripts/ui/terrain_map_renderer.gd` | 生成地形、迷雾与可选前沿的展示 |
 | `scripts/village_map.gd` | 俯视地图与单位的程序绘制 |
 | `scripts/main.gd` | 注入状态和模拟器、协调用户请求与固定步长播放 |
 | `scenes/ui/`、`scripts/ui/` | HUD、手牌、详情、弹窗与奖励选项的独立场景和展示组件 |
@@ -71,9 +73,9 @@ run_windows.bat "D:\Applications\Godot\Godot_v4.5-stable_win64.exe"
 
 ### 添加卡牌
 
-在 Godot Inspector 中创建 `CardDefinition` 资源，保存到 `data/cards/`，并在 `data/card_library.tres` 的 `cards` 中注册。需要作为初始手牌的卡牌同时加入 `starting_cards`。可以参考现有 `data/cards/training.tres`。
+在 Godot Inspector 中创建 `CardDefinition` 资源，保存到 `data/cards/`，并在 `data/card_library.tres` 的 `cards` 中注册。按前置自动发放的基础行动同时加入 `starting_cards`；第一天只发勘探，后续按地形与职业开放。可以参考现有 `data/cards/training.tres`。
 
-`costs` 使用 `ResourceCost`，`prerequisites` 使用 `BuildingRequirement`；`effects` 组合 `CardEffect.Type` 的 `RESOURCE`、`BUILD`、`MODIFIER`、`HEAL`、`REPAIR_WALLS` 和 `POPULATION`，不需要为每张卡单独写脚本。`building` 指向建筑定义，其 `max_level` 限制升级；`reusable` 让行动保留在手牌中；`CardEffect.required_building` 指定条件加成。
+`costs` 使用 `ResourceCost`，`prerequisites` 使用 `BuildingRequirement`，`keywords` 引用原生 `KeywordDefinition`；地形类指定真实发现或已探索地貌，人物类指定职业与最低人数，同卡全部条件同时成立，`required_cards` 指定先完成的卡牌 ID；库初始化验证依赖图。全部发展卡遵守营地与勘探的共同前置，清单见 [卡牌依赖表](card_prerequisites.md)。`effects` 组合 `CardEffect.Type` 的 `RESOURCE`、`BUILD`、`MODIFIER`、`HEAL`、`REPAIR_WALLS` 和 `POPULATION`，不需要为每张卡单独写脚本。`building` 指向建筑定义，其 `max_level` 限制升级；`reusable` 让行动保留在手牌中；`CardEffect.required_building` 指定条件加成。
 
 新增建筑在 `data/buildings/` 创建 `BuildingDefinition` 并注册到资源库，其 `footprint` 由 `WorldLayout` 读取。独有设施联动通过 `BuildingSynergy` 子类配置，统一由 `EffectResolver.derive()` 调用。完整扩展流程见项目规范。
 
@@ -83,11 +85,15 @@ run_windows.bat "D:\Applications\Godot\Godot_v4.5-stable_win64.exe"
 
 每次决策与战后自动保存；顶部可手动保存和继续。启动时展示新村庄，点击“继续”恢复原有存档。未开始新决策前不会覆盖旧存档。
 
-存档版本为 5，保存种子、天气、每日事件与选择、烦躁、策略次数、稳定身份、职业装备、队伍、地图余量、手牌、行动、建筑、黄昏耗材预算和战报。夜间继续从同一黄昏重演，不复扣电力。2/3/4 版旧档在内存补齐为旧材料兼容地图，保留旧材料、建筑位置、旧黄昏和已经生效的惩罚；读取不改写旧文件，后续正常保存用版本 5。1 版仍拒绝。写入使用临时文件后替换，恢复先校验完整对象图，失败不改变原局。
+存档版本为 7，保存种子、已探索路线、待勘探目标和卡牌完成记录；地图在内存中重新生成，先验证连续路线及发现一致性再提交。版本 6 没有坐标，按已有发现迁移成连续区域；2–5 版继续既有库存、岗位、工具和建筑迁移，详见 [生存逻辑顺序](survival_progression.md)。读档不改写旧文件；1 版仍拒绝。夜间继续从原黄昏预算重演，不复扣电力；写入使用临时文件后替换，恢复失败不改变原局。
 
-人口职业配置在 [workforce_rules.tres](../data/workforce_rules.tres)，卡牌通过 `profession` 指定职业，通过 `labor` 指定劳动类别。新人补齐岗位，实际战损按身份删除。现代地图的稳定身份、装备与夜间作用见 [发展系统](progression_system.md)。
+分工界面由原生 `workforce_row.tscn` 与 `VillageInfoPanel` 展示草案；增减通过 `WorkforceRules.adjusted_allocation()` 在通用村民与专业间调配，确认后才提交，不能自由输入任意人数。人口职业配置在 [workforce_rules.tres](../data/workforce_rules.tres)，卡牌通过 `profession` 指定职业，通过 `labor` 指定劳动类别。新人补齐岗位，实际战损按身份删除。现代地图的稳定身份、装备与夜间作用见 [发展系统](progression_system.md)。
 
-词条说明使用 [keywords.tres](../data/ui/keywords.tres) 中的原生 `KeywordDefinition` 资源，通过 Godot `RichTextLabel` 的 hint 标签显示。词条解释已有卡牌规则，效果执行继续由 `CardEffect` 和 `EffectResolver` 统一处理。
+营地展示使用 `WorldLayout.camp_areas()` 从已建可见结构查询清理地面，`TerrainMapRenderer` 绘制已知地形、未知迷雾与连接道路，`data/ui/camp_ground_*.tres` 定义地面样式；`VillageMap` 在状态变化时缓存范围并在入夜时恢复近景。探索不会自动扩张营地，粮仓、储水罐和蓄电池沿用原生建筑占地和战斗结构。
+
+手牌右键通过 `VillageCardButton.inspect_requested` → `VillageHandPanel` → `VillageGameOverlay.show_card(uid)` 打开原生 `card_inspection_panel.tscn`。中央详解只读，描述、收益、风险、联合前置、当前费用与不可用原因都读取现有规则查询；不改变左键选中卡，也不执行行动。CARD 模态沿用背景遮罩、战斗暂停和输入阻断；关闭按钮、Esc、暗色背景返回游戏，换局或被查看的手牌消失时自动关闭，避免 UID 复用展示旧卡。
+
+词条说明使用 [keywords.tres](../data/ui/keywords.tres) 中的原生 `KeywordDefinition` 资源，通过 Godot `RichTextLabel` 的 hint 标签显示。词条配置位于 `data/keywords/`，含稳定 ID、主题/地形/人物枚举分类与类型化选择器；卡牌只引用注册词条。主题用于分类解释，地形与人物还由 `KeywordRules` 参与准入，文本匹配仅负责提示，效果执行继续由 `CardEffect` 和 `EffectResolver` 统一处理。详见 [关键词与卡牌](card_keywords.md)。
 
 默认存档为 Godot `user://village_save.tres`，使用 `VillageSaveData` 原生资源；macOS 通常位于 `~/Library/Application Support/Godot/app_userdata/余烬村庄 · Emberhaven/`。
 

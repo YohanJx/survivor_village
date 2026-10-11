@@ -1,9 +1,13 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=10 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
 [ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
 [ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="stat"]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/engineer.tres" id="kw_engineer"]
+[ext_resource type="Resource" path="res://data/keywords/fuel_site.tres" id="kw_fuel_site"]
 
 [sub_resource type="Resource" id="cost0"]
 script = ExtResource("cost")
@@ -52,3 +56,6 @@ crew_water = 2
 crew_output = 2
 costs = Array[ExtResource("cost")]([SubResource("cost0"), SubResource("cost1")])
 effects = Array[ExtResource("effect")]([SubResource("effect0"), SubResource("effect1"), SubResource("effect2")])
+
+
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_engineer"), ExtResource("kw_fuel_site")])

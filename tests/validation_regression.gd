@@ -16,6 +16,7 @@ static func _fresh() -> VillageState:
 	var state: VillageState = VillageState.new()
 	state.persistence_enabled = false
 	state.new_run(4242)
+	SurvivalTestSetup.developed(state)
 	return state
 
 
@@ -216,7 +217,7 @@ static func _test_snapshot_failures(check: Callable) -> void:
 	data.version = VillageSaveData.CURRENT_VERSION
 	check.call(state.restore(data), "Valid reward roundtrip accepted")
 	state.choose_reward(0)
-	check.call(state.day == 2, "Restored reward can safely settle dawn")
+	check.call(state.day == 3, "Restored reward can safely settle dawn")
 
 
 static func _test_transaction_edges(check: Callable) -> void:
@@ -274,7 +275,11 @@ static func _test_transaction_edges(check: Callable) -> void:
 
 static func _test_signal_reentry(check: Callable) -> void:
 	var state: VillageState = _fresh()
-	var uid: int = state.hand[0].uid
+	var uid: int = -1
+	for entry: CardInstance in state.hand:
+		if entry.definition.id == "forage":
+			uid = entry.uid
+			break
 	var attempted: PackedInt32Array = [0]
 	var callback: Callable = func() -> void:
 		attempted[0] += 1

@@ -1,9 +1,14 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=13 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=17 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
 [ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="s_card_effect"]
 [ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="s_stat_modifier"]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/temporary.tres" id="kw_temporary"]
+[ext_resource type="Resource" path="res://data/keywords/stealth.tres" id="kw_stealth"]
+[ext_resource type="Resource" path="res://data/keywords/guard.tres" id="kw_guard"]
 
 [sub_resource type="Resource" id="cost_0"]
 script = ExtResource("s_resource_cost")
@@ -66,4 +71,5 @@ negative = "今晚守卫攻击 -15%，探照灯停用"
 reusable = false
 costs = Array[ExtResource("s_resource_cost")]([SubResource("cost_0")])
 effects = Array[ExtResource("s_card_effect")]([SubResource("effect_0"), SubResource("effect_1"), SubResource("effect_2"), SubResource("effect_3")])
-tags = PackedStringArray("临时", "隐蔽")
+
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_temporary"), ExtResource("kw_stealth"), ExtResource("kw_guard")])

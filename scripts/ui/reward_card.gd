@@ -21,7 +21,9 @@ func _ready() -> void:
 func update_view(card: CardDefinition, state: VillageState, index: int) -> void:
 	_index = index
 	_kind.add_theme_color_override("default_color", UiElements.CARD_COLORS[card.color])
-	_kind.text = KeywordText.format_text(card.kind_name() + " / " + " · ".join(card.tags))
+	_kind.text = KeywordText.format_text(
+		card.kind_name() + " / " + " · ".join(card.keyword_names())
+	)
 	_title.text = card.display_name
 	_positive.text = KeywordText.format_text("＋ " + ProgressionEconomy.output_text(state, card))
 	_negative.text = KeywordText.format_text("－ " + card.negative)

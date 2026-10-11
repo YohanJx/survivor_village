@@ -5,9 +5,28 @@ extends VBoxContainer
 signal jobs_requested(counts: PackedInt32Array, archers: bool)
 signal crew_requested(size: int)
 
+const ROLE_HINTS: PackedStringArray = ["可执行通用行动", "采集与探索", "建造与修补", "勘探与机械", "药品与治疗", "训练与守夜"]
+
 var _state: VillageState
+var _draft: PackedInt32Array = []
+var _source_roster: PackedInt32Array = []
+var _source_day: int = -1
+var _source_progress: VillageProgress
+var _rows: Array[WorkforceRow] = []
 
 @onready var _information: Label = %VillageInformation
+
+
+func _ready() -> void:
+	var tabs: TabContainer = %VillageTabs
+	tabs.set_tab_title(0, "分工与队伍")
+	tabs.set_tab_title(1, "村庄概况")
+	for index: int in GameTypes.Profession.COUNT:
+		var row: WorkforceRow = get_node("%%Job%d" % index) as WorkforceRow
+		_rows.append(row)
+		row.adjustment_requested.connect(_on_allocation_adjusted.bind(index))
+	(%AssignJobs as Button).pressed.connect(_on_assign_jobs)
+	(%CrewChoice as OptionButton).item_selected.connect(crew_requested.emit)
 
 
 func update_view(state: VillageState) -> void:
@@ -43,6 +62,18 @@ func update_view(state: VillageState) -> void:
 		if state.progress.event_choice >= 0:
 			lines.append("已选择：" + event.options[state.progress.event_choice].description)
 	lines.append("每时段 %d 次行动 · 下个黎明按人口更新" % state.actions_per_slot)
+	lines.append("\n" + SurvivalRules.summary(state))
+	lines.append("\n跨日存储容量（当日消耗后保留，超出丢弃）")
+	for stock: int in [GameTypes.Stock.FOOD, GameTypes.Stock.WATER, GameTypes.Stock.POWER]:
+		lines.append(
+			(
+				"%s：%d"
+				% [
+					GameTypes.STOCK_NAMES[stock],
+					SurvivalRules.storage_capacity(state, stock as GameTypes.Stock)
+				]
+			)
+		)
 	lines.append("\n职业分布")
 	for profession: int in GameTypes.Profession.COUNT:
 		lines.append(
@@ -109,32 +140,65 @@ func update_view(state: VillageState) -> void:
 	_information.text = "\n".join(lines)
 
 
-func _ready() -> void:
-	(%AssignJobs as Button).pressed.connect(_on_assign_jobs)
-	(%CrewChoice as OptionButton).item_selected.connect(crew_requested.emit)
-
-
 func _on_assign_jobs() -> void:
-	var counts: PackedInt32Array = []
-	for index: int in GameTypes.Profession.COUNT:
-		counts.append(int((get_node("%%Job%d" % index) as SpinBox).value))
-	jobs_requested.emit(counts, (%UseArchers as CheckButton).button_pressed)
+	jobs_requested.emit(_draft.duplicate(), (%UseArchers as CheckButton).button_pressed)
 
 
-func _refresh_controls() -> void:
-	var editable: bool = (
-		_state.phase == GameTypes.Phase.DAY
+func _on_allocation_adjusted(delta: int, profession: int) -> void:
+	if not _can_edit():
+		return
+	_draft = _state.catalog.library.workforce_rules.adjusted_allocation(
+		_draft, _state.population, profession as GameTypes.Profession, delta
+	)
+	_refresh_allocation()
+
+
+func _can_edit() -> bool:
+	return (
+		_state != null
+		and _state.phase == GameTypes.Phase.DAY
 		and _state.slot == 0
 		and _state.actions_used == 0
 		and not _state.progress.assigned_today
 	)
-	for index: int in GameTypes.Profession.COUNT:
-		var control: SpinBox = get_node("%%Job%d" % index) as SpinBox
-		control.value = _state.profession_counts[index]
-		control.editable = editable
-	(%AssignJobs as Button).disabled = not editable
+
+
+func _refresh_controls() -> void:
+	if (
+		_source_progress != _state.progress
+		or _source_day != _state.day
+		or _source_roster != _state.profession_counts
+	):
+		_source_day = _state.day
+		_source_progress = _state.progress
+		_source_roster = _state.profession_counts.duplicate()
+		_draft = _source_roster.duplicate()
+		(%UseArchers as CheckButton).button_pressed = _state.progress.survivors.any(
+			func(person: SurvivorRecord) -> bool: return person.archer
+		)
+	_refresh_allocation()
 	var crew: OptionButton = %CrewChoice
 	crew.select(_state.progress.crew)
 	crew.disabled = _state.phase != GameTypes.Phase.DAY
 	for size: int in range(1, 5):
 		crew.set_item_disabled(size, size > mini(4, maxi(1, int(_state.population / 5.0))))
+
+
+func _refresh_allocation() -> void:
+	var editable: bool = _can_edit()
+	var available: int = _draft[GameTypes.Profession.GENERAL]
+	(%AllocationSummary as Label).text = "幸存者 %d 人  ·  待分配 %d 人" % [_state.population, available]
+	(%AllocationHint as Label).text = (
+		"用 − 释放人员，再用 + 分配到其他岗位。调整后确认，今日只可确认一次。" if editable else "今日分工已锁定，下个黎明可重新安排。"
+	)
+	for index: int in GameTypes.Profession.COUNT:
+		_rows[index].configure(
+			"待分配" if index == GameTypes.Profession.GENERAL else GameTypes.PROFESSION_NAMES[index],
+			_draft[index],
+			ROLE_HINTS[index],
+			editable and index > 0 and _draft[index] > 0,
+			editable and index > 0 and available > 0,
+			index > 0
+		)
+	(%AssignJobs as Button).disabled = not editable
+	(%UseArchers as CheckButton).disabled = not editable

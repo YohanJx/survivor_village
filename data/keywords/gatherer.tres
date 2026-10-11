@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="KeywordDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="definition"]
+
+[resource]
+script = ExtResource("definition")
+id = "gatherer"
+title = "采集者"
+description = "至少需要一名采集者；失去此职业后，已有卡牌也无法执行。"
+category = 2
+profession = 1

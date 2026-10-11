@@ -17,7 +17,7 @@ const KIND_NAMES: PackedStringArray = ["行动", "建造", "科技", "事件"]
 @export_multiline var description: String = ""
 @export_multiline var positive: String = ""
 @export_multiline var negative: String = ""
-@export var tags: PackedStringArray = []
+@export var keywords: Array[KeywordDefinition] = []
 @export var reusable: bool = false
 @export var profession: GameTypes.Profession = GameTypes.Profession.GENERAL
 @export var labor: GameTypes.Labor = GameTypes.Labor.NONE
@@ -30,6 +30,8 @@ const KIND_NAMES: PackedStringArray = ["行动", "建造", "科技", "事件"]
 @export var vent: bool = false
 @export var strategy: GameTypes.Strategy = GameTypes.Strategy.NONE
 @export var regions: PackedInt32Array = []
+@export var required_cards: PackedStringArray = []
+@export var guaranteed_unlock: bool = false
 @export var costs: Array[ResourceCost] = []
 @export var prerequisites: Array[BuildingRequirement] = []
 @export var effects: Array[CardEffect] = []
@@ -38,3 +40,10 @@ const KIND_NAMES: PackedStringArray = ["行动", "建造", "科技", "事件"]
 
 func kind_name() -> String:
 	return KIND_NAMES[kind]
+
+
+func keyword_names() -> PackedStringArray:
+	var names: PackedStringArray = []
+	for keyword: KeywordDefinition in keywords:
+		names.append(keyword.title)
+	return names

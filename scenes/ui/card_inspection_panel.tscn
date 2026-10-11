@@ -1,0 +1,108 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/card_inspection_panel.gd" id="script"]
+
+[node name="CardInspectionPanel" type="VBoxContainer"]
+script = ExtResource("script")
+theme_override_constants/separation = 12
+
+[node name="InspectAccent" type="ColorRect" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="InspectKind" type="RichTextLabel" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+theme_override_font_sizes/normal_font_size = 14
+
+[node name="InspectTitle" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+autowrap_mode = 3
+
+[node name="InspectScroll" type="ScrollContainer" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 300)
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="Details" type="VBoxContainer" parent="InspectScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 14
+
+[node name="InspectDescription" type="RichTextLabel" parent="InspectScroll/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+theme_override_font_sizes/normal_font_size = 17
+
+[node name="BenefitHeading" type="Label" parent="InspectScroll/Details"]
+layout_mode = 2
+text = "＋ 收益与效果"
+theme_override_colors/font_color = Color(0.62, 0.74, 0.60, 1)
+
+[node name="InspectBenefit" type="RichTextLabel" parent="InspectScroll/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+theme_override_font_sizes/normal_font_size = 16
+
+[node name="RiskHeading" type="Label" parent="InspectScroll/Details"]
+layout_mode = 2
+text = "− 代价与风险"
+theme_override_colors/font_color = Color(0.80, 0.59, 0.53, 1)
+
+[node name="InspectRisk" type="RichTextLabel" parent="InspectScroll/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+theme_override_font_sizes/normal_font_size = 16
+
+[node name="RequirementHeading" type="Label" parent="InspectScroll/Details"]
+layout_mode = 2
+text = "使用前置"
+theme_override_colors/font_color = Color(0.81, 0.71, 0.47, 1)
+
+[node name="InspectRequirement" type="RichTextLabel" parent="InspectScroll/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+theme_override_font_sizes/normal_font_size = 16
+
+[node name="InspectLabor" type="Label" parent="InspectScroll/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 14
+
+[node name="InspectCost" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 16
+
+[node name="InspectStatus" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 14
+
+[node name="InspectClose" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+text = "收起卡牌 · Esc"

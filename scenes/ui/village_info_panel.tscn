@@ -1,22 +1,130 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/village_info_panel.gd" id="script"]
+[ext_resource type="PackedScene" path="res://scenes/ui/workforce_row.tscn" id="row"]
+
+[sub_resource type="StyleBoxEmpty" id="tab_panel"]
+
+[sub_resource type="StyleBoxFlat" id="tab_selected"]
+bg_color = Color(0.16, 0.26, 0.19, 1)
+content_margin_left = 18.0
+content_margin_right = 18.0
+content_margin_top = 10.0
+content_margin_bottom = 10.0
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+
+[sub_resource type="StyleBoxFlat" id="tab_inactive"]
+bg_color = Color(0.10, 0.17, 0.13, 1)
+content_margin_left = 18.0
+content_margin_right = 18.0
+content_margin_top = 10.0
+content_margin_bottom = 10.0
+corner_radius_top_left = 8
+corner_radius_top_right = 8
 
 [node name="VillageInfoPanel" type="VBoxContainer"]
 script = ExtResource("script")
-theme_override_constants/separation = 16
+theme_override_constants/separation = 14
 
 [node name="Title" type="Label" parent="."]
 layout_mode = 2
 theme_override_font_sizes/font_size = 26
 text = "村庄现况"
 
-[node name="Scroll" type="ScrollContainer" parent="."]
+[node name="VillageTabs" type="TabContainer" parent="."]
+unique_name_in_owner = true
 layout_mode = 2
-custom_minimum_size = Vector2(0, 390)
+custom_minimum_size = Vector2(0, 410)
+theme_override_styles/panel = SubResource("tab_panel")
+theme_override_styles/tab_selected = SubResource("tab_selected")
+theme_override_styles/tab_unselected = SubResource("tab_inactive")
+theme_override_styles/tab_hovered = SubResource("tab_selected")
+
+[node name="Workforce" type="VBoxContainer" parent="VillageTabs"]
+layout_mode = 2
+metadata/_tab_name = "分工与队伍"
+theme_override_constants/separation = 14
+
+[node name="AllocationSummary" type="Label" parent="VillageTabs/Workforce"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+
+[node name="AllocationHint" type="Label" parent="VillageTabs/Workforce"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 3
+
+[node name="WorkforceControls" type="GridContainer" parent="VillageTabs/Workforce"]
+layout_mode = 2
+columns = 3
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+
+[node name="Job0" parent="VillageTabs/Workforce/WorkforceControls" instance=ExtResource("row")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Job1" parent="VillageTabs/Workforce/WorkforceControls" instance=ExtResource("row")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Job2" parent="VillageTabs/Workforce/WorkforceControls" instance=ExtResource("row")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Job3" parent="VillageTabs/Workforce/WorkforceControls" instance=ExtResource("row")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Job4" parent="VillageTabs/Workforce/WorkforceControls" instance=ExtResource("row")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Job5" parent="VillageTabs/Workforce/WorkforceControls" instance=ExtResource("row")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="UseArchers" type="CheckButton" parent="VillageTabs/Workforce"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "优先让守卫装备弓箭"
+
+[node name="WorkforceActions" type="HBoxContainer" parent="VillageTabs/Workforce"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="AssignJobs" type="Button" parent="VillageTabs/Workforce/WorkforceActions"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "确认今日分工"
+
+[node name="CrewChoice" type="OptionButton" parent="VillageTabs/Workforce/WorkforceActions"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 5
+selected = 0
+popup/item_0/text = "劳动队伍：自动"
+popup/item_1/text = "劳动队伍：1 队"
+popup/item_2/text = "劳动队伍：2 队"
+popup/item_3/text = "劳动队伍：3 队"
+popup/item_4/text = "劳动队伍：4 队"
+
+[node name="Overview" type="VBoxContainer" parent="VillageTabs"]
+layout_mode = 2
+metadata/_tab_name = "村庄概况"
+
+[node name="Scroll" type="ScrollContainer" parent="VillageTabs/Overview"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="VillageInformation" type="Label" parent="Scroll"]
+[node name="VillageInformation" type="Label" parent="VillageTabs/Overview/Scroll"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -27,73 +135,3 @@ autowrap_mode = 3
 unique_name_in_owner = true
 layout_mode = 2
 text = "回到村庄"
-
-[node name="WorkforceControls" type="HBoxContainer" parent="."]
-layout_mode = 2
-
-[node name="Job0" type="SpinBox" parent="WorkforceControls"]
-unique_name_in_owner = true
-layout_mode = 2
-custom_minimum_size = Vector2(100, 0)
-max_value = 999.0
-prefix = "村民"
-
-[node name="Job1" type="SpinBox" parent="WorkforceControls"]
-unique_name_in_owner = true
-layout_mode = 2
-custom_minimum_size = Vector2(100, 0)
-max_value = 999.0
-prefix = "采集"
-
-[node name="Job2" type="SpinBox" parent="WorkforceControls"]
-unique_name_in_owner = true
-layout_mode = 2
-custom_minimum_size = Vector2(100, 0)
-max_value = 999.0
-prefix = "建造"
-
-[node name="Job3" type="SpinBox" parent="WorkforceControls"]
-unique_name_in_owner = true
-layout_mode = 2
-custom_minimum_size = Vector2(100, 0)
-max_value = 999.0
-prefix = "工程"
-
-[node name="Job4" type="SpinBox" parent="WorkforceControls"]
-unique_name_in_owner = true
-layout_mode = 2
-custom_minimum_size = Vector2(100, 0)
-max_value = 999.0
-prefix = "医疗"
-
-[node name="Job5" type="SpinBox" parent="WorkforceControls"]
-unique_name_in_owner = true
-layout_mode = 2
-custom_minimum_size = Vector2(100, 0)
-max_value = 999.0
-prefix = "守卫"
-
-[node name="WorkforceActions" type="HBoxContainer" parent="."]
-layout_mode = 2
-
-[node name="UseArchers" type="CheckButton" parent="WorkforceActions"]
-unique_name_in_owner = true
-layout_mode = 2
-button_pressed = true
-text = "守卫装备弓箭"
-
-[node name="AssignJobs" type="Button" parent="WorkforceActions"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "确认今日分工"
-
-[node name="CrewChoice" type="OptionButton" parent="WorkforceActions"]
-unique_name_in_owner = true
-layout_mode = 2
-item_count = 5
-selected = 0
-popup/item_0/text = "劳动队伍：自动"
-popup/item_1/text = "劳动队伍：1 队"
-popup/item_2/text = "劳动队伍：2 队"
-popup/item_3/text = "劳动队伍：3 队"
-popup/item_4/text = "劳动队伍：4 队"

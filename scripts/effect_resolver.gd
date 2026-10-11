@@ -52,7 +52,22 @@ static func derive(state: VillageState) -> VillageStats:
 	return stats
 
 
-static func apply(state: VillageState, card: CardDefinition, pay_costs: bool = false) -> void:
+static func daily_upkeep(state: VillageState) -> PackedInt32Array:
+	var stats: VillageStats = (
+		state.night_stats
+		if state.night_stats != null and state.phase != GameTypes.Phase.DAY
+		else derive(state)
+	)
+	var upkeep: PackedInt32Array = stats.upkeep.duplicate()
+	if state.phase == GameTypes.Phase.REWARD and state.last_report != null:
+		for stock: int in [GameTypes.Stock.FOOD, GameTypes.Stock.WATER]:
+			upkeep[stock] -= state.last_report.started_survivors - state.population
+	return upkeep
+
+
+static func apply(
+	state: VillageState, card: CardDefinition, pay_costs: bool = false, preview: bool = false
+) -> void:
 	var consumed_mood: int = mini(3, state.progress.frustration) if card.vent else 0
 	var deltas: PackedInt32Array = resource_deltas(state, card, pay_costs)
 	for key: int in GameTypes.Stock.COUNT:
@@ -79,6 +94,8 @@ static func apply(state: VillageState, card: CardDefinition, pay_costs: bool = f
 				state.wall_damage.clear()
 			CardEffect.Type.POPULATION:
 				state.population += int(effect.amount)
+			CardEffect.Type.SURVEY, CardEffect.Type.WELL_TOOLS, CardEffect.Type.WELL_SURVEY, CardEffect.Type.DRILL:
+				SurvivalRules.commit(state, effect, preview)
 	if consumed_mood > 0:
 		var modifier: StatModifier = StatModifier.new()
 		modifier.key = GameTypes.Stat.ATTACK
@@ -112,6 +129,11 @@ static func cost_totals(card: CardDefinition, state: VillageState = null) -> Pac
 		if LaborRules.renewable_fallback(state, card):
 			totals.fill(0)
 			totals[GameTypes.Stock.STAMINA] = 4
+		if SurvivalRules.is_survey(card) and state.progress.exploration_target >= 0:
+			var distance: int = TerrainGrid.distance(
+				TerrainGrid.position(state.progress.exploration_target)
+			)
+			totals[GameTypes.Stock.STAMINA] += maxi(0, distance - 1) * 2
 		var crew: int = LaborRules.crew_size(state, card)
 		totals[GameTypes.Stock.STAMINA] += card.crew_stamina * (crew - 1)
 		totals[GameTypes.Stock.WATER] += card.crew_water * (crew - 1)
@@ -185,7 +207,7 @@ static func construction_error(state: VillageState, card: CardDefinition) -> Str
 	for effect: CardEffect in card.effects:
 		if effect.required_building != null and state.buildings[effect.required_building.id] == 0:
 			continue
-		if effect.type == CardEffect.Type.BUILD:
+		if effect.type in [CardEffect.Type.BUILD, CardEffect.Type.DRILL]:
 			levels[effect.building.id] += int(effect.amount)
 			if levels[effect.building.id] > effect.building.max_level:
 				return "该建筑已达到最高等级"

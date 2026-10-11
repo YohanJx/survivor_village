@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="KeywordDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="definition"]
+
+[resource]
+script = ExtResource("definition")
+id = "woodland"
+title = "林地"
+description = "必须实际勘探发现林地后，对应卡牌才会出现。方向线索不算发现。"
+category = 1
+discovery = 2

@@ -1,0 +1,59 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/workforce_row.gd" id="script"]
+
+[sub_resource type="StyleBoxFlat" id="row_style"]
+bg_color = Color(0.085, 0.145, 0.11, 1)
+content_margin_left = 12.0
+content_margin_right = 12.0
+content_margin_top = 10.0
+content_margin_bottom = 10.0
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_left = 8
+corner_radius_bottom_right = 8
+
+[node name="WorkforceRow" type="PanelContainer"]
+script = ExtResource("script")
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("row_style")
+
+[node name="Content" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Heading" type="HBoxContainer" parent="Content"]
+layout_mode = 2
+
+[node name="RoleName" type="Label" parent="Content/Heading"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+
+[node name="RoleCount" type="Label" parent="Content/Heading"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+
+[node name="Actions" type="HBoxContainer" parent="Content"]
+layout_mode = 2
+
+[node name="RoleHint" type="Label" parent="Content/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = ""
+
+[node name="Decrease" type="Button" parent="Content/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(30, 30)
+text = "−"
+
+[node name="Increase" type="Button" parent="Content/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(30, 30)
+text = "+"

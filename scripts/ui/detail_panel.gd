@@ -13,9 +13,10 @@ var _selected_uid: int = -1
 @onready var _title: Label = %CardTitle
 @onready var _description: RichTextLabel = %Description
 @onready var _positive: RichTextLabel = %Positive
+@onready var _survey_report: Label = %SurveyReport
 @onready var _negative: RichTextLabel = %Negative
 @onready var _cost: Label = %Cost
-@onready var _requirement: Label = %Requirement
+@onready var _requirement: RichTextLabel = %Requirement
 @onready var _preview: Label = %Preview
 @onready var _reason: Label = %Reason
 @onready var _execute: Button = %ExecuteButton
@@ -41,7 +42,8 @@ func _refresh_detail() -> void:
 	_card_detail.visible = card != null
 	_execute.visible = card != null
 	_cost.visible = card != null
-	_negative.visible = card != null
+	_negative.visible = card != null and not SurvivalRules.is_survey(card)
+	_survey_report.visible = SurvivalRules.is_survey(card)
 	_reason.visible = false
 	if card == null:
 		_refresh_empty_hint()
@@ -65,12 +67,25 @@ func _refresh_empty_hint() -> void:
 
 func _refresh_card(card: CardDefinition) -> void:
 	_kind.add_theme_color_override("default_color", UiElements.CARD_COLORS[card.color])
-	_kind.text = KeywordText.format_text(card.kind_name() + "  /  " + " · ".join(card.tags))
+	_kind.text = KeywordText.format_text(
+		card.kind_name() + "  /  " + " · ".join(card.keyword_names())
+	)
 	_title.text = card.display_name
 	_description.text = KeywordText.format_text(card.description)
 	_positive.text = KeywordText.format_text(ProgressionEconomy.output_text(_state, card))
 	_negative.text = KeywordText.format_text("代价与风险  /  " + card.negative)
+	if card.effects.any(
+		func(effect: CardEffect) -> bool: return effect.type == CardEffect.Type.DRILL
+	):
+		_negative.text += (
+			"\n打井成功率 %d%%；失败仍扣费并消耗行动" % roundi(SurvivalRules.well_chance(_state) * 100)
+		)
 	_cost.text = "消耗  /  " + _state.catalog.cost_text(card, _state)
+	if SurvivalRules.is_survey(card) and _state.progress.exploration_target >= 0:
+		var target: Vector2i = TerrainGrid.position(_state.progress.exploration_target)
+		_cost.text += (
+			"\n目标 (%d, %d) · 离营地 %d 格" % [target.x, target.y, TerrainGrid.distance(target)]
+		)
 	if card.profession != GameTypes.Profession.GENERAL:
 		_cost.text += (
 			"\n%s %d 人 · 体力 ×%.2f"
@@ -82,14 +97,32 @@ func _refresh_card(card: CardDefinition) -> void:
 				)
 			]
 		)
+		if _state.profession_counts[card.profession] == 0:
+			_cost.text = "需要%s，当前无人；无法执行" % GameTypes.PROFESSION_NAMES[card.profession]
 	_execute.text = "确认执行 · 剩余 %d 次行动" % (_state.actions_per_slot - _state.actions_used)
-	_requirement.text = _state.catalog.requirement_text(card)
+	_requirement.text = KeywordText.format_text(_state.catalog.requirement_text(card))
 	_requirement.visible = not _requirement.text.is_empty()
 	_reason.text = _state.can_play(_selected_uid)
 	_reason.visible = not _reason.text.is_empty()
 	_execute.disabled = _reason.visible
+	if SurvivalRules.is_survey(card):
+		_survey_report.text = "点击亮边未知格选择目标。\n每远一格，额外消耗 2 体力。"
+		if _state.progress.explored_cells.size() > 1:
+			_survey_report.text = _state.terrain_grid.report_short(
+				TerrainGrid.position(_state.progress.explored_cells[-1]),
+				_state.progress.explored_cells
+			)
+		_positive.text = "选择邻接的未知区域后确认；发现与方向线索在勘探完成后返回。"
 	_preview.text = (
-		LaborRules.summary(_state, card) + "\n" + ("" if _reason.visible else _preview_card(card))
+		(
+			SurvivalRules.exploration_summary(_state)
+			if SurvivalRules.is_survey(card)
+			else SurvivalRules.summary(_state)
+		)
+		+ "\n"
+		+ LaborRules.summary(_state, card)
+		+ "\n"
+		+ ("" if _reason.visible else _preview_card(card))
 	)
 	var deltas: PackedInt32Array = EffectResolver.resource_deltas(_state, card)
 	for key: int in GameTypes.Stock.COUNT:
@@ -121,4 +154,11 @@ func _preview_card(card: CardDefinition) -> String:
 	for synergy: String in after.synergies:
 		if not before.synergies.has(synergy):
 			changes.append(synergy)
-	return "结算预览  /  " + "；".join(changes) if not changes.is_empty() else ""
+	var label: String = (
+		"成功时预览"
+		if card.effects.any(
+			func(effect: CardEffect) -> bool: return effect.type == CardEffect.Type.DRILL
+		)
+		else "结算预览"
+	)
+	return label + "  /  " + "；".join(changes) if not changes.is_empty() else ""

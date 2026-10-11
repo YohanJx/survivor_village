@@ -4,7 +4,6 @@ extends Resource
 
 @export_range(1, 100) var people_per_action: int = 5
 @export_range(1, 10) var max_actions_per_slot: int = 4
-@export_range(1.0, 3.0) var missing_profession_multiplier: float = 1.5
 @export_range(0.0, 0.5) var reduction_per_extra_worker: float = 0.1
 @export_range(0.1, 1.0) var minimum_multiplier: float = 0.6
 @export var initial_roster: PackedInt32Array = [0, 1, 1, 1, 1, 1]
@@ -13,8 +12,6 @@ extends Resource
 func validation_error() -> String:
 	if people_per_action < 1 or max_actions_per_slot < 1 or max_actions_per_slot > 10:
 		return "人口行动配置非法"
-	if not is_finite(missing_profession_multiplier) or missing_profession_multiplier < 1.0:
-		return "缺少职业的体力倍率非法"
 	if not is_finite(reduction_per_extra_worker) or reduction_per_extra_worker < 0.0:
 		return "职业减耗配置非法"
 	if not is_finite(minimum_multiplier) or minimum_multiplier <= 0.0 or minimum_multiplier > 1.0:
@@ -33,7 +30,7 @@ func stamina_multiplier(profession: GameTypes.Profession, roster: PackedInt32Arr
 		return 1.0
 	var workers: int = roster[profession]
 	if workers == 0:
-		return missing_profession_multiplier
+		return 1.0
 	return maxf(minimum_multiplier, 1.0 - (workers - 1) * reduction_per_extra_worker)
 
 
@@ -46,6 +43,24 @@ func valid_roster(roster: PackedInt32Array, population: int) -> bool:
 			return false
 		total += count
 	return total == population
+
+
+## 草案只在通用村民与一个专业之间转移；拒绝时返回独立且未改变的名册。
+func adjusted_allocation(
+	roster: PackedInt32Array, population: int, profession: GameTypes.Profession, delta: int
+) -> PackedInt32Array:
+	var result: PackedInt32Array = roster.duplicate()
+	if not valid_roster(roster, population):
+		return result
+	if profession <= GameTypes.Profession.GENERAL or profession >= GameTypes.Profession.COUNT:
+		return result
+	if delta not in [-1, 1]:
+		return result
+	if result[profession] + delta < 0 or result[GameTypes.Profession.GENERAL] - delta < 0:
+		return result
+	result[profession] += delta
+	result[GameTypes.Profession.GENERAL] -= delta
+	return result
 
 
 ## 新人依次补充人数最少的专业；战损从人数最多的职业扣除，同人数按枚举顺序。

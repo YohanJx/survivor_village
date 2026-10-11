@@ -3,7 +3,9 @@ extends RefCounted
 ## 扩展资源与存档对象图校验，不修改被检验对象。
 
 
-static func rules_error(rules: ProgressionRules, buildings: Array[BuildingDefinition]) -> String:
+static func rules_error(
+	rules: ProgressionRules, buildings: Array[BuildingDefinition], keywords: KeywordLibrary
+) -> String:
 	if rules == null or not is_finite(rules.frustration_cost) or rules.frustration_cost < 0:
 		return "发展规则缺失或费用非法"
 	if rules.max_frustration != 5 or rules.max_crew != 4:
@@ -22,6 +24,35 @@ static func rules_error(rules: ProgressionRules, buildings: Array[BuildingDefini
 			return "地图定义缺失或重复"
 		maps[definition.kind] = true
 		if (
+			not is_finite(definition.well_base_chance)
+			or definition.well_base_chance < 0.0
+			or definition.well_base_chance > 1.0
+		):
+			return "打井基础概率非法"
+		if (
+			not is_finite(definition.well_survey_gain)
+			or definition.well_survey_gain <= 0.0
+			or definition.well_survey_gain > 1.0
+		):
+			return "井位勘探增益非法"
+		if (
+			not is_finite(definition.noise_frequency)
+			or definition.noise_frequency < 0.01
+			or definition.noise_frequency > 1.0
+		):
+			return "地形噪声频率非法"
+		if (
+			not is_finite(definition.river_width)
+			or definition.river_width < 0.01
+			or definition.river_width > 0.3
+		):
+			return "河流宽度非法"
+		var found: Dictionary[int, bool] = {}
+		for discovery: int in definition.discoveries:
+			if discovery < 0 or discovery >= GameTypes.Discovery.COUNT or found.has(discovery):
+				return "地图发现非法或重复"
+			found[discovery] = true
+		if (
 			definition.display_name.is_empty()
 			or definition.initial_resources.size() != GameTypes.Stock.COUNT
 			or definition.abundance.size() != GameTypes.Stock.COUNT
@@ -35,15 +66,6 @@ static func rules_error(rules: ProgressionRules, buildings: Array[BuildingDefini
 				return "地图库存非法"
 			if not is_finite(definition.abundance[key]) or definition.abundance[key] <= 0:
 				return "地图丰度非法"
-		for area: Rect2i in definition.barriers:
-			if (
-				area.size.x <= 0
-				or area.size.y <= 0
-				or not Rect2i(Vector2i.ZERO, WorldLayout.GRID).encloses(area)
-			):
-				return "地图障碍越界"
-			if area.intersects(Rect2i(12, 4, 17, 17)):
-				return "地图障碍侵入村庄设施区域"
 	if maps.size() != GameTypes.Region.COUNT:
 		return "地图注册不完整"
 	var ids: Dictionary[String, bool] = {}
@@ -76,6 +98,9 @@ static func rules_error(rules: ProgressionRules, buildings: Array[BuildingDefini
 			var error: String = ResourceValidation.card_error(option, buildings)
 			if not error.is_empty():
 				return error
+			var registered_error: String = KeywordRules.registered_error(option, keywords)
+			if not registered_error.is_empty():
+				return registered_error
 		if not event.options[1].costs.is_empty():
 			return "每日事件必须有无费用退路"
 	return "" if not rules.events.is_empty() else "每日事件池为空"
@@ -85,6 +110,15 @@ static func valid_progress(data: VillageSaveData, catalog: CardCatalog) -> bool:
 	var progress: VillageProgress = data.progress
 	if progress == null or catalog.library.progression_rules.map_for(progress.region) == null:
 		return false
+	if data.version >= 6:
+		if not valid_survival(progress, catalog, data.run_seed, data.version):
+			return false
+		if (
+			data.buildings.size() > GameTypes.Building.WELL
+			and data.buildings[GameTypes.Building.WELL] > 0
+		):
+			if not progress.well_tools or progress.well_surveys == 0:
+				return false
 	if (
 		progress.frustration < 0
 		or progress.frustration > 5
@@ -267,4 +301,36 @@ static func valid_frozen_roster(data: VillageSaveData) -> bool:
 			if original.profession != person.profession or original.archer != person.archer:
 				return false
 
+	return true
+
+
+static func valid_survival(
+	progress: VillageProgress, catalog: CardCatalog, seed_value: int = 0, version: int = 7
+) -> bool:
+	if (
+		progress.terrain_surveys < 0
+		or progress.terrain_surveys > 999
+		or progress.well_surveys < 0
+		or progress.well_surveys > 999
+	):
+		return false
+	if progress.well_surveys > 0 and not progress.well_tools:
+		return false
+	if version >= 7:
+		if not TerrainValidation.valid_progress(progress, catalog, seed_value):
+			return false
+	else:
+		var map: MapDefinition = catalog.library.progression_rules.map_for(progress.region)
+		if (
+			progress.discoveries
+			!= map.discoveries.slice(0, mini(map.discoveries.size(), progress.terrain_surveys * 3))
+		):
+			return false
+	if progress.terrain_surveys == 0 and (progress.well_tools or progress.well_surveys > 0):
+		return false
+	var ids: Dictionary[String, bool] = {}
+	for id: String in progress.granted_cards:
+		if not catalog.cards.has(id) or ids.has(id):
+			return false
+		ids[id] = true
 	return true

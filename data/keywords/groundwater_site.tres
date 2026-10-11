@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="KeywordDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="definition"]
+
+[resource]
+script = ExtResource("definition")
+id = "groundwater_site"
+title = "地下水候选地"
+description = "已探索的草甸可作为地下水候选地；营地不计入。这里尚未确认有水，需备齐工具并由工程师参与井位勘探后才能尝试打井。"
+category = 1
+biome = 0
