@@ -2,16 +2,20 @@ class_name UiElements
 extends RefCounted
 ## 正文保持中性；低饱和颜色区分资源、卡牌标识、收益与风险。静态样式来自 Theme。
 
-const TEXT_PRIMARY: Color = Color("dce1dc")
-const TEXT_SECONDARY: Color = Color("a3ada5")
-const ACCENT: Color = Color("9fae9f")
+const BACKGROUND: Color = Color("191816")
+const PANEL: Color = Color("29251f")
+const BORDER: Color = Color("685d49")
 
-const POSITIVE: Color = Color("9ebc98")
-const WATER: Color = Color("8fb7c4")
-const EMPHASIS: Color = Color("cfb477")
-const NEGATIVE: Color = Color("cd9787")
+const TEXT_PRIMARY: Color = Color("dcd3bf")
+const TEXT_SECONDARY: Color = Color("a39985")
+const ACCENT: Color = Color("c2ad80")
+
+const POSITIVE: Color = Color("b5b093")
+const WATER: Color = Color("839da0")
+const EMPHASIS: Color = Color("c2ad80")
+const NEGATIVE: Color = Color("bb8370")
 const CARD_COLORS: Array[Color] = [
-	Color("9ebc98"), Color("8fb7c4"), Color("cfb477"), Color("cd9787")
+	Color("b5b093"), Color("839da0"), Color("c2ad80"), Color("bb8370")
 ]
 const UNIT_COLORS: Array[Color] = [
 	Color("a6c3ba"),

@@ -17,7 +17,6 @@ static func _fresh(region: GameTypes.Region = GameTypes.Region.RURAL) -> Village
 	state.persistence_enabled = false
 	state.new_run(59172, region)
 	SurvivalTestSetup.developed(state)
-	state.choose_daily_event(1)
 	state.actions_per_slot = 4
 	return state
 
@@ -126,65 +125,45 @@ static func _test_events(check: Callable) -> void:
 	state.persistence_enabled = false
 	state.new_run(98, GameTypes.Region.MOUNTAIN)
 	check.call(
-		state.progress.event_id == "settle" and state.progress.event_choice == -1,
-		"First day has fixed pending event"
-	)
-	check.call(not _play(state, "forage"), "Pending event blocks labor")
-	state.skip_slot()
-	state.begin_night()
-	check.call(
-		state.phase == GameTypes.Phase.DAY and state.slot == 0,
-		"Pending event blocks standby and dusk bypass"
-	)
-	var restored: VillageState = _fresh()
-	check.call(
-		restored.restore(state.snapshot()) and restored.progress.event_choice == -1,
-		"Pending event survives save"
+		state.progress.event_id.is_empty() and state.progress.event_choice == 1,
+		"Dawn has no blocking event"
 	)
 	var rng_before: int = state.rng.state
-	check.call(state.choose_daily_event(0), "Event choice commits without action")
+	ProgressionEconomy.start_day(state)
 	check.call(
-		not state.choose_daily_event(1) and state.actions_used == 0,
-		"Event commits exactly once without consuming action"
+		state.rng.state == rng_before and state.actions_used == 0,
+		"Dawn reset draws no event and spends no action"
 	)
-	check.call(state.rng.state == rng_before, "Event does not consume reward RNG")
-	for day: int in range(2, 20):
-		state.day = day
-		var first: DailyEvent = state.catalog.library.progression_rules.for_day(state)
-		var second: DailyEvent = state.catalog.library.progression_rules.for_day(state)
-		check.call(
-			first.id == second.id and not state.progress.recent_events.has(first.id),
-			"Event is reproducible and respects cooldown"
-		)
-		check.call(
-			first.regions.is_empty() or first.regions.has(GameTypes.Region.MOUNTAIN),
-			"Event respects map"
-		)
-		ProgressionEconomy.start_day(state)
-	state.progress.region = GameTypes.Region.RUINS
-	state.progress.event_id = "convoy"
-	state.progress.event_choice = -1
-	state.resources[1] = 0
-	var before: PackedInt32Array = state.resources.duplicate()
+	var old_save: VillageSaveData = state.snapshot()
+	old_save.version = 7
+	old_save.progress.event_id = "low_mood"
+	old_save.progress.event_choice = -1
+	var restored: VillageState = _fresh()
 	check.call(
 		(
-			not state.choose_daily_event(0)
-			and state.resources == before
-			and state.progress.event_choice == -1
+			restored.restore(old_save)
+			and restored.progress.event_id.is_empty()
+			and restored.progress.event_choice == 1
 		),
-		"Unpayable event preserves transaction"
+		"Old pending dawn event continues without popup"
 	)
-	check.call(state.choose_daily_event(1), "Event always has free fallback")
+	check.call(old_save.progress.event_choice == -1, "Dawn migration preserves input snapshot")
+	old_save.progress.event_choice = 0
+	check.call(
+		restored.restore(old_save) and restored.progress.event_id == "low_mood",
+		"Previously accepted legacy effects survive restore"
+	)
+	ProgressionEconomy.start_day(restored)
+	check.call(restored.progress.event_id.is_empty(), "Legacy effect clears at next dawn")
 	state = _fresh()
 	state.progress.event_id = "low_mood"
 	state.progress.event_choice = 0
 	check.call(
 		_play(state, "forage") and _play(state, "forage") and state.progress.frustration == 2,
-		"Low mood affects first repeat"
+		"Legacy low mood affects first repeat"
 	)
 	check.call(
-		_play(state, "forage") and state.progress.frustration == 3,
-		"Low mood extra penalty happens once"
+		_play(state, "forage") and state.progress.frustration == 3, "Legacy penalty happens once"
 	)
 
 
@@ -513,7 +492,7 @@ static func _test_later_days(check: Callable) -> void:
 		while battle.active:
 			battle.step(BattleSimulation.FIXED_STEP_SECONDS)
 		check.call(
-			state.last_report != null and state.phase == GameTypes.Phase.REWARD,
+			state.last_report != null and state.phase == GameTypes.Phase.DAY_END,
 			"Developed village survives real special wave"
 		)
 		check.call(
@@ -525,8 +504,7 @@ static func _test_later_days(check: Callable) -> void:
 		check.call(
 			not state.restore(malformed), "Reward restoration rejects a foreign frozen identity"
 		)
-		check.call(state.choose_reward(0), "Special wave reaches next dawn")
-		state.choose_daily_event(1)
+		check.call(SurvivalTestSetup.settle_day_end(state), "Special wave reaches next dawn")
 		state.population += 2
 		PopulationRules.reconcile(state)
 		check.call(

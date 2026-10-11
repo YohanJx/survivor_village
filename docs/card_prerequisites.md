@@ -2,7 +2,7 @@
 
 当前 47 张发展卡的共同起点是已建立营地；除勘探外，全部要求第二天起且已完成地形勘探。下表列出对应职业与额外条件；执行还统一检查费用、建筑上限、资源余量和当日阶段。任意村民表示任何岗位可执行，不要求必须分配通用职业。每日事件属于当前事件的两个选项，不从发展手牌解锁。
 
-完成记录指实际执行完成，建筑记录仅在成功建造时写入。依赖 ID 使用原生 `CardDefinition.required_cards`，建筑等级使用 `BuildingRequirement`，人物与地形使用 `CardDefinition.keywords` 引用的 `KeywordDefinition`。查询、奖励与执行共用规则；详细机制见 [勘探与生存顺序](survival_progression.md)。
+完成记录指实际执行完成，建筑记录仅在成功建造时写入。依赖 ID 使用原生 `CardDefinition.required_cards`，建筑等级使用 `BuildingRequirement`，人物与地形使用 `CardDefinition.keywords` 引用的 `KeywordDefinition`。查询、发放与执行共用规则；详细机制见 [勘探与生存顺序](survival_progression.md)。
 
 | 卡牌 | 内容 ID | 职业 | 额外前置 |
 | --- | --- | --- | --- |

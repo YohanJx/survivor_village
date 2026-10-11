@@ -21,6 +21,7 @@ func _run() -> void:
 	WorkforceRegression.run(_check)
 	WeatherRegression.run(_check)
 	TradeoffRegression.run(_check)
+	DayEndEventRegression.run(_check)
 	ProgressionRegression.run(_check)
 	_test_transactions()
 	_test_synergies()
@@ -63,13 +64,6 @@ func _win_report(state: VillageState) -> BattleReport:
 	report.started_survivors = state.population
 	report.duration = 50.0
 	return report
-
-
-func _reward_ids(offers: Array[CardDefinition]) -> PackedStringArray:
-	var result: PackedStringArray = []
-	for definition: CardDefinition in offers:
-		result.append(definition.id)
-	return result
 
 
 func _hand_ids(hand: Array[CardInstance]) -> PackedStringArray:
@@ -136,27 +130,27 @@ func _test_transactions() -> void:
 	)
 	state.finish_night(_win_report(state))
 	_check(
-		state.phase == GameTypes.Phase.REWARD and state.rewards.size() == 3,
-		"Victory creates three offers"
+		state.phase == GameTypes.Phase.DAY_END and state.current_day_end_event() != null,
+		"Victory opens a day-end event"
 	)
-	var reward: CardDefinition = state.rewards[0]
+	var hand_before: PackedStringArray = _hand_ids(state.hand)
 	var kills_before: int = state.total_kills
 	state.finish_night(_win_report(state))
 	_check(state.total_kills == kills_before, "Duplicate battle completion does not pay twice")
 	state.advance_dawn()
-	_check(state.day == 2, "Dawn blocked until a reward is chosen")
-	_check(state.choose_reward(0), "Reward chosen")
+	_check(state.day == 2, "Dawn blocked until the day-end event is handled")
+	_check(SurvivalTestSetup.settle_day_end(state), "Day-end option chosen")
 	_check(
 		state.day == 3 and state.slot == 0 and state.phase == GameTypes.Phase.DAY,
-		"Reward advances to next dawn"
+		"Day-end event advances to next dawn"
 	)
-	_check(not state.choose_reward(0) and state.day == 3, "Duplicate reward rejected")
+	_check(
+		not SurvivalTestSetup.settle_day_end(state) and state.day == 3,
+		"Duplicate day-end event rejected"
+	)
 	state.advance_dawn()
 	_check(state.day == 3, "Duplicate dawn rejected")
-	_check(
-		state.hand.any(func(entry: CardInstance) -> bool: return entry.definition == reward),
-		"Reward joins hand before use"
-	)
+	_check(_hand_ids(state.hand) == hand_before, "Day-end event never adds its option to the hand")
 	var duplicate_cost_card: CardDefinition = CardDefinition.new()
 	duplicate_cost_card.id = "duplicate_cost_fixture"
 	duplicate_cost_card.display_name = "重复费用夹具"
@@ -300,7 +294,7 @@ func _test_dawn() -> void:
 		"Restore retains power allocation without another payment"
 	)
 	state.finish_night(_win_report(state))
-	state.choose_reward(0)
+	SurvivalTestSetup.settle_day_end(state)
 	_check(state.resources[GameTypes.Stock.FOOD] == 25, "Dawn uses frozen irrigation yield")
 	_check(
 		(
@@ -314,7 +308,7 @@ func _test_dawn() -> void:
 	poor.resources[GameTypes.Stock.WATER] = 0
 	poor.begin_night()
 	poor.finish_night(_win_report(poor))
-	poor.choose_reward(0)
+	SurvivalTestSetup.settle_day_end(poor)
 	_check(poor.core_health < 240, "Food and water shortage damages core")
 	_check(
 		poor.resources[GameTypes.Stock.FOOD] >= 0 and poor.resources[GameTypes.Stock.WATER] >= 0,
@@ -340,8 +334,8 @@ func _test_snapshots_and_save() -> void:
 	var loaded: VillageState = _fresh(888)
 	_check(loaded.load_game(TEST_SAVE_PATH), "Native save loaded")
 	_check(
-		loaded.day == state.day and _reward_ids(loaded.rewards) == _reward_ids(state.rewards),
-		"Reward offers preserved"
+		loaded.day == state.day and loaded.day_end_event_id == state.day_end_event_id,
+		"Pending day-end event preserved"
 	)
 	_check(_hand_ids(loaded.hand) == _hand_ids(state.hand), "Hand instance identities preserved")
 	_check(loaded.rng.state == state.rng.state, "64-bit RNG state preserved natively")
@@ -359,7 +353,7 @@ func _test_snapshots_and_save() -> void:
 	broken.hand[1].uid = broken.hand[0].uid
 	_check(not loaded.restore(broken), "Duplicate instance IDs rejected")
 	_check(loaded.resources == state.resources, "Failed restore leaves current state intact")
-	state.choose_reward(0)
+	SurvivalTestSetup.settle_day_end(state)
 	_check(
 		state.save_game(TEST_SAVE_PATH) and loaded.load_game(TEST_SAVE_PATH),
 		"Overwriting a save bypasses stale loader cache"
@@ -367,10 +361,12 @@ func _test_snapshots_and_save() -> void:
 	_check(loaded.day == 3, "Latest saved state read from disk")
 	var first: VillageState = _fresh()
 	var second: VillageState = _fresh()
-	first.generate_rewards()
-	second.generate_rewards()
+	first.begin_night()
+	second.begin_night()
+	first.finish_night(_win_report(first))
+	second.finish_night(_win_report(second))
 	_check(
-		_reward_ids(first.rewards) == _reward_ids(second.rewards), "Fixed-seed rewards reproducible"
+		first.day_end_event_id == second.day_end_event_id, "Fixed-seed day-end events reproducible"
 	)
 
 
@@ -436,7 +432,7 @@ func _test_battles() -> void:
 			"Night resolves without a stuck route: day %d" % scenario
 		)
 		_check(
-			state.phase == GameTypes.Phase.REWARD, "Developed village survives day %d" % scenario
+			state.phase == GameTypes.Phase.DAY_END, "Developed village survives day %d" % scenario
 		)
 		if scenario == 7:
 			_check(

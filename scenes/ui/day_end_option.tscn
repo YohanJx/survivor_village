@@ -1,8 +1,8 @@
 [gd_scene load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://scripts/ui/reward_card.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/ui/day_end_option.gd" id="1"]
 
-[node name="RewardCard" type="PanelContainer"]
+[node name="DayEndOption" type="PanelContainer"]
 custom_minimum_size = Vector2(228, 0)
 size_flags_horizontal = 3
 script = ExtResource("1")
@@ -19,7 +19,7 @@ theme_override_font_sizes/normal_font_size = 13
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
-theme_override_colors/default_color = Color(0.6392157, 0.6784314, 0.64705884, 1)
+theme_override_colors/default_color = Color(0.64, 0.60, 0.52, 1)
 
 [node name="Title" type="Label" parent="Content"]
 unique_name_in_owner = true
@@ -27,7 +27,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 20
 autowrap_mode = 3
-theme_override_colors/font_color = Color(0.8627451, 0.88235295, 0.8627451, 1)
+theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
 
 [node name="Positive" type="RichTextLabel" parent="Content"]
 unique_name_in_owner = true
@@ -37,7 +37,7 @@ theme_override_font_sizes/normal_font_size = 14
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
-theme_override_colors/default_color = Color(0.61960784, 0.73725490, 0.59607843, 1)
+theme_override_colors/default_color = Color(0.80, 0.76, 0.65, 1)
 
 [node name="Negative" type="RichTextLabel" parent="Content"]
 unique_name_in_owner = true
@@ -47,7 +47,7 @@ theme_override_font_sizes/normal_font_size = 14
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
-theme_override_colors/default_color = Color(0.80392157, 0.59215686, 0.52941176, 1)
+theme_override_colors/default_color = Color(0.733333, 0.513725, 0.439216, 1)
 
 [node name="Cost" type="Label" parent="Content"]
 unique_name_in_owner = true
@@ -55,10 +55,10 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
 autowrap_mode = 3
-theme_override_colors/font_color = Color(0.6392157, 0.6784314, 0.64705884, 1)
+theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
 
 [node name="SelectButton" type="Button" parent="Content"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_default_cursor_shape = 2
-text = "收入手牌 →"
+text = "处理事件 →"

@@ -103,7 +103,9 @@ static func rules_error(
 				return registered_error
 		if not event.options[1].costs.is_empty():
 			return "每日事件必须有无费用退路"
-	return "" if not rules.events.is_empty() else "每日事件池为空"
+	if rules.events.is_empty():
+		return "每日事件池为空"
+	return DayEndEvents.configuration_error(rules, buildings, keywords)
 
 
 static func valid_progress(data: VillageSaveData, catalog: CardCatalog) -> bool:
@@ -147,7 +149,13 @@ static func valid_progress(data: VillageSaveData, catalog: CardCatalog) -> bool:
 	var event: DailyEvent = catalog.library.progression_rules.event_for(progress.event_id)
 	if (
 		progress.event_id.is_empty()
-		and (progress.region != GameTypes.Region.LEGACY or progress.event_choice != 1)
+		and (
+			progress.event_choice != 1
+			or (
+				data.version < VillageSaveData.DAY_END_VERSION
+				and progress.region != GameTypes.Region.LEGACY
+			)
+		)
 	):
 		return false
 	if not progress.event_id.is_empty() and event == null:
@@ -157,9 +165,20 @@ static func valid_progress(data: VillageSaveData, catalog: CardCatalog) -> bool:
 	for id: String in progress.recent_events:
 		if catalog.library.progression_rules.event_for(id) == null:
 			return false
+	if data.version >= VillageSaveData.DAY_END_VERSION:
+		if progress.recent_day_end_events.size() > 2:
+			return false
+		var recent: Dictionary[String, bool] = {}
+		for id: String in progress.recent_day_end_events:
+			if catalog.library.progression_rules.day_end_event_for(id) == null or recent.has(id):
+				return false
+			recent[id] = true
 	if event != null and not event.regions.is_empty() and not event.regions.has(progress.region):
 		return false
-	if data.phase != GameTypes.Phase.DAY and progress.event_choice < 0:
+	if (
+		(data.phase != GameTypes.Phase.DAY or data.version >= VillageSaveData.DAY_END_VERSION)
+		and progress.event_choice < 0
+	):
 		return false
 	if progress.survivors.size() != data.population or progress.next_person_id < 1:
 		return false
@@ -254,7 +273,7 @@ static func combat_error(rules: ProgressionRules) -> String:
 static func valid_frozen_roster(data: VillageSaveData) -> bool:
 	if (
 		data.night_stats == null
-		or data.phase not in [GameTypes.Phase.NIGHT, GameTypes.Phase.REWARD]
+		or data.phase not in [GameTypes.Phase.NIGHT, GameTypes.Phase.DAY_END]
 	):
 		return true
 	var stats: VillageStats = data.night_stats
@@ -276,7 +295,7 @@ static func valid_frozen_roster(data: VillageSaveData) -> bool:
 				or frozen.archer != current.archer
 			):
 				return false
-	if data.phase == GameTypes.Phase.REWARD:
+	if data.phase == GameTypes.Phase.DAY_END:
 		var report: BattleReport = data.last_report
 		if (
 			report == null

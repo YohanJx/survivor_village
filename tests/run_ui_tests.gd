@@ -42,6 +42,8 @@ func _run() -> void:
 	await map_tests.run(self, _dashboard, _check, _capture)
 	await CardUiRegression.run(self, _dashboard, _check, _capture)
 	await CardInspectionUiRegression.run(self, _game, _check, _capture)
+	await CardAcquisitionUiRegression.run(self, _game, _check)
+	await MixedCardCostsUiRegression.run(self, _game, _check)
 	_check(_game.state.phase == GameTypes.Phase.DAY, "Main scene starts in day phase")
 	_check(
 		(
@@ -145,20 +147,27 @@ func _run() -> void:
 		_game.battle.step(BattleSimulation.FIXED_STEP_SECONDS)
 	await process_frame
 	_check(
-		_game.state.phase == GameTypes.Phase.REWARD and _dashboard.overlay.visible,
-		"Victory opens reward modal"
+		_game.state.phase == GameTypes.Phase.DAY_END and _dashboard.overlay.visible,
+		"Victory opens day-end event modal"
 	)
-	var row: HBoxContainer = _dashboard.overlay.get_node("%RewardRow") as HBoxContainer
-	_check(row.get_child_count() == 3, "Three reward scenes rendered")
-	await _capture("ui_rewards")
+	var row: HBoxContainer = _dashboard.overlay.get_node("%DayEndRow") as HBoxContainer
+	_check(row.get_child_count() == 2, "Two tradeoff event options rendered")
+	await _capture("ui_day_end_event")
 	var hand_size: int = _game.state.hand.size()
-	var reward_view: VillageRewardCard = row.get_child(0) as VillageRewardCard
-	(reward_view.get_node("%SelectButton") as Button).pressed.emit()
+	var event_button: Button
+	for child: Node in row.get_children():
+		var button: Button = child.get_node("%SelectButton") as Button
+		if not button.disabled:
+			event_button = button
+			break
+	_check(event_button != null, "Ordinary closing event has an available choice")
+	if event_button != null:
+		await CardUiRegression.click(self, event_button)
 	_check(
-		_game.state.day == 3 and _game.state.hand.size() == hand_size + 1,
-		"Reward click adds a card and settles dawn"
+		_game.state.day == 3 and _game.state.hand.size() == hand_size,
+		"Event click settles dawn without adding a card"
 	)
-	_check(not _dashboard.overlay.visible, "Reward modal closes at dawn")
+	_check(not _dashboard.overlay.visible, "Day-end modal closes at dawn")
 	_dashboard.new_run_requested.emit()
 	_check(_dashboard.overlay.visible, "New village asks through its modal")
 	(_dashboard.overlay.get_node("%NewRunCancel") as Button).pressed.emit()
@@ -173,6 +182,7 @@ func _run() -> void:
 		_dashboard.detail.get_global_rect().end.x <= _game.size.x, "Detail fits smaller viewport"
 	)
 	_game.set_process(true)
+	await DayEndEventUiRegression.run(self, _game, _check, _capture)
 	print(
 		(
 			"UI TEST RESULT: %d checks, %d failures; renderer=%s"

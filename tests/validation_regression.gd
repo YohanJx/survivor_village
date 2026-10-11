@@ -216,7 +216,7 @@ static func _test_snapshot_failures(check: Callable) -> void:
 	data = state.snapshot()
 	data.version = VillageSaveData.CURRENT_VERSION
 	check.call(state.restore(data), "Valid reward roundtrip accepted")
-	state.choose_reward(0)
+	SurvivalTestSetup.settle_day_end(state)
 	check.call(state.day == 3, "Restored reward can safely settle dawn")
 
 

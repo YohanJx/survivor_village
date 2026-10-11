@@ -14,7 +14,7 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 17
-theme_override_colors/font_color = Color(0.88235295, 0.8901961, 0.8039216, 1)
+theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
 text = "今日的选择"
 
 [node name="Hint" type="Label" parent="Heading"]
@@ -22,8 +22,9 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(0.56078434, 0.63529414, 0.5529412, 1)
-text = "每个时段使用 1 张卡牌  ·  点击卡牌查看正负效果"
+theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
+text = "选择行动"
+clip_text = true
 
 [node name="KeywordFilter" type="OptionButton" parent="Heading"]
 unique_name_in_owner = true
@@ -38,7 +39,7 @@ mouse_default_cursor_shape = 2
 text = "待命  ·  体力 +8"
 
 [node name="HandScroll" type="ScrollContainer" parent="."]
-custom_minimum_size = Vector2(0, 218)
+custom_minimum_size = Vector2(0, 322)
 layout_mode = 2
 vertical_scroll_mode = 0
 

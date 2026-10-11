@@ -3,6 +3,9 @@ extends RefCounted
 
 signal changed
 
+## 完整事务提交后发送新增手牌 UID；新局初始手牌与读档不作为获取。
+signal cards_acquired(uids: PackedInt32Array)
+
 signal persistence_failed(message: String)
 
 signal phase_changed(phase: GameTypes.Phase)
@@ -35,7 +38,7 @@ var core_max_health: float = 240.0
 var buildings: PackedInt32Array = []
 var modifiers: Array[StatModifier] = []
 var hand: Array[CardInstance] = []
-var rewards: Array[CardDefinition] = []
+var day_end_event_id: String = ""
 var history: Array[VillageLogEntry] = []
 var wall_damage: Dictionary[Vector2i, float] = {}
 var night_stats: VillageStats
@@ -46,6 +49,7 @@ var persistence_enabled: bool = true
 var save_path: String = SAVE_PATH
 var last_error: String = ""
 var _publishing_changes: bool = false
+var _pending_card_uids: PackedInt32Array = []
 
 
 func new_run(seed_value: int = 0, region: GameTypes.Region = GameTypes.Region.LEGACY) -> void:
@@ -78,7 +82,8 @@ func new_run(seed_value: int = 0, region: GameTypes.Region = GameTypes.Region.LE
 	buildings.fill(0)
 	modifiers.clear()
 	hand.clear()
-	rewards.clear()
+	_pending_card_uids.clear()
+	day_end_event_id = ""
 	history.clear()
 	wall_damage.clear()
 	night_stats = null
@@ -88,13 +93,16 @@ func new_run(seed_value: int = 0, region: GameTypes.Region = GameTypes.Region.LE
 	SurvivalRules.grant_available(self)
 	PopulationRules.reconcile(self)
 	ProgressionEconomy.start_day(self)
+	_pending_card_uids.clear()
 	log_event("五位幸存者在村庄落脚。第一天只勘探地形，随身补给供今日使用。")
 	_publish_changes(true)
 
 
+## 规则提交阶段加入手牌，获取通知延后到下一次完整状态发布。
 func add_card(definition: CardDefinition) -> void:
-	if definition != null:
+	if definition != null and not _publishing_changes:
 		hand.append(CardInstance.new(definition, next_uid))
+		_pending_card_uids.append(next_uid)
 		next_uid += 1
 
 
@@ -110,8 +118,6 @@ func can_play(uid: int) -> String:
 		return catalog.validation_error
 	if phase != GameTypes.Phase.DAY:
 		return "只能在白天使用卡牌"
-	if progress.event_choice < 0:
-		return "请先确认今日事件"
 	var card: CardDefinition = find_card(uid)
 	if card == null:
 		return "这张卡已不在手牌中"
@@ -168,7 +174,7 @@ func play_card(uid: int) -> bool:
 func skip_slot() -> void:
 	if _publishing_changes:
 		return
-	if phase != GameTypes.Phase.DAY or progress.event_choice < 0:
+	if phase != GameTypes.Phase.DAY:
 		return
 	progress.frustration = maxi(0, progress.frustration - 1)
 	progress.last_labor = GameTypes.Labor.NONE
@@ -181,7 +187,7 @@ func skip_slot() -> void:
 func begin_night() -> void:
 	if _publishing_changes:
 		return
-	if phase != GameTypes.Phase.DAY or progress.event_choice < 0:
+	if phase != GameTypes.Phase.DAY:
 		return
 	PopulationRules.reconcile(self)
 	slot = 3
@@ -219,7 +225,7 @@ func finish_night(report: BattleReport) -> void:
 		phase = GameTypes.Phase.GAME_OVER
 		log_event("防线失守。村庄坚持了 %d 天，击退 %d 名感染者。" % [day, total_kills])
 	else:
-		phase = GameTypes.Phase.REWARD
+		phase = GameTypes.Phase.DAY_END
 		add_resource(
 			(
 				GameTypes.Stock.MATERIALS
@@ -228,13 +234,11 @@ func finish_night(report: BattleReport) -> void:
 			),
 			3 + int(report.kills / 5.0)
 		)
-		generate_rewards()
-		if rewards.is_empty():
-			advance_dawn()
-			return
+		var event: DailyEvent = DayEndEvents.for_day(self)
+		day_end_event_id = event.id
 		log_event(
 			(
-				"守住第 %d 夜！击退 %d，幸存 %d / %d。选择一份新的发展机会。"
+				"守住第 %d 夜！击退 %d，幸存 %d / %d。日终事件等待处理。"
 				% [day, report.kills, population, report.started_survivors]
 			)
 		)
@@ -242,44 +246,39 @@ func finish_night(report: BattleReport) -> void:
 	autosave()
 
 
-func generate_rewards() -> void:
-	rewards.clear()
-	var pool: Array[CardDefinition] = []
-	for card: CardDefinition in catalog.library.cards:
-		if card.reusable or card.guaranteed_unlock:
-			continue
-		if not SurvivalRules.unlock_error(self, card, day + 1).is_empty():
-			continue
-		if not card.regions.is_empty() and not card.regions.has(progress.region):
-			continue
-		if card.building != null and buildings[card.building.id] >= card.building.max_level:
-			continue
-		pool.append(card)
-	while rewards.size() < 3 and not pool.is_empty():
-		var index: int = rng.randi_range(0, pool.size() - 1)
-		rewards.append(pool[index])
-		pool.remove_at(index)
+## 返回当前待处理的只读原生定义；无事件时返回 null，查询不修改状态。
+func current_day_end_event() -> DailyEvent:
+	return catalog.library.progression_rules.day_end_event_for(day_end_event_id)
 
 
-func choose_reward(index: int) -> bool:
+## 仅在日终阶段处理一次；准入失败不扣费、不推进日期或发信号。
+## 成功直接结算双向效果与黎明，发 changed/phase_changed 并自动保存。
+func choose_day_end_event(index: int) -> bool:
 	if _publishing_changes:
 		return false
-	if phase != GameTypes.Phase.REWARD or index < 0 or index >= rewards.size():
+	last_error = DayEndEvents.option_error(self, index)
+	if not last_error.is_empty():
 		return false
-	var definition: CardDefinition = rewards[index]
-	add_card(definition)
-	log_event("获得卡牌：%s。" % definition.display_name)
-	rewards.clear()
-	advance_dawn()
+	_settle_day_end(current_day_end_event().options[index])
+	return true
+
+
+## 特殊事件可跳过；普通事件拒绝跳过，无游戏状态副作用。
+func skip_day_end_event() -> bool:
+	if _publishing_changes or phase != GameTypes.Phase.DAY_END:
+		return false
+	var event: DailyEvent = current_day_end_event()
+	if event == null or not event.skippable:
+		return false
+	_settle_day_end(null)
 	return true
 
 
 func advance_dawn() -> void:
 	if _publishing_changes:
 		return
-	if phase != GameTypes.Phase.REWARD or not rewards.is_empty():
+	if phase != GameTypes.Phase.DAY_END or not day_end_event_id.is_empty():
 		return
-	EffectResolver.expire_after_night(self)
 	var shortage: int = 0
 	var daily_upkeep: PackedInt32Array = EffectResolver.daily_upkeep(self)
 	for key: int in [
@@ -377,7 +376,7 @@ func snapshot() -> VillageSaveData:
 		data.modifiers.append(modifier.copy_runtime())
 	for instance: CardInstance in hand:
 		data.hand.append(CardInstance.new(instance.definition, instance.uid))
-	data.rewards = rewards.duplicate()
+	data.day_end_event_id = day_end_event_id
 	for entry: VillageLogEntry in history:
 		data.history.append(VillageLogEntry.new(entry.day, entry.text))
 	data.wall_damage = wall_damage.duplicate()
@@ -411,6 +410,8 @@ func restore(data: VillageSaveData) -> bool:
 	resources = data.resources.duplicate()
 	resources.resize(GameTypes.Stock.COUNT)
 	progress = data.progress.copy_progress() if data.version >= 5 else VillageProgress.new()
+	if data.version < VillageSaveData.DAY_END_VERSION:
+		progress.recent_day_end_events.clear()
 	population = data.population
 	profession_counts = (
 		data.profession_counts.duplicate()
@@ -426,11 +427,12 @@ func restore(data: VillageSaveData) -> bool:
 	for modifier: StatModifier in data.modifiers:
 		modifiers.append(modifier.copy_runtime())
 	hand.clear()
+	_pending_card_uids.clear()
 	for instance: CardInstance in data.hand:
 		hand.append(CardInstance.new(catalog.get_card(instance.definition.id), instance.uid))
-	rewards.clear()
-	for definition: CardDefinition in data.rewards:
-		rewards.append(catalog.get_card(definition.id))
+	day_end_event_id = (
+		data.day_end_event_id if data.version >= VillageSaveData.DAY_END_VERSION else ""
+	)
 	history.clear()
 	for entry: VillageLogEntry in data.history:
 		history.append(VillageLogEntry.new(entry.day, entry.text))
@@ -439,6 +441,10 @@ func restore(data: VillageSaveData) -> bool:
 	last_report = data.last_report.copy_snapshot() if data.last_report != null else null
 	next_uid = data.next_uid
 	total_kills = data.total_kills
+	# 旧版尚未选择的黎明事件按原计划继续；已选择的当天效果保持。
+	if progress.event_choice < 0:
+		progress.event_id = ""
+		progress.event_choice = 1
 	if data.version < 5:
 		progress.event_choice = 1
 		PopulationRules.reconcile(self)
@@ -457,30 +463,9 @@ func restore(data: VillageSaveData) -> bool:
 		TerrainGrid.migrate_progress(progress, terrain_grid)
 		SurvivalRules.migrate_completions(self)
 	ProgressionEconomy.expand_snapshot(night_stats)
+	if data.version < VillageSaveData.DAY_END_VERSION and phase == GameTypes.Phase.DAY_END:
+		day_end_event_id = DayEndEvents.for_day(self).id
 	_publish_changes(true)
-	return true
-
-
-func choose_daily_event(index: int) -> bool:
-	if _publishing_changes or phase != GameTypes.Phase.DAY or progress.event_choice >= 0:
-		return false
-	var event: DailyEvent = LaborRules.event_for(self)
-	if event == null or index < 0 or index >= event.options.size():
-		return false
-	var card: CardDefinition = event.options[index]
-	if not EffectResolver.construction_error(self, card).is_empty():
-		return false
-	var costs: PackedInt32Array = EffectResolver.cost_totals(card, self)
-	var deltas: PackedInt32Array = EffectResolver.resource_deltas(self, card)
-	for key: int in GameTypes.Stock.COUNT:
-		if resources[key] < costs[key] or resources[key] + deltas[key] < 0:
-			return false
-	EffectResolver.apply(self, card, true)
-	progress.event_choice = index
-	progress.scouting = event.id == "scream" and index == 0
-	log_event("今日事件：%s · %s" % [event.display_name, card.display_name])
-	_publish_changes(false)
-	autosave()
 	return true
 
 
@@ -574,6 +559,28 @@ func exploration_error() -> String:
 	return ""
 
 
+func _settle_day_end(option: CardDefinition) -> void:
+	last_error = ""
+	var event: DailyEvent = current_day_end_event()
+	day_end_event_id = ""
+	progress.recent_day_end_events.append(event.id)
+	if progress.recent_day_end_events.size() > 2:
+		progress.recent_day_end_events.remove_at(0)
+	# 先结束已完成夜晚的临时效果，再施加新事件，保留其下一夜期限。
+	EffectResolver.expire_after_night(self)
+	if option != null:
+		EffectResolver.apply(self, option, true)
+		log_event(
+			(
+				"日终事件：%s · %s；%s；%s"
+				% [event.display_name, option.display_name, option.positive, option.negative]
+			)
+		)
+	else:
+		log_event("跳过日终事件：%s，没有取得收益或承担代价。" % event.display_name)
+	advance_dawn()
+
+
 func _advance_slot() -> void:
 	actions_used += 1
 	if actions_used >= actions_per_slot:
@@ -587,8 +594,12 @@ func _advance_slot() -> void:
 
 
 func _publish_changes(include_phase: bool) -> void:
+	var acquired: PackedInt32Array = _pending_card_uids.duplicate()
+	_pending_card_uids.clear()
 	_publishing_changes = true
 	if include_phase:
 		phase_changed.emit(phase)
 	changed.emit()
+	if not acquired.is_empty():
+		cards_acquired.emit(acquired)
 	_publishing_changes = false

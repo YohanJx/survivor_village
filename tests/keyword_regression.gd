@@ -7,7 +7,6 @@ static func run(check: Callable) -> void:
 	var state: VillageState = VillageState.new()
 	state.persistence_enabled = false
 	state.new_run(65012, GameTypes.Region.RURAL)
-	state.choose_daily_event(1)
 	state.day = 2
 	var well: CardDefinition = state.catalog.get_card("well_tools")
 	var site: KeywordDefinition = well.keywords.back()
@@ -114,7 +113,7 @@ static func _test_daily_upkeep(check: Callable) -> void:
 		"Daily upkeep includes population and facilities without netting income"
 	)
 	state.night_stats = EffectResolver.derive(state)
-	state.phase = GameTypes.Phase.REWARD
+	state.phase = GameTypes.Phase.DAY_END
 	state.last_report = BattleReport.new()
 	state.last_report.started_survivors = state.population
 	state.population -= 2

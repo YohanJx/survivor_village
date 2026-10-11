@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/event.tres" id="kw_event"]
+
+[sub_resource type="Resource" id="effect0"]
+script = ExtResource("effect")
+type = 0
+key = 9
+amount = 8.0
+
+[sub_resource type="Resource" id="effect1"]
+script = ExtResource("effect")
+type = 0
+key = 10
+amount = 4.0
+
+[sub_resource type="Resource" id="effect2"]
+script = ExtResource("effect")
+type = 0
+key = 5
+amount = 3.0
+
+[sub_resource type="Resource" id="cost0"]
+script = ExtResource("cost")
+key = 1
+amount = 4
+
+[sub_resource type="Resource" id="cost1"]
+script = ExtResource("cost")
+key = 2
+amount = 2
+
+[resource]
+script = ExtResource("card")
+id = "day_end_trader_0"
+display_name = "交换工业物资"
+description = "零件 +8、燃料 +4；食物消耗 4、水消耗 2、噪音 +3。确认后直接结算，不占用白天行动。"
+positive = "零件 +8、燃料 +4"
+negative = "食物消耗 4、水消耗 2、噪音 +3"
+kind = 3
+icon = 11
+color = 2
+mood_delta = 0
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_event")])
+costs = Array[ExtResource("cost")]([SubResource("cost0"), SubResource("cost1")])
+effects = Array[ExtResource("effect")]([SubResource("effect0"), SubResource("effect1"), SubResource("effect2")])

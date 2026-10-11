@@ -1,0 +1,100 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ui/worn_iron_panel.png" id="worn_texture"]
+[ext_resource type="Script" path="res://scripts/ui/card_face.gd" id="script"]
+[ext_resource type="PackedScene" path="res://scenes/ui/card_cost_strip.tscn" id="costs"]
+
+[sub_resource type="StyleBoxTexture" id="card"]
+content_margin_left = 10.0
+content_margin_right = 10.0
+content_margin_top = 10.0
+content_margin_bottom = 10.0
+texture = ExtResource("worn_texture")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+modulate_color = Color(1, 1, 1, 1)
+
+[node name="CardFace" type="PanelContainer"]
+script = ExtResource("script")
+custom_minimum_size = Vector2(210, 0)
+mouse_filter = 2
+theme_override_styles/panel = SubResource("card")
+
+[node name="Content" type="VBoxContainer" parent="."]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="FaceTitle" type="Label" parent="Content"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+
+[node name="FaceKind" type="Label" parent="Content"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 11
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.69, 0.62, 0.49, 1)
+
+[node name="FaceArt" type="TextureRect" parent="Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 184)
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="FaceSummary" type="Label" parent="Content"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+autowrap_mode = 3
+max_lines_visible = 2
+text_overrun_behavior = 3
+theme_override_font_sizes/font_size = 13
+
+[node name="FaceRules" type="RichTextLabel" parent="Content"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+theme_override_font_sizes/normal_font_size = 19
+theme_override_font_sizes/bold_font_size = 19
+
+[node name="FaceRisk" type="RichTextLabel" parent="Content"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+theme_override_font_sizes/normal_font_size = 14
+theme_override_colors/default_color = Color(0.73, 0.49, 0.40, 1)
+
+[node name="FaceRiskSummary" type="Label" parent="Content"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+autowrap_mode = 3
+max_lines_visible = 1
+text_overrun_behavior = 3
+theme_override_font_sizes/font_size = 11
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.73, 0.49, 0.40, 1)
+
+[node name="Divider" type="HSeparator" parent="Content"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="FaceCosts" parent="Content" instance=ExtResource("costs")]
+unique_name_in_owner = true
+layout_mode = 2

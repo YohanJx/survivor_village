@@ -15,10 +15,12 @@ signal new_run_requested
 signal help_requested
 
 var _resource_labels: Array[Label] = []
+var _notification_progress: VillageProgress
 
 @onready var detail: VillageDetailPanel = %DetailPanel
 @onready var hand_panel: VillageHandPanel = %HandPanel
 @onready var overlay: VillageGameOverlay = %GameOverlay
+@onready var _card_acquisition: CardAcquisitionNotice = %CardAcquisition
 @onready var _village_map: VillageMap = %VillageMap
 @onready var _day_label: Label = %DayLabel
 @onready var _phase_label: Label = %PhaseLabel
@@ -40,6 +42,7 @@ var _resource_labels: Array[Label] = []
 func _ready() -> void:
 	_resource_labels = [%Stock0, %Stock1, %Stock2, %Stock3, %Stock4]
 	(%ProgressLine as Button).pressed.connect(overlay.show_village)
+	_card_acquisition.inspect_requested.connect(overlay.show_card)
 	hand_panel.card_selected.connect(card_selected.emit)
 	hand_panel.inspect_requested.connect(overlay.show_card)
 	hand_panel.skip_requested.connect(skip_requested.emit)
@@ -63,6 +66,9 @@ func bind(state: VillageState, battle: BattleSimulation) -> void:
 
 
 func update_view(state: VillageState, battle: BattleSimulation, selected_uid: int) -> void:
+	if _notification_progress != state.progress:
+		_card_acquisition.clear()
+		_notification_progress = state.progress
 	_village_map.set_exploration_mode(
 		(
 			state.phase == GameTypes.Phase.DAY
@@ -73,7 +79,7 @@ func update_view(state: VillageState, battle: BattleSimulation, selected_uid: in
 		state.environment_period()
 	]
 	var event: DailyEvent = LaborRules.event_for(state)
-	var event_name: String = event.display_name if event != null else "旧版规则"
+	var event_name: String = event.display_name if event != null else "日终处理事件"
 	(%ProgressLine as Button).text = (
 		"%s · 烦躁 %d/5 · 今日：%s · 木 %d 石 %d 零件 %d 燃料 %d 箭 %d 药 %d"
 		% [
@@ -132,8 +138,8 @@ func update_view(state: VillageState, battle: BattleSimulation, selected_uid: in
 				]
 			)
 			_status_label.add_theme_color_override("font_color", UiElements.POSITIVE)
-		GameTypes.Phase.REWARD:
-			_map_hint.text = "守夜结束  /  选择奖励"
+		GameTypes.Phase.DAY_END:
+			_map_hint.text = "守夜结束  /  处理日终事件"
 		GameTypes.Phase.GAME_OVER:
 			_map_hint.text = "防线失守"
 	_save_button.disabled = state.phase == GameTypes.Phase.NIGHT
@@ -143,6 +149,10 @@ func update_view(state: VillageState, battle: BattleSimulation, selected_uid: in
 	hand_panel.update_view(state, selected_uid, overlay.blocks_simulation())
 	detail.update_view(state, selected_uid)
 	overlay.update_view(state)
+
+
+func show_acquired_cards(state: VillageState, uids: PackedInt32Array) -> void:
+	_card_acquisition.show_cards(state, uids)
 
 
 func update_resources(state: VillageState, battle: BattleSimulation) -> void:

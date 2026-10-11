@@ -60,13 +60,13 @@ func update_view(state: VillageState, selected_uid: int, blocked: bool) -> void:
 			+ ProgressionEconomy.output_text(state, entry.definition)
 			+ "\n风险："
 			+ entry.definition.negative
+			+ "\n消耗："
+			+ state.catalog.cost_text(entry.definition, state)
 		)
-		view.cost = state.catalog.cost_text(entry.definition, state)
 		view.is_selected = entry.uid == selected_uid
-		view.locked = not state.can_play(entry.uid).is_empty()
-		view.reusable = entry.definition.reusable
 		view.disabled = blocked
 		_hand_container.move_child(view, index)
+		view.update_face(state)
 		view.queue_redraw()
 	_apply_filter()
 

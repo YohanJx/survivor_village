@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/event.tres" id="kw_event"]
+
+[sub_resource type="Resource" id="effect0"]
+script = ExtResource("effect")
+type = 3
+key = 1
+amount = 18.0
+
+[sub_resource type="Resource" id="effect1"]
+script = ExtResource("effect")
+type = 0
+key = 5
+amount = 2.0
+
+[sub_resource type="Resource" id="cost0"]
+script = ExtResource("cost")
+key = 12
+amount = 1
+
+[resource]
+script = ExtResource("card")
+id = "day_end_traveler_1"
+display_name = "请他救治伤者"
+description = "村庄耐久 +18；药品消耗 1，噪音 +2。确认后直接结算，不占用白天行动。"
+positive = "村庄耐久 +18"
+negative = "药品消耗 1，噪音 +2"
+kind = 3
+icon = 11
+color = 2
+mood_delta = 0
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_event")])
+costs = Array[ExtResource("cost")]([SubResource("cost0")])
+effects = Array[ExtResource("effect")]([SubResource("effect0"), SubResource("effect1")])

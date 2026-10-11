@@ -11,6 +11,6 @@
 [resource]
 script = ExtResource("1")
 definitions = Array[ExtResource("2")]([ExtResource("w0"), ExtResource("w1"), ExtResource("w2"), ExtResource("w3"), ExtResource("w4")])
-ground_colors = PackedColorArray(0.27, 0.37, 0.28, 1, 0.21, 0.31, 0.23, 1, 0.32, 0.26, 0.22, 1, 0.09, 0.17, 0.21, 1)
-background_colors = PackedColorArray(0.085, 0.125, 0.10, 1, 0.067, 0.11, 0.09, 1, 0.12, 0.09, 0.075, 1, 0.045, 0.075, 0.10, 1)
-light_colors = PackedColorArray(0.92, 0.76, 0.48, 0.055, 0, 0, 0, 0, 0.77, 0.30, 0.10, 0.17, 0.025, 0.065, 0.16, 0.26)
+ground_colors = PackedColorArray(0.24, 0.28, 0.23, 1, 0.20, 0.25, 0.21, 1, 0.32, 0.26, 0.22, 1, 0.09, 0.17, 0.21, 1)
+background_colors = PackedColorArray(0.10, 0.095, 0.083, 1, 0.115, 0.107, 0.091, 1, 0.10, 0.082, 0.065, 1, 0.055, 0.057, 0.054, 1)
+light_colors = PackedColorArray(0.92, 0.76, 0.48, 0.055, 0, 0, 0, 0, 0.50, 0.37, 0.24, 0.10, 0.025, 0.065, 0.16, 0.26)

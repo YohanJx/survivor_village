@@ -1,27 +1,34 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
+[ext_resource type="Texture2D" path="res://assets/ui/worn_iron_panel.png" id="worn_texture"]
 [ext_resource type="Script" path="res://scripts/ui/village_info_panel.gd" id="script"]
 [ext_resource type="PackedScene" path="res://scenes/ui/workforce_row.tscn" id="row"]
 
 [sub_resource type="StyleBoxEmpty" id="tab_panel"]
 
-[sub_resource type="StyleBoxFlat" id="tab_selected"]
-bg_color = Color(0.16, 0.26, 0.19, 1)
+[sub_resource type="StyleBoxTexture" id="tab_selected"]
 content_margin_left = 18.0
 content_margin_right = 18.0
 content_margin_top = 10.0
 content_margin_bottom = 10.0
-corner_radius_top_left = 8
-corner_radius_top_right = 8
+texture = ExtResource("worn_texture")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+modulate_color = Color(1, 1, 1, 1)
 
-[sub_resource type="StyleBoxFlat" id="tab_inactive"]
-bg_color = Color(0.10, 0.17, 0.13, 1)
+[sub_resource type="StyleBoxTexture" id="tab_inactive"]
 content_margin_left = 18.0
 content_margin_right = 18.0
 content_margin_top = 10.0
 content_margin_bottom = 10.0
-corner_radius_top_left = 8
-corner_radius_top_right = 8
+texture = ExtResource("worn_texture")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+modulate_color = Color(1, 1, 1, 1)
 
 [node name="VillageInfoPanel" type="VBoxContainer"]
 script = ExtResource("script")

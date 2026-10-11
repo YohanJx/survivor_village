@@ -13,3 +13,4 @@ extends Resource
 @export var output_multiplier: float = 1.0
 @export var cost_multiplier: float = 1.0
 @export var low_mood: bool = false
+@export var skippable: bool = false

@@ -123,7 +123,7 @@ static func _test_save_and_dawn(state: VillageState, check: Callable) -> void:
 	report.kills = 11
 	report.duration = 30.0
 	state.finish_night(report)
-	state.choose_reward(0)
+	SurvivalTestSetup.settle_day_end(state)
 	check.call(
 		state.resources[GameTypes.Stock.WATER] == water + 16 - 5, "Dawn settles storm water once"
 	)

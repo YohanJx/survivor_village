@@ -1,17 +1,19 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
+[ext_resource type="Texture2D" path="res://assets/ui/worn_iron_panel.png" id="worn_texture"]
 [ext_resource type="Script" path="res://scripts/ui/workforce_row.gd" id="script"]
 
-[sub_resource type="StyleBoxFlat" id="row_style"]
-bg_color = Color(0.085, 0.145, 0.11, 1)
+[sub_resource type="StyleBoxTexture" id="row_style"]
 content_margin_left = 12.0
 content_margin_right = 12.0
 content_margin_top = 10.0
 content_margin_bottom = 10.0
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_left = 8
-corner_radius_bottom_right = 8
+texture = ExtResource("worn_texture")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+modulate_color = Color(1, 1, 1, 1)
 
 [node name="WorkforceRow" type="PanelContainer"]
 script = ExtResource("script")

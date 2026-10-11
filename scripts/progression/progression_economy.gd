@@ -13,12 +13,9 @@ static func start_day(state: VillageState) -> void:
 	progress.low_mood_used = false
 	progress.assigned_today = false
 	progress.scouting = false
-	var event: DailyEvent = state.catalog.library.progression_rules.for_day(state)
-	progress.event_id = event.id
-	progress.event_choice = 1 if progress.region == GameTypes.Region.LEGACY else -1
-	progress.recent_events.append(event.id)
-	if progress.recent_events.size() > 2:
-		progress.recent_events.remove_at(0)
+	# 黎明只重置当日状态；遭遇统一在守夜结束后处理。
+	progress.event_id = ""
+	progress.event_choice = 1
 
 
 static func expand_snapshot(stats: VillageStats) -> void:

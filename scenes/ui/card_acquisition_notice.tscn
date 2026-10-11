@@ -1,0 +1,66 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ui/worn_iron_panel.png" id="worn_texture"]
+[ext_resource type="Script" path="res://scripts/ui/card_acquisition_notice.gd" id="script"]
+
+[sub_resource type="StyleBoxTexture" id="notice"]
+content_margin_left = 18.0
+content_margin_top = 12.0
+content_margin_right = 18.0
+content_margin_bottom = 12.0
+texture = ExtResource("worn_texture")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+modulate_color = Color(1, 1, 1, 1)
+
+[node name="CardAcquisitionNotice" type="PanelContainer"]
+visible = false
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -690.0
+offset_top = 164.0
+offset_right = -350.0
+offset_bottom = 164.0
+grow_horizontal = 0
+script = ExtResource("script")
+theme_override_styles/panel = SubResource("notice")
+
+[node name="Content" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Heading" type="HBoxContainer" parent="Content"]
+layout_mode = 2
+
+[node name="AcquiredTitle" type="Label" parent="Content/Heading"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.81, 0.71, 0.47, 1)
+theme_override_font_sizes/font_size = 19
+text = "获得新卡"
+
+[node name="DismissNotice" type="Button" parent="Content/Heading"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "×"
+tooltip_text = "收起通知"
+
+[node name="AcquiredNames" type="RichTextLabel" parent="Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+bbcode_enabled = true
+theme_override_font_sizes/normal_font_size = 17
+
+[node name="Hint" type="Label" parent="Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.64, 0.68, 0.65, 1)
+text = "已加入手牌 · 点击卡名查看，列表可滚动"
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true

@@ -1,13 +1,13 @@
 class_name TradeoffRegression
 extends RefCounted
-## 验证原生取舍卡的事务、跨夜代价、预览隔离和奖励可达性。
+## 验证原生取舍卡的事务、跨夜代价、预览隔离和日终事件独立性。
 
 
 static func run(check: Callable) -> void:
 	_test_cards(check)
 	_test_payment(check)
 	_test_debt(check)
-	_test_rewards(check)
+	_test_availability(check)
 
 
 static func _test_cards(check: Callable) -> void:
@@ -141,7 +141,7 @@ static func _test_debt(check: Callable) -> void:
 	check.call(restored.modifiers.is_empty(), "Legacy debt expires after two nights")
 
 
-static func _test_rewards(check: Callable) -> void:
+static func _test_availability(check: Callable) -> void:
 	var state: VillageState = _fresh()
 	check.call(
 		_has_card(state, "forced_march") and _has_card(state, "emergency_rations"),
@@ -149,14 +149,10 @@ static func _test_rewards(check: Callable) -> void:
 	)
 	state.buildings[GameTypes.Building.WALL] = 1
 	state.buildings[GameTypes.Building.GENERATOR] = 1
-	var found: PackedStringArray = []
-	for draw: int in 100:
-		state.generate_rewards()
-		for card: CardDefinition in state.rewards:
-			if not found.has(card.id):
-				found.append(card.id)
-	for id: String in ["forced_march", "emergency_rations", "lure", "overcharge", "hold_position"]:
-		check.call(found.has(id), "Tradeoff appears in seeded random rewards: " + id)
+	var hand_before: int = state.hand.size()
+	var event: DailyEvent = DayEndEvents.for_day(state)
+	check.call(event != null, "Day-end opportunity exists without awarding tradeoff cards")
+	check.call(state.hand.size() == hand_before, "Event queries never stuff cards into the hand")
 
 
 static func _fresh() -> VillageState:

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="DailyEvent" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/daily_event.gd" id="event"]
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Resource" path="res://data/events/day_end/options/repair_0.tres" id="o0"]
+[ext_resource type="Resource" path="res://data/events/day_end/options/repair_1.tres" id="o1"]
+
+[resource]
+script = ExtResource("event")
+id = "day_end_repair"
+display_name = "破损的防线"
+description = "夜战留下了破口。集中修补或先照料伤者，都需要付出代价。"
+skippable = false
+options = Array[ExtResource("card")]([ExtResource("o0"), ExtResource("o1")])

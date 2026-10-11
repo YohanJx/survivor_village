@@ -59,7 +59,7 @@ static func daily_upkeep(state: VillageState) -> PackedInt32Array:
 		else derive(state)
 	)
 	var upkeep: PackedInt32Array = stats.upkeep.duplicate()
-	if state.phase == GameTypes.Phase.REWARD and state.last_report != null:
+	if state.phase == GameTypes.Phase.DAY_END and state.last_report != null:
 		for stock: int in [GameTypes.Stock.FOOD, GameTypes.Stock.WATER]:
 			upkeep[stock] -= state.last_report.started_survivors - state.population
 	return upkeep

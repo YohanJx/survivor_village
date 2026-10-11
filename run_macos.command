@@ -64,5 +64,35 @@ printf '%s\n' "正在导入项目资源，首次启动可能需要稍等……"
 	|| fail "项目资源导入失败，请检查上方错误信息并使用 Godot 4.5 重试。"
 
 printf '%s\n' "正在启动余烬村庄……"
-"$godot_executable" --path "$project_directory" "$@" \
-	|| fail "游戏启动或运行失败，请检查上方错误信息。"
+launch_log="${TMPDIR:-/tmp}/ember_village_launch_$(date +%Y%m%d_%H%M%S)_$$.log"
+nohup "$godot_executable" --path "$project_directory" "$@" > "$launch_log" 2>&1 < /dev/null &
+game_pid=$!
+sleep 1
+if ! kill -0 "$game_pid" 2>/dev/null; then
+	wait "$game_pid" || {
+		cat "$launch_log" >&2
+		fail "游戏启动失败，请检查上方错误信息。"
+	}
+fi
+printf '游戏日志：%s\n' "$launch_log"
+
+# Close only the launcher's Terminal tab after this shell has finished.
+if [[ "${TERM_PROGRAM:-}" == "Apple_Terminal" && -t 1 ]]; then
+	terminal_tty="$(tty)"
+	nohup /usr/bin/osascript - "$terminal_tty" > /dev/null 2>&1 < /dev/null <<'APPLESCRIPT' &
+on run arguments
+	delay 1
+	set launcherTty to item 1 of arguments
+	tell application "Terminal"
+		repeat with terminalWindow in windows
+			repeat with terminalTab in tabs of terminalWindow
+				if tty of terminalTab is launcherTty then
+					close terminalTab
+					return
+				end if
+			end repeat
+		end repeat
+	end tell
+end run
+APPLESCRIPT
+fi

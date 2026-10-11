@@ -6,7 +6,13 @@ extends RefCounted
 static func run(
 	tree: SceneTree, dashboard: VillageDashboard, check: Callable, capture: Callable
 ) -> void:
-	tree.root.grab_focus()
+	if DisplayServer.get_name() != "headless":
+		tree.root.grab_focus()
+		# 原生窗口的焦点申请异步完成；取得焦点后再移动系统光标。
+		for attempt: int in 20:
+			if tree.root.has_focus():
+				break
+			await tree.create_timer(0.05).timeout
 	await tree.process_frame
 	var row: HBoxContainer = dashboard.hand_panel.get_node("%HandContainer") as HBoxContainer
 	var card: VillageCardButton
@@ -24,13 +30,15 @@ static func run(
 	var away: InputEventMouseMotion = InputEventMouseMotion.new()
 	away.position = Vector2(5, 5)
 	away.global_position = away.position
-	tree.root.warp_mouse(away.position)
+	if DisplayServer.get_name() != "headless":
+		tree.root.warp_mouse(away.position)
 	tree.root.push_input(away, true)
 	await tree.process_frame
 	var motion: InputEventMouseMotion = InputEventMouseMotion.new()
 	motion.position = point
 	motion.global_position = point
-	tree.root.warp_mouse(point)
+	if DisplayServer.get_name() != "headless":
+		tree.root.warp_mouse(point)
 	tree.root.push_input(motion, true)
 	var explanation: KeywordDefinition = KeywordText.definition("采集")
 	check.call(
@@ -81,7 +89,7 @@ static func run(
 		"Scrolling effects does not hide or move fixed risk"
 	)
 	check.call(
-		(dashboard.detail.get_node("%Cost") as Label).visible,
+		(dashboard.detail.get_node("%SelectedCosts") as CardCostStrip).is_visible_in_tree(),
 		"Adjusted fees remain visible outside scrolling effects"
 	)
 	var original_size: Vector2i = tree.root.size

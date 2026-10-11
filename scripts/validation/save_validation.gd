@@ -10,6 +10,7 @@ static func is_valid(data: VillageSaveData, catalog: CardCatalog, max_health: fl
 		data.version
 		not in [
 			VillageSaveData.CURRENT_VERSION,
+			7,
 			6,
 			5,
 			4,
@@ -46,7 +47,7 @@ static func is_valid(data: VillageSaveData, catalog: CardCatalog, max_health: fl
 		return false
 	if data.phase == GameTypes.Phase.DAY and data.slot == 3:
 		return false
-	if data.phase in [GameTypes.Phase.NIGHT, GameTypes.Phase.REWARD] and data.slot != 3:
+	if data.phase in [GameTypes.Phase.NIGHT, GameTypes.Phase.DAY_END] and data.slot != 3:
 		return false
 	if data.phase != GameTypes.Phase.GAME_OVER and (data.core_health <= 0 or data.population <= 0):
 		return false
@@ -68,19 +69,37 @@ static func is_valid(data: VillageSaveData, catalog: CardCatalog, max_health: fl
 		return false
 	if data.version >= 5 and not ProgressionValidation.valid_frozen_roster(data):
 		return false
-	if data.phase in [GameTypes.Phase.NIGHT, GameTypes.Phase.REWARD]:
+	if data.phase in [GameTypes.Phase.NIGHT, GameTypes.Phase.DAY_END]:
 		if not valid_stats(data.night_stats):
 			return false
 	if data.last_report != null and not valid_report(data.last_report, max_health):
 		return false
-	if data.phase == GameTypes.Phase.REWARD:
-		if data.last_report == null or data.rewards.is_empty():
+	if data.phase == GameTypes.Phase.DAY_END:
+		if (
+			data.last_report == null
+			or (data.version < VillageSaveData.DAY_END_VERSION and data.rewards.is_empty())
+		):
 			return false
 		if data.last_report.survivors != data.population:
 			return false
 		if not is_equal_approx(data.last_report.core_health, data.core_health):
 			return false
+	if data.version >= VillageSaveData.DAY_END_VERSION and not _valid_day_end_event(data, catalog):
+		return false
 	return true
+
+
+static func _valid_day_end_event(data: VillageSaveData, catalog: CardCatalog) -> bool:
+	if not data.rewards.is_empty():
+		return false
+	if data.phase != GameTypes.Phase.DAY_END:
+		return data.day_end_event_id.is_empty()
+	var event: DailyEvent = catalog.library.progression_rules.day_end_event_for(
+		data.day_end_event_id
+	)
+	if event == null or data.progress.recent_day_end_events.has(event.id):
+		return false
+	return event.regions.is_empty() or event.regions.has(data.progress.region)
 
 
 static func valid_stats(stats: VillageStats) -> bool:
@@ -204,6 +223,6 @@ static func _valid_cards(data: VillageSaveData, catalog: CardCatalog) -> bool:
 		if card == null or not catalog.cards.has(card.id) or reward_ids.has(card.id):
 			return false
 		reward_ids[card.id] = true
-	if data.phase != GameTypes.Phase.REWARD and not data.rewards.is_empty():
+	if data.phase != GameTypes.Phase.DAY_END and not data.rewards.is_empty():
 		return false
 	return true

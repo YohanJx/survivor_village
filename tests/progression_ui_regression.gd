@@ -9,18 +9,8 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 	await tree.process_frame
 	await tree.process_frame
 	check.call(
-		overlay.visible and (overlay.get_node("%EventContent") as Control).visible,
-		"New map opens fixed first-day event"
-	)
-	await capture.call("ui_progression_event")
-	await CardUiRegression.click(tree, overlay.get_node("%EventAccept") as Control)
-	check.call(
-		(
-			game.state.progress.event_choice == 0
-			and not overlay.visible
-			and game.state.actions_used == 0
-		),
-		"Real event button unlocks day without spending action"
+		not overlay.visible and game.state.actions_used == 0,
+		"New map starts directly without dawn modal or action cost"
 	)
 	SurvivalTestSetup.developed(game.state)
 	game.state.changed.emit()
@@ -97,34 +87,14 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 	check.call(
 		(
 			game.state.progress.region == GameTypes.Region.RUINS
-			and game.state.progress.event_choice == -1
+			and game.state.progress.event_choice == 1
 		),
 		"New-run confirmation uses chosen map"
-	)
-	await CardUiRegression.click(tree, overlay.get_node("%EventDecline") as Control)
-	game.state.progress.event_id = "convoy"
-	game.state.progress.event_choice = -1
-	game.state.resources[GameTypes.Stock.FOOD] = 0
-	game.state.changed.emit()
-	check.call(
-		(overlay.get_node("%EventAccept") as Button).disabled,
-		"Unaffordable event option is visibly disabled"
-	)
-	check.call(
-		not (overlay.get_node("%EventDecline") as Button).disabled,
-		"Free event option remains reachable"
-	)
-	await capture.call("ui_progression_event_choice")
-	await CardUiRegression.click(tree, overlay.get_node("%EventDecline") as Control)
-	check.call(
-		game.state.progress.event_choice == 1 and game.state.resources[GameTypes.Stock.FOOD] == 0,
-		"Real free event choice preserves insufficient supplies"
 	)
 	for region: GameTypes.Region in [
 		GameTypes.Region.MOUNTAIN, GameTypes.Region.RURAL, GameTypes.Region.RUINS
 	]:
 		game.state.new_run(65012, region)
-		game.state.choose_daily_event(1)
 		await tree.process_frame
 		await tree.process_frame
 		await capture.call("ui_progression_map_%d" % region)

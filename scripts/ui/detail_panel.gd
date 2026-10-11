@@ -24,12 +24,15 @@ var _selected_uid: int = -1
 
 func _ready() -> void:
 	_execute.pressed.connect(execute_requested.emit)
+	(%AdvancedToggle as Button).toggled.connect(_on_advanced_toggled)
 
 
 func update_view(state: VillageState, selected_uid: int, selection_changed: bool = false) -> void:
+	var changed_card: bool = selection_changed or _selected_uid != selected_uid
 	_state = state
 	_selected_uid = selected_uid
-	if selection_changed:
+	if changed_card:
+		(%AdvancedToggle as Button).button_pressed = false
 		(%DetailScroll as ScrollContainer).scroll_vertical = 0
 	_refresh_detail()
 
@@ -40,8 +43,11 @@ func _refresh_detail() -> void:
 	var card: CardDefinition = _state.find_card(_selected_uid)
 	_empty_hint.visible = card == null
 	_card_detail.visible = card != null
+	_positive.visible = card != null
+	(%CardHeader as Control).visible = card != null
 	_execute.visible = card != null
-	_cost.visible = card != null
+	_cost.visible = false
+	(%SelectedCosts as Control).visible = card != null
 	_negative.visible = card != null and not SurvivalRules.is_survey(card)
 	_survey_report.visible = SurvivalRules.is_survey(card)
 	_reason.visible = false
@@ -67,12 +73,15 @@ func _refresh_empty_hint() -> void:
 
 func _refresh_card(card: CardDefinition) -> void:
 	_kind.add_theme_color_override("default_color", UiElements.CARD_COLORS[card.color])
-	_kind.text = KeywordText.format_text(
-		card.kind_name() + "  /  " + " · ".join(card.keyword_names())
+	_kind.text = KeywordText.format_text(card.kind_name() + (" / 常驻" if card.reusable else " / 单次"))
+	(%CardKeywords as RichTextLabel).text = KeywordText.format_text(
+		" · ".join(card.keyword_names())
 	)
 	_title.text = card.display_name
+	(%ActionArt as TextureRect).texture = VillageCardFace.art_for(card)
 	_description.text = KeywordText.format_text(card.description)
 	_positive.text = KeywordText.format_text(ProgressionEconomy.output_text(_state, card))
+	(%PositiveHeading as Label).visible = false
 	_negative.text = KeywordText.format_text("代价与风险  /  " + card.negative)
 	if card.effects.any(
 		func(effect: CardEffect) -> bool: return effect.type == CardEffect.Type.DRILL
@@ -80,25 +89,8 @@ func _refresh_card(card: CardDefinition) -> void:
 		_negative.text += (
 			"\n打井成功率 %d%%；失败仍扣费并消耗行动" % roundi(SurvivalRules.well_chance(_state) * 100)
 		)
-	_cost.text = "消耗  /  " + _state.catalog.cost_text(card, _state)
-	if SurvivalRules.is_survey(card) and _state.progress.exploration_target >= 0:
-		var target: Vector2i = TerrainGrid.position(_state.progress.exploration_target)
-		_cost.text += (
-			"\n目标 (%d, %d) · 离营地 %d 格" % [target.x, target.y, TerrainGrid.distance(target)]
-		)
-	if card.profession != GameTypes.Profession.GENERAL:
-		_cost.text += (
-			"\n%s %d 人 · 体力 ×%.2f"
-			% [
-				GameTypes.PROFESSION_NAMES[card.profession],
-				_state.profession_counts[card.profession],
-				_state.catalog.library.workforce_rules.stamina_multiplier(
-					card.profession, _state.profession_counts
-				)
-			]
-		)
-		if _state.profession_counts[card.profession] == 0:
-			_cost.text = "需要%s，当前无人；无法执行" % GameTypes.PROFESSION_NAMES[card.profession]
+	_cost.text = "行动消耗"
+	(%SelectedCosts as CardCostStrip).update_view(card, _state)
 	_execute.text = "确认执行 · 剩余 %d 次行动" % (_state.actions_per_slot - _state.actions_used)
 	_requirement.text = KeywordText.format_text(_state.catalog.requirement_text(card))
 	_requirement.visible = not _requirement.text.is_empty()
@@ -112,7 +104,7 @@ func _refresh_card(card: CardDefinition) -> void:
 				TerrainGrid.position(_state.progress.explored_cells[-1]),
 				_state.progress.explored_cells
 			)
-		_positive.text = "选择邻接的未知区域后确认；发现与方向线索在勘探完成后返回。"
+		_positive.text = "探索相邻区域，发现地形、资源与线索。"
 	_preview.text = (
 		(
 			SurvivalRules.exploration_summary(_state)
@@ -162,3 +154,8 @@ func _preview_card(card: CardDefinition) -> String:
 		else "结算预览"
 	)
 	return label + "  /  " + "；".join(changes) if not changes.is_empty() else ""
+
+
+func _on_advanced_toggled(expanded: bool) -> void:
+	(%AdvancedDetails as VBoxContainer).visible = expanded
+	(%AdvancedToggle as Button).text = ("收起前置与结算预览 ▾" if expanded else "查看前置与结算预览 ▸")

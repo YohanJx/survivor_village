@@ -17,7 +17,6 @@ static func _fresh(region: GameTypes.Region = GameTypes.Region.RURAL) -> Village
 	var state: VillageState = VillageState.new()
 	state.persistence_enabled = false
 	state.new_run(65012, region)
-	state.choose_daily_event(1)
 	return state
 
 
@@ -38,9 +37,8 @@ static func _win(state: VillageState) -> void:
 	for person: SurvivorRecord in state.progress.survivors:
 		report.survivor_ids.append(person.id)
 	state.finish_night(report)
-	if state.phase == GameTypes.Phase.REWARD:
-		state.choose_reward(0)
-	state.choose_daily_event(1)
+	if state.phase == GameTypes.Phase.DAY_END:
+		SurvivalTestSetup.settle_day_end(state)
 
 
 static func _test_opening(check: Callable) -> void:
@@ -145,12 +143,12 @@ static func _test_professions(check: Callable) -> void:
 		state.resources == before.resources and state.slot == before.slot,
 		"Missing professional never charges higher stamina to execute"
 	)
-	state.generate_rewards()
-	for card: CardDefinition in state.rewards:
+	var event: DailyEvent = DayEndEvents.for_day(state)
+	for card: CardDefinition in event.options:
 		check.call(
-			card.profession == GameTypes.Profession.GENERAL, "Rewards exclude absent professions"
+			card.profession == GameTypes.Profession.GENERAL,
+			"Day-end events remain accessible without specialized professions"
 		)
-	state.rewards.clear()
 	var untrained: VillageState = _fresh()
 	untrained.assign_jobs(PackedInt32Array([5, 0, 0, 0, 0, 0]))
 	_explore(untrained)
@@ -334,6 +332,9 @@ static func _test_save_validation(check: Callable) -> void:
 	check.call(not restored.restore(snapshot), "Unknown unlock identifiers are rejected")
 	snapshot = state.snapshot()
 	snapshot.version = 5
+	# 旧版新局必有黎明事件 ID，构造符合旧版本格式的迁移样本。
+	snapshot.progress.event_id = "settle"
+	snapshot.progress.event_choice = 1
 	snapshot.buildings.resize(13)
 	check.call(
 		restored.restore(snapshot) and restored.buildings.size() == GameTypes.Building.COUNT,
@@ -361,7 +362,7 @@ static func _test_first_night(check: Callable) -> void:
 		while battle.active:
 			battle.step(BattleSimulation.FIXED_STEP_SECONDS)
 		check.call(
-			state.last_report != null and state.phase == GameTypes.Phase.REWARD,
+			state.last_report != null and state.phase == GameTypes.Phase.DAY_END,
 			"Exploration-only opening survives a real first night on map %d" % region
 		)
 

@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/event.tres" id="kw_event"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="stat"]
+
+[sub_resource type="Resource" id="modifier"]
+script = ExtResource("stat")
+key = 4
+operation = 1
+amount = 0.9
+duration = 1
+
+[sub_resource type="Resource" id="effect0"]
+script = ExtResource("effect")
+type = 0
+key = 9
+amount = 4.0
+
+[sub_resource type="Resource" id="effect1"]
+script = ExtResource("effect")
+type = 0
+key = 6
+amount = 3.0
+
+[sub_resource type="Resource" id="effect2"]
+script = ExtResource("effect")
+type = 2
+modifier = SubResource("modifier")
+
+[resource]
+script = ExtResource("card")
+id = "day_end_salvage_1"
+display_name = "拆取零件"
+description = "零件 +4；下一夜守卫生命 -10%，拆解粉尘增加污染 3。确认后直接结算，不占用白天行动。"
+positive = "零件 +4"
+negative = "下一夜守卫生命 -10%，拆解粉尘增加污染 3"
+kind = 3
+icon = 11
+color = 2
+mood_delta = 0
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_event")])
+costs = Array[ExtResource("cost")]([])
+effects = Array[ExtResource("effect")]([SubResource("effect0"), SubResource("effect1"), SubResource("effect2")])

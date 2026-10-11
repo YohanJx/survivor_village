@@ -14,7 +14,7 @@ enum Profession {
 enum Phase {
 	DAY = 0,
 	NIGHT = 1,
-	REWARD = 2,
+	DAY_END = 2,
 	GAME_OVER = 3,
 }
 enum Stock {

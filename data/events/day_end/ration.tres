@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="DailyEvent" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/daily_event.gd" id="event"]
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Resource" path="res://data/events/day_end/options/ration_0.tres" id="o0"]
+[ext_resource type="Resource" path="res://data/events/day_end/options/ration_1.tres" id="o1"]
+
+[resource]
+script = ExtResource("event")
+id = "day_end_ration"
+display_name = "围炉分食"
+description = "大家想在火边吃顿热饭，恢复疲惫的身体；生火和赶工都会留下代价。"
+skippable = false
+options = Array[ExtResource("card")]([ExtResource("o0"), ExtResource("o1")])

@@ -2,7 +2,7 @@ class_name MapViewCamera
 extends RefCounted
 ## 地图展示镜头；世界坐标不变，平移和缩放只影响绘制。
 
-const VILLAGE_ZOOM: float = 2.5
+const VILLAGE_ZOOM: float = 3.4
 const MIN_ZOOM: float = 1.0
 const MAX_ZOOM: float = 8.0
 const ZOOM_STEP: float = 1.2

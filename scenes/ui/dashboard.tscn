@@ -1,5 +1,6 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=23 format=3]
 
+[ext_resource type="Texture2D" path="res://assets/ui/worn_iron_panel.png" id="worn_texture"]
 [ext_resource type="Script" path="res://scripts/ui/dashboard.gd" id="ui_script"]
 
 [ext_resource type="Theme" path="res://data/ui/village_theme.tres" id="1_3sxa0"]
@@ -11,149 +12,130 @@
 
 [ext_resource type="Script" path="res://scripts/ui/map_atmosphere.gd" id="atmosphere"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ocrk6"]
-content_margin_left = 10.0
-content_margin_top = 10.0
-content_margin_right = 10.0
-content_margin_bottom = 10.0
-bg_color = Color(0.105882354, 0.16470589, 0.13725491, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.1882353, 0.2627451, 0.19607843, 1)
-corner_radius_top_left = 7
-corner_radius_top_right = 7
-corner_radius_bottom_right = 7
-corner_radius_bottom_left = 7
+[ext_resource type="PackedScene" path="res://scenes/ui/card_acquisition_notice.tscn" id="acquisition"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ln0ri"]
-content_margin_left = 10.0
-content_margin_top = 10.0
-content_margin_right = 10.0
-content_margin_bottom = 10.0
-bg_color = Color(0.105882354, 0.16470589, 0.13725491, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.1882353, 0.2627451, 0.19607843, 1)
-corner_radius_top_left = 7
-corner_radius_top_right = 7
-corner_radius_bottom_right = 7
-corner_radius_bottom_left = 7
+[ext_resource type="Texture2D" path="res://assets/cards/survey.png" id="ruin_art"]
+[ext_resource type="Shader" path="res://scripts/ui/ruin_backdrop.gdshader" id="ruin_shader"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1qoam"]
-content_margin_left = 10.0
-content_margin_top = 10.0
-content_margin_right = 10.0
-content_margin_bottom = 10.0
-bg_color = Color(0.105882354, 0.16470589, 0.13725491, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.1882353, 0.2627451, 0.19607843, 1)
-corner_radius_top_left = 7
-corner_radius_top_right = 7
-corner_radius_bottom_right = 7
-corner_radius_bottom_left = 7
+[sub_resource type="ShaderMaterial" id="ruin_material"]
+shader = ExtResource("ruin_shader")
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bwlxt"]
+[sub_resource type="StyleBoxTexture" id="StyleBoxFlat_ocrk6"]
 content_margin_left = 10.0
-content_margin_top = 10.0
+content_margin_top = 7.0
 content_margin_right = 10.0
-content_margin_bottom = 10.0
-bg_color = Color(0.105882354, 0.16470589, 0.13725491, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.1882353, 0.2627451, 0.19607843, 1)
-corner_radius_top_left = 7
-corner_radius_top_right = 7
-corner_radius_bottom_right = 7
-corner_radius_bottom_left = 7
+content_margin_bottom = 7.0
+texture = ExtResource("worn_texture")
+region_rect = Rect2(16, 16, 139, 224)
+texture_margin_left = 2.0
+texture_margin_top = 2.0
+texture_margin_right = 2.0
+texture_margin_bottom = 2.0
+modulate_color = Color(1, 1, 1, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_o7t5d"]
+[sub_resource type="StyleBoxTexture" id="StyleBoxFlat_ln0ri"]
 content_margin_left = 10.0
-content_margin_top = 10.0
+content_margin_top = 7.0
 content_margin_right = 10.0
-content_margin_bottom = 10.0
-bg_color = Color(0.105882354, 0.16470589, 0.13725491, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.1882353, 0.2627451, 0.19607843, 1)
-corner_radius_top_left = 7
-corner_radius_top_right = 7
-corner_radius_bottom_right = 7
-corner_radius_bottom_left = 7
+content_margin_bottom = 7.0
+texture = ExtResource("worn_texture")
+region_rect = Rect2(16, 16, 139, 224)
+texture_margin_left = 2.0
+texture_margin_top = 2.0
+texture_margin_right = 2.0
+texture_margin_bottom = 2.0
+modulate_color = Color(1, 1, 1, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pnaqj"]
+[sub_resource type="StyleBoxTexture" id="StyleBoxFlat_1qoam"]
 content_margin_left = 10.0
-content_margin_top = 10.0
+content_margin_top = 7.0
 content_margin_right = 10.0
-content_margin_bottom = 10.0
-bg_color = Color(0.105882354, 0.16470589, 0.13725491, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.1882353, 0.2627451, 0.19607843, 1)
-corner_radius_top_left = 7
-corner_radius_top_right = 7
-corner_radius_bottom_right = 7
-corner_radius_bottom_left = 7
+content_margin_bottom = 7.0
+texture = ExtResource("worn_texture")
+region_rect = Rect2(16, 16, 139, 224)
+texture_margin_left = 2.0
+texture_margin_top = 2.0
+texture_margin_right = 2.0
+texture_margin_bottom = 2.0
+modulate_color = Color(1, 1, 1, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h5vli"]
+[sub_resource type="StyleBoxTexture" id="StyleBoxFlat_bwlxt"]
 content_margin_left = 10.0
-content_margin_top = 10.0
+content_margin_top = 7.0
 content_margin_right = 10.0
-content_margin_bottom = 10.0
-bg_color = Color(0.105882354, 0.16470589, 0.13725491, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.1882353, 0.2627451, 0.19607843, 1)
-corner_radius_top_left = 7
-corner_radius_top_right = 7
-corner_radius_bottom_right = 7
-corner_radius_bottom_left = 7
+content_margin_bottom = 7.0
+texture = ExtResource("worn_texture")
+region_rect = Rect2(16, 16, 139, 224)
+texture_margin_left = 2.0
+texture_margin_top = 2.0
+texture_margin_right = 2.0
+texture_margin_bottom = 2.0
+modulate_color = Color(1, 1, 1, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uuwn2"]
+[sub_resource type="StyleBoxTexture" id="StyleBoxFlat_o7t5d"]
 content_margin_left = 10.0
-content_margin_top = 10.0
+content_margin_top = 7.0
 content_margin_right = 10.0
-content_margin_bottom = 10.0
-bg_color = Color(0.105882354, 0.16470589, 0.13725491, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.1882353, 0.2627451, 0.19607843, 1)
-corner_radius_top_left = 7
-corner_radius_top_right = 7
-corner_radius_bottom_right = 7
-corner_radius_bottom_left = 7
+content_margin_bottom = 7.0
+texture = ExtResource("worn_texture")
+region_rect = Rect2(16, 16, 139, 224)
+texture_margin_left = 2.0
+texture_margin_top = 2.0
+texture_margin_right = 2.0
+texture_margin_bottom = 2.0
+modulate_color = Color(1, 1, 1, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j8l84"]
+[sub_resource type="StyleBoxTexture" id="StyleBoxFlat_pnaqj"]
+content_margin_left = 10.0
+content_margin_top = 7.0
+content_margin_right = 10.0
+content_margin_bottom = 7.0
+texture = ExtResource("worn_texture")
+region_rect = Rect2(16, 16, 139, 224)
+texture_margin_left = 2.0
+texture_margin_top = 2.0
+texture_margin_right = 2.0
+texture_margin_bottom = 2.0
+modulate_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxFlat_h5vli"]
+content_margin_left = 10.0
+content_margin_top = 7.0
+content_margin_right = 10.0
+content_margin_bottom = 7.0
+texture = ExtResource("worn_texture")
+region_rect = Rect2(16, 16, 139, 224)
+texture_margin_left = 2.0
+texture_margin_top = 2.0
+texture_margin_right = 2.0
+texture_margin_bottom = 2.0
+modulate_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxFlat_uuwn2"]
+content_margin_left = 10.0
+content_margin_top = 7.0
+content_margin_right = 10.0
+content_margin_bottom = 7.0
+texture = ExtResource("worn_texture")
+region_rect = Rect2(16, 16, 139, 224)
+texture_margin_left = 2.0
+texture_margin_top = 2.0
+texture_margin_right = 2.0
+texture_margin_bottom = 2.0
+modulate_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxFlat_j8l84"]
 content_margin_left = 2.0
 content_margin_top = 2.0
 content_margin_right = 2.0
 content_margin_bottom = 2.0
-bg_color = Color(0.13725491, 0.22352941, 0.18039216, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.28627452, 0.3764706, 0.2784314, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+texture = ExtResource("worn_texture")
+region_rect = Rect2(16, 16, 139, 224)
+texture_margin_left = 2.0
+texture_margin_top = 2.0
+texture_margin_right = 2.0
+texture_margin_bottom = 2.0
+modulate_color = Color(1, 1, 1, 1)
 
 [node name="Dashboard" type="Control"]
 script = ExtResource("ui_script")
@@ -175,6 +157,19 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.06666667, 0.10980392, 0.09019608, 1)
 
+[node name="RuinBackdrop" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+material = SubResource("ruin_material")
+texture = ExtResource("ruin_art")
+expand_mode = 1
+stretch_mode = 6
+
 [node name="Margin" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
@@ -183,7 +178,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 26
-theme_override_constants/margin_top = 20
+theme_override_constants/margin_top = 14
 theme_override_constants/margin_right = 26
 theme_override_constants/margin_bottom = 16
 
@@ -192,7 +187,7 @@ layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="Header" type="HBoxContainer" parent="Margin/Layout"]
-custom_minimum_size = Vector2(0, 54)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 
 [node name="Logo" type="TextureRect" parent="Margin/Layout/Header"]
@@ -209,13 +204,13 @@ theme_override_constants/separation = 2
 [node name="TitleLabel" type="Label" parent="Margin/Layout/Header/Title"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 27
-theme_override_colors/font_color = Color(0.8627451, 0.88235295, 0.8627451, 1)
+theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
 text = "余烬村庄"
 
 [node name="Subtitle" type="Label" parent="Margin/Layout/Header/Title"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
-theme_override_colors/font_color = Color(0.6392157, 0.6784314, 0.64705884, 1)
+theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
 text = "E M B E R H A V E N    /    活下去，再建一个家"
 
 [node name="HeaderStretch" type="Control" parent="Margin/Layout/Header"]
@@ -230,7 +225,7 @@ theme_override_constants/separation = 2
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
-theme_override_colors/font_color = Color(0.8627451, 0.88235295, 0.8627451, 1)
+theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
 text = "第 01 日"
 horizontal_alignment = 2
 
@@ -238,7 +233,7 @@ horizontal_alignment = 2
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.6392157, 0.6784314, 0.64705884, 1)
+theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
 text = "距离大尸潮还有 6 天"
 
 [node name="HeaderSpacer" type="Control" parent="Margin/Layout/Header"]
@@ -300,7 +295,7 @@ theme_override_constants/separation = 8
 custom_minimum_size = Vector2(3, 28)
 layout_mode = 2
 size_flags_vertical = 4
-color = Color(0.81176471, 0.70588235, 0.46666667, 1)
+color = Color(0.721569, 0.678431, 0.509804, 1)
 
 [node name="StaminaColumn" type="VBoxContainer" parent="Margin/Layout/Resources/StaminaPanel/StaminaRow"]
 layout_mode = 2
@@ -309,14 +304,14 @@ theme_override_constants/separation = 1
 [node name="StaminaCaption" type="Label" parent="Margin/Layout/Resources/StaminaPanel/StaminaRow/StaminaColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.6392157, 0.6784314, 0.64705884, 1)
+theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
 text = "体力"
 
 [node name="Stock0" type="Label" parent="Margin/Layout/Resources/StaminaPanel/StaminaRow/StaminaColumn"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-theme_override_colors/font_color = Color(0.81176471, 0.70588235, 0.46666667, 1)
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.721569, 0.678431, 0.509804, 1)
 text = "0"
 
 [node name="FoodPanel" type="PanelContainer" parent="Margin/Layout/Resources"]
@@ -332,7 +327,7 @@ theme_override_constants/separation = 8
 custom_minimum_size = Vector2(3, 28)
 layout_mode = 2
 size_flags_vertical = 4
-color = Color(0.61960784, 0.73725490, 0.59607843, 1)
+color = Color(0.80, 0.76, 0.65, 1)
 
 [node name="FoodColumn" type="VBoxContainer" parent="Margin/Layout/Resources/FoodPanel/FoodRow"]
 layout_mode = 2
@@ -341,14 +336,14 @@ theme_override_constants/separation = 1
 [node name="FoodCaption" type="Label" parent="Margin/Layout/Resources/FoodPanel/FoodRow/FoodColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.6392157, 0.6784314, 0.64705884, 1)
+theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
 text = "食物"
 
 [node name="Stock1" type="Label" parent="Margin/Layout/Resources/FoodPanel/FoodRow/FoodColumn"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-theme_override_colors/font_color = Color(0.61960784, 0.73725490, 0.59607843, 1)
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.80, 0.76, 0.65, 1)
 text = "0"
 
 [node name="WaterPanel" type="PanelContainer" parent="Margin/Layout/Resources"]
@@ -364,7 +359,7 @@ theme_override_constants/separation = 8
 custom_minimum_size = Vector2(3, 28)
 layout_mode = 2
 size_flags_vertical = 4
-color = Color(0.56078431, 0.71764706, 0.76862745, 1)
+color = Color(0.513725, 0.615686, 0.627451, 1)
 
 [node name="WaterColumn" type="VBoxContainer" parent="Margin/Layout/Resources/WaterPanel/WaterRow"]
 layout_mode = 2
@@ -373,14 +368,14 @@ theme_override_constants/separation = 1
 [node name="WaterCaption" type="Label" parent="Margin/Layout/Resources/WaterPanel/WaterRow/WaterColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.6392157, 0.6784314, 0.64705884, 1)
+theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
 text = "水"
 
 [node name="Stock2" type="Label" parent="Margin/Layout/Resources/WaterPanel/WaterRow/WaterColumn"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-theme_override_colors/font_color = Color(0.56078431, 0.71764706, 0.76862745, 1)
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.513725, 0.615686, 0.627451, 1)
 text = "0"
 
 [node name="PowerPanel" type="PanelContainer" parent="Margin/Layout/Resources"]
@@ -396,7 +391,7 @@ theme_override_constants/separation = 8
 custom_minimum_size = Vector2(3, 28)
 layout_mode = 2
 size_flags_vertical = 4
-color = Color(0.81176471, 0.70588235, 0.46666667, 1)
+color = Color(0.721569, 0.678431, 0.509804, 1)
 
 [node name="PowerColumn" type="VBoxContainer" parent="Margin/Layout/Resources/PowerPanel/PowerRow"]
 layout_mode = 2
@@ -405,14 +400,14 @@ theme_override_constants/separation = 1
 [node name="PowerCaption" type="Label" parent="Margin/Layout/Resources/PowerPanel/PowerRow/PowerColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.6392157, 0.6784314, 0.64705884, 1)
+theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
 text = "电力"
 
 [node name="Stock3" type="Label" parent="Margin/Layout/Resources/PowerPanel/PowerRow/PowerColumn"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-theme_override_colors/font_color = Color(0.81176471, 0.70588235, 0.46666667, 1)
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.721569, 0.678431, 0.509804, 1)
 text = "0"
 
 [node name="MaterialsPanel" type="PanelContainer" parent="Margin/Layout/Resources"]
@@ -428,7 +423,7 @@ theme_override_constants/separation = 8
 custom_minimum_size = Vector2(3, 28)
 layout_mode = 2
 size_flags_vertical = 4
-color = Color(0.81176471, 0.70588235, 0.46666667, 1)
+color = Color(0.721569, 0.678431, 0.509804, 1)
 
 [node name="MaterialsColumn" type="VBoxContainer" parent="Margin/Layout/Resources/MaterialsPanel/MaterialsRow"]
 layout_mode = 2
@@ -438,14 +433,14 @@ theme_override_constants/separation = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.6392157, 0.6784314, 0.64705884, 1)
+theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
 text = "材料"
 
 [node name="Stock4" type="Label" parent="Margin/Layout/Resources/MaterialsPanel/MaterialsRow/MaterialsColumn"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-theme_override_colors/font_color = Color(0.81176471, 0.70588235, 0.46666667, 1)
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.721569, 0.678431, 0.509804, 1)
 text = "0"
 
 [node name="PopulationPanel" type="PanelContainer" parent="Margin/Layout/Resources"]
@@ -461,7 +456,7 @@ theme_override_constants/separation = 8
 custom_minimum_size = Vector2(3, 28)
 layout_mode = 2
 size_flags_vertical = 4
-color = Color(0.56078431, 0.71764706, 0.76862745, 1)
+color = Color(0.513725, 0.615686, 0.627451, 1)
 
 [node name="PopulationColumn" type="VBoxContainer" parent="Margin/Layout/Resources/PopulationPanel/PopulationRow"]
 layout_mode = 2
@@ -470,14 +465,14 @@ theme_override_constants/separation = 1
 [node name="PopulationCaption" type="Label" parent="Margin/Layout/Resources/PopulationPanel/PopulationRow/PopulationColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.6392157, 0.6784314, 0.64705884, 1)
+theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
 text = "幸存者"
 
 [node name="PopulationLabel" type="Label" parent="Margin/Layout/Resources/PopulationPanel/PopulationRow/PopulationColumn"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-theme_override_colors/font_color = Color(0.56078431, 0.71764706, 0.76862745, 1)
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.513725, 0.615686, 0.627451, 1)
 text = "0"
 
 [node name="CorePanel" type="PanelContainer" parent="Margin/Layout/Resources"]
@@ -493,7 +488,7 @@ theme_override_constants/separation = 8
 custom_minimum_size = Vector2(3, 28)
 layout_mode = 2
 size_flags_vertical = 4
-color = Color(0.61960784, 0.73725490, 0.59607843, 1)
+color = Color(0.80, 0.76, 0.65, 1)
 
 [node name="CoreColumn" type="VBoxContainer" parent="Margin/Layout/Resources/CorePanel/CoreRow"]
 layout_mode = 2
@@ -502,14 +497,14 @@ theme_override_constants/separation = 1
 [node name="CoreCaption" type="Label" parent="Margin/Layout/Resources/CorePanel/CoreRow/CoreColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.6392157, 0.6784314, 0.64705884, 1)
+theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
 text = "村庄耐久"
 
 [node name="CoreLabel" type="Label" parent="Margin/Layout/Resources/CorePanel/CoreRow/CoreColumn"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-theme_override_colors/font_color = Color(0.61960784, 0.73725490, 0.59607843, 1)
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.80, 0.76, 0.65, 1)
 text = "0"
 
 [node name="RiskPanel" type="PanelContainer" parent="Margin/Layout/Resources"]
@@ -525,7 +520,7 @@ theme_override_constants/separation = 8
 custom_minimum_size = Vector2(3, 28)
 layout_mode = 2
 size_flags_vertical = 4
-color = Color(0.80392157, 0.59215686, 0.52941176, 1)
+color = Color(0.733333, 0.513725, 0.439216, 1)
 
 [node name="RiskColumn" type="VBoxContainer" parent="Margin/Layout/Resources/RiskPanel/RiskRow"]
 layout_mode = 2
@@ -534,14 +529,14 @@ theme_override_constants/separation = 1
 [node name="RiskCaption" type="Label" parent="Margin/Layout/Resources/RiskPanel/RiskRow/RiskColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.6392157, 0.6784314, 0.64705884, 1)
+theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
 text = "噪音 / 污染"
 
 [node name="RiskLabel" type="Label" parent="Margin/Layout/Resources/RiskPanel/RiskRow/RiskColumn"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-theme_override_colors/font_color = Color(0.80392157, 0.59215686, 0.52941176, 1)
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.733333, 0.513725, 0.439216, 1)
 text = "0"
 
 [node name="CenterRow" type="HBoxContainer" parent="Margin/Layout"]
@@ -559,14 +554,14 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 17
-theme_override_colors/font_color = Color(0.8627451, 0.88235295, 0.8627451, 1)
+theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
 text = "村庄与周围林地"
 
 [node name="WeatherLabel" type="Label" parent="Margin/Layout/CenterRow/MapColumn/MapHeading"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(0.6392157, 0.6784314, 0.64705884, 1)
+theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
 text = "天气：晴朗"
 mouse_filter = 1
 
@@ -575,7 +570,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(0.6392157, 0.6784314, 0.64705884, 1)
+theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
 text = "清晨  /  第一个决策时段"
 horizontal_alignment = 2
 
@@ -608,7 +603,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(0.8627451, 0.88235295, 0.8627451, 1)
+theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
 text = "●  防线平静  ·  守卫会自行寻路与攻击"
 clip_text = true
 
@@ -651,15 +646,21 @@ layout_mode = 2
 mouse_default_cursor_shape = 2
 text = "1×"
 
-[node name="DetailPanel" type="PanelContainer" parent="Margin/Layout/CenterRow" instance=ExtResource("4_q7oii")]
+[node name="ActionTray" type="HBoxContainer" parent="Margin/Layout"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="HandPanel" type="VBoxContainer" parent="Margin/Layout/ActionTray" instance=ExtResource("5_ykaip")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_constants/separation = 8
+
+[node name="DetailPanel" type="PanelContainer" parent="Margin/Layout/ActionTray" instance=ExtResource("4_q7oii")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(320, 0)
 layout_mode = 2
-
-[node name="HandPanel" type="VBoxContainer" parent="Margin/Layout" instance=ExtResource("5_ykaip")]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_constants/separation = 10
 
 [node name="Footer" type="HBoxContainer" parent="Margin/Layout"]
 layout_mode = 2
@@ -667,7 +668,7 @@ layout_mode = 2
 [node name="VersionLabel" type="Label" parent="Margin/Layout/Footer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.6392157, 0.6784314, 0.64705884, 1)
+theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
 text = "原型 0.1   /   三个白天时段 · 自动守夜 · 每七日大尸潮"
 
 [node name="Notification" type="Label" parent="Margin/Layout/Footer"]
@@ -675,9 +676,13 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.8627451, 0.88235295, 0.8627451, 1)
+theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
 text = "选择一张卡牌，决定村庄的明天。"
 horizontal_alignment = 2
+
+[node name="CardAcquisition" parent="." instance=ExtResource("acquisition")]
+unique_name_in_owner = true
+layout_mode = 1
 
 [node name="GameOverlay" type="ColorRect" parent="." instance=ExtResource("6_fq68b")]
 unique_name_in_owner = true

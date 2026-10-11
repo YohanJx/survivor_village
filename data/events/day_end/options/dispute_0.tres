@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/event.tres" id="kw_event"]
+
+[sub_resource type="Resource" id="effect0"]
+script = ExtResource("effect")
+type = 0
+key = 0
+amount = 12.0
+
+[resource]
+script = ExtResource("card")
+id = "day_end_dispute_0"
+display_name = "给大家休息"
+description = "体力 +12；烦躁 +2，黎明按正常规则缓解 1。确认后直接结算，不占用白天行动。"
+positive = "体力 +12"
+negative = "烦躁 +2，黎明按正常规则缓解 1"
+kind = 3
+icon = 11
+color = 2
+mood_delta = 2
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_event")])
+costs = Array[ExtResource("cost")]([])
+effects = Array[ExtResource("effect")]([SubResource("effect0")])

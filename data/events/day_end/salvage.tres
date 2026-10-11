@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="DailyEvent" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/daily_event.gd" id="event"]
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Resource" path="res://data/events/day_end/options/salvage_0.tres" id="o0"]
+[ext_resource type="Resource" path="res://data/events/day_end/options/salvage_1.tres" id="o1"]
+
+[resource]
+script = ExtResource("event")
+id = "day_end_salvage"
+display_name = "夜间搜集"
+description = "守夜结束，巡逻队发现几处可拆的残骸。搬运的声响可能引来更多感染者。"
+skippable = false
+options = Array[ExtResource("card")]([ExtResource("o0"), ExtResource("o1")])

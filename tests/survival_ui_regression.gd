@@ -7,7 +7,6 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 	var dashboard: VillageDashboard = game.get_node("Dashboard") as VillageDashboard
 	game.state.new_run(65012, GameTypes.Region.MOUNTAIN)
 	await tree.process_frame
-	await CardUiRegression.click(tree, dashboard.overlay.get_node("%EventAccept") as Control)
 	var row: HBoxContainer = dashboard.hand_panel.get_node("%HandContainer") as HBoxContainer
 	check.call(row.get_child_count() == 1, "Opening shows only one exploration card")
 	await CardUiRegression.click(tree, row.get_child(0) as Control)
@@ -54,6 +53,13 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 		"Real mouse confirmation commits discovery and one action"
 	)
 	map_view.set_exploration_mode(false)
+	await tree.process_frame
+	var village_button: Control = dashboard.get_node("%VillageInfoButton") as Control
+
+	check.call(
+		Rect2(Vector2.ZERO, game.size).encloses(village_button.get_global_rect()),
+		"Complete survey report keeps top village information control inside the viewport"
+	)
 	await capture.call("ui_camp_explored")
 	await CardUiRegression.click(tree, dashboard.get_node("%VillageInfoButton") as Control)
 	var info: VillageInfoPanel = dashboard.overlay.get_node("%VillageInfo") as VillageInfoPanel
@@ -65,7 +71,6 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 	await capture.call("ui_survival_dry_map")
 	await CardUiRegression.click(tree, info.get_node("%VillageClose") as Control)
 	game.state.new_run(65012, GameTypes.Region.RURAL)
-	game.state.choose_daily_event(1)
 	SurvivalTestSetup.developed(game.state)
 	game.state.changed.emit()
 	game.state.assign_jobs(PackedInt32Array([5, 0, 0, 0, 0, 0]))
@@ -87,7 +92,6 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 	)
 	await capture.call("ui_survival_profession_locked")
 	game.state.new_run(65012, GameTypes.Region.MOUNTAIN)
-	game.state.choose_daily_event(1)
 	SurvivalTestSetup.developed(game.state)
 	game.state.changed.emit()
 	await tree.process_frame
@@ -132,7 +136,6 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 		GameTypes.Region.MOUNTAIN, GameTypes.Region.RURAL, GameTypes.Region.RUINS
 	]:
 		game.state.new_run(65012, region)
-		game.state.choose_daily_event(1)
 		SurvivalTestSetup.developed(game.state)
 		game.state.changed.emit()
 		for child: Node in row.get_children():
@@ -174,7 +177,6 @@ static func _check_camp_view(
 	)
 	await capture.call("ui_camp_built_night")
 	game.state.new_run(65012, GameTypes.Region.RURAL)
-	game.state.choose_daily_event(1)
 	SurvivalTestSetup.developed(game.state)
 	game.state.changed.emit()
 
@@ -202,10 +204,10 @@ static func _check_report_layout(
 	)
 	check.call(
 		(
-			report.get_global_rect().end.y
-			<= (dashboard.detail.get_node("%ExecuteButton") as Control).get_global_rect().position.y
+			(dashboard.detail.get_node("%ExecuteButton") as Control).get_global_rect().end.y
+			<= (dashboard.detail.get_node("%DetailScroll") as Control).get_global_rect().position.y
 		),
-		"Report remains above fixed confirmation"
+		"Scrollable report stays below the compact fixed action and confirmation"
 	)
 	await capture.call("ui_terrain_report_small")
 	tree.root.size = Vector2i(1440, 960)
@@ -255,10 +257,11 @@ static func _check_resource_and_filter(
 	check.call(index > 0, "Filter groups actual keywords by terrain, people and topics")
 	filter.select(0)
 	filter.item_selected.emit(0)
-	tree.root.grab_focus()
-	tree.root.warp_mouse(Vector2(5, 5))
-	# 等待 macOS 异步焦点与光标事件完成，再向嵌入式菜单发送按键。
-	await tree.create_timer(0.15).timeout
+	if DisplayServer.get_name() != "headless":
+		tree.root.grab_focus()
+		tree.root.warp_mouse(Vector2(5, 5))
+		# 等待 macOS 异步焦点与光标事件完成，再向嵌入式菜单发送按键。
+		await tree.create_timer(0.15).timeout
 	filter.grab_focus()
 	var before: int = game.state.actions_used
 	await _filter_key(tree, KEY_ENTER)

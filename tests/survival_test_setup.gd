@@ -35,3 +35,18 @@ static func select_frontier(
 				break
 	state.select_exploration(fallback)
 	return fallback
+
+
+## 原有非事件回归使用跳过或无费用选项，日终的具体效果由专门回归覆盖。
+static func settle_day_end(state: VillageState) -> bool:
+	if state.phase != GameTypes.Phase.DAY_END:
+		return false
+	var event: DailyEvent = state.current_day_end_event()
+	if event == null:
+		return false
+	if event.skippable:
+		return state.skip_day_end_event()
+	for index: int in range(event.options.size() - 1, -1, -1):
+		if DayEndEvents.option_error(state, index).is_empty():
+			return state.choose_day_end_event(index)
+	return false

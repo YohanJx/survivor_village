@@ -39,9 +39,9 @@ func update_view(state: VillageState) -> void:
 		"村庄的发展方向 · " + GameTypes.REGION_NAMES[state.progress.region],
 		"烦躁 %d/5 · 劳动体力 +%d%%" % [state.progress.frustration, state.progress.frustration * 15],
 		(
-			"今日事件：" + LaborRules.event_for(state).display_name
+			"旧存档当日影响：" + LaborRules.event_for(state).display_name
 			if LaborRules.event_for(state) != null
-			else "兼容存档"
+			else "日终事件：守夜结束后处理"
 		),
 		"今日天气：%s · %s" % [state.weather.display_name, state.weather.description],
 		"",
@@ -58,7 +58,7 @@ func update_view(state: VillageState) -> void:
 	]
 	var event: DailyEvent = LaborRules.event_for(state)
 	if event != null:
-		lines.append("今日事件详情：" + event.description)
+		lines.append("旧存档影响详情：" + event.description)
 		if state.progress.event_choice >= 0:
 			lines.append("已选择：" + event.options[state.progress.event_choice].description)
 	lines.append("每时段 %d 次行动 · 下个黎明按人口更新" % state.actions_per_slot)

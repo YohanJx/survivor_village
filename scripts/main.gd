@@ -32,10 +32,10 @@ func _ready() -> void:
 	_dashboard.load_requested.connect(_on_load_pressed)
 	_dashboard.new_run_requested.connect(_dashboard.overlay.request_new_run)
 	_dashboard.help_requested.connect(_dashboard.overlay.show_help)
-	_dashboard.overlay.reward_requested.connect(_on_reward_selected)
+	_dashboard.overlay.day_end_requested.connect(_on_day_end_selected)
+	_dashboard.overlay.day_end_skip_requested.connect(_on_day_end_skip_requested)
 	_dashboard.overlay.restart_requested.connect(_on_restart_pressed)
 	_dashboard.overlay.modal_changed.connect(_on_modal_changed)
-	_dashboard.overlay.event_requested.connect(_on_event_selected)
 	(_dashboard.overlay.get_node("%VillageInfo") as VillageInfoPanel).jobs_requested.connect(
 		_on_jobs_requested
 	)
@@ -43,6 +43,7 @@ func _ready() -> void:
 		_on_crew_requested
 	)
 	state.changed.connect(_on_state_changed)
+	state.cards_acquired.connect(_on_cards_acquired)
 	state.phase_changed.connect(_on_phase_changed)
 	state.persistence_failed.connect(_on_persistence_failed)
 	battle.finished.connect(state.finish_night)
@@ -151,9 +152,16 @@ func _on_modal_changed() -> void:
 	_dashboard.hand_panel.update_view(state, _selected_uid, _dashboard.overlay.blocks_simulation())
 
 
-func _on_reward_selected(index: int) -> void:
-	_selected_uid = -1
-	state.choose_reward(index)
+func _on_day_end_selected(index: int) -> void:
+	if state.choose_day_end_event(index):
+		_selected_uid = -1
+	else:
+		_dashboard.notify(state.last_error)
+
+
+func _on_day_end_skip_requested() -> void:
+	if state.skip_day_end_event():
+		_selected_uid = -1
 
 
 func _on_restart_pressed() -> void:
@@ -192,11 +200,6 @@ func _notify_result(message: String) -> void:
 	_dashboard.notify(message if state.last_error.is_empty() else "自动保存失败：" + state.last_error)
 
 
-func _on_event_selected(index: int) -> void:
-	if not state.choose_daily_event(index):
-		_dashboard.notify("补给不足，无法选择这项事件。")
-
-
 func _on_jobs_requested(counts: PackedInt32Array, archers: bool) -> void:
 	if not state.assign_jobs(counts, archers):
 		_dashboard.notify("分工总数必须等于人口，且仅能在每日第一次行动前调整一次。")
@@ -215,3 +218,7 @@ func _on_exploration_requested(cell: Vector2i) -> void:
 		if SurvivalRules.is_survey(entry.definition):
 			_on_card_selected(entry.uid)
 			break
+
+
+func _on_cards_acquired(uids: PackedInt32Array) -> void:
+	_dashboard.show_acquired_cards(state, uids)

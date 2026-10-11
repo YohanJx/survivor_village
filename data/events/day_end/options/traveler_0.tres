@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/event.tres" id="kw_event"]
+
+[sub_resource type="Resource" id="effect0"]
+script = ExtResource("effect")
+type = 5
+key = 1
+amount = 1.0
+
+[sub_resource type="Resource" id="effect1"]
+script = ExtResource("effect")
+type = 0
+key = 5
+amount = 4.0
+
+[sub_resource type="Resource" id="cost0"]
+script = ExtResource("cost")
+key = 1
+amount = 3
+
+[sub_resource type="Resource" id="cost1"]
+script = ExtResource("cost")
+key = 2
+amount = 3
+
+[resource]
+script = ExtResource("card")
+id = "day_end_traveler_0"
+display_name = "接纳旅人"
+description = "人口 +1，明日可分工并参与防守；食物消耗 3、水消耗 3、噪音 +4；新增人口也需本日口粮。确认后直接结算，不占用白天行动。"
+positive = "人口 +1，明日可分工并参与防守"
+negative = "食物消耗 3、水消耗 3、噪音 +4；新增人口也需本日口粮"
+kind = 3
+icon = 11
+color = 2
+mood_delta = 0
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_event")])
+costs = Array[ExtResource("cost")]([SubResource("cost0"), SubResource("cost1")])
+effects = Array[ExtResource("effect")]([SubResource("effect0"), SubResource("effect1")])

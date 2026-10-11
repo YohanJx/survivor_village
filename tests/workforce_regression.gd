@@ -113,7 +113,7 @@ static func _test_actions(check: Callable) -> void:
 	report.survivors = 10
 	report.core_health = state.core_health
 	state.finish_night(report)
-	state.choose_reward(0)
+	SurvivalTestSetup.settle_day_end(state)
 	check.call(
 		state.day == 3 and state.actions_per_slot == 2 and state.actions_used == 0,
 		"Dawn recalculates next day's quota from surviving population"

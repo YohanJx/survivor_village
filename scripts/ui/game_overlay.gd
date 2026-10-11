@@ -1,9 +1,9 @@
 class_name VillageGameOverlay
 extends ColorRect
-## 弹窗的固定布局来自场景，奖励选项按数据实例化；写入操作由上层执行。
+## 弹窗固定布局来自场景，事件选项按定义实例化；写入操作由上层执行。
 
-signal reward_requested(index: int)
-signal event_requested(index: int)
+signal day_end_requested(index: int)
+signal day_end_skip_requested
 signal restart_requested
 signal modal_changed
 
@@ -15,37 +15,40 @@ enum Mode {
 	CARD,
 }
 
-const REWARD_CARD_SCENE: PackedScene = preload("res://scenes/ui/reward_card.tscn")
+const DAY_END_OPTION_SCENE: PackedScene = preload("res://scenes/ui/day_end_option.tscn")
+
+var _normal_panel_style: StyleBox
+var _card_panel_style: StyleBoxEmpty = StyleBoxEmpty.new()
 
 var _state: VillageState
 var _mode: Mode = Mode.NONE
-var _offers: Array[CardDefinition] = []
+var _day_end_id: String = ""
 var _inspection_uid: int = -1
 var _inspection_progress: VillageProgress
 
-@onready var _event: VBoxContainer = %EventContent
 @onready var _panel: PanelContainer = $Center/Panel
 @onready var _inspection: CardInspectionPanel = %CardInspection
 
 @onready var _village_info: VillageInfoPanel = %VillageInfo
 @onready var _help: VBoxContainer = %HelpContent
 @onready var _new_run: VBoxContainer = %NewRunContent
-@onready var _reward: VBoxContainer = %RewardContent
+@onready var _day_end: VBoxContainer = %DayEndContent
 @onready var _game_over: VBoxContainer = %GameOverContent
-@onready var _summary: Label = %RewardSummary
+@onready var _summary: Label = %DayEndSummary
 @onready var _game_over_summary: Label = %GameOverSummary
-@onready var _reward_row: HBoxContainer = %RewardRow
+@onready var _day_end_row: HBoxContainer = %DayEndRow
+@onready var _day_end_skip: Button = %DayEndSkip
 
 
 func _ready() -> void:
-	(%EventAccept as Button).pressed.connect(_on_event_accept)
-	(%EventDecline as Button).pressed.connect(_on_event_decline)
+	_normal_panel_style = _panel.get_theme_stylebox("panel")
 	(_village_info.get_node("%VillageClose") as Button).pressed.connect(close_modal)
 	(%HelpClose as Button).pressed.connect(close_modal)
 	(%NewRunCancel as Button).pressed.connect(close_modal)
 	(%NewRunConfirm as Button).pressed.connect(_on_restart_pressed)
 	(%GameOverRestart as Button).pressed.connect(_on_restart_pressed)
 	_inspection.close_requested.connect(close_modal)
+	_day_end_skip.pressed.connect(day_end_skip_requested.emit)
 
 
 func _gui_input(event: InputEvent) -> void:
@@ -111,18 +114,26 @@ func blocks_simulation() -> bool:
 	return _mode != Mode.NONE
 
 
+func selected_region() -> GameTypes.Region:
+	return (%MapChoice as OptionButton).get_selected_id() as GameTypes.Region
+
+
 func _on_restart_pressed() -> void:
 	close_modal()
 	restart_requested.emit()
 
 
-func _on_reward_selected(index: int) -> void:
-	reward_requested.emit(index)
+func _on_day_end_selected(index: int) -> void:
+	day_end_requested.emit(index)
 
 
 func _refresh_overlay() -> void:
 	if _state == null:
 		return
+	_panel.custom_minimum_size.x = 320 if _mode == Mode.CARD else 790
+	_panel.add_theme_stylebox_override(
+		"panel", _card_panel_style if _mode == Mode.CARD else _normal_panel_style
+	)
 	_inspection.visible = _mode == Mode.CARD
 	if _inspection.visible:
 		_inspection.update_view(_state, _inspection_uid)
@@ -131,25 +142,17 @@ func _refresh_overlay() -> void:
 		_village_info.update_view(_state)
 	_help.visible = _mode == Mode.HELP
 	_new_run.visible = _mode == Mode.NEW_RUN
-	_reward.visible = _mode == Mode.NONE and _state.phase == GameTypes.Phase.REWARD
+	_day_end.visible = _mode == Mode.NONE and _state.phase == GameTypes.Phase.DAY_END
 	_game_over.visible = _mode == Mode.NONE and _state.phase == GameTypes.Phase.GAME_OVER
-	_event.visible = (
-		_mode == Mode.NONE
-		and _state.phase == GameTypes.Phase.DAY
-		and _state.progress.event_choice < 0
-	)
-	if _event.visible:
-		_refresh_event()
 	visible = (
-		_event.visible
-		or _inspection.visible
+		_inspection.visible
 		or _village_info.visible
 		or _help.visible
 		or _new_run.visible
-		or _reward.visible
+		or _day_end.visible
 		or _game_over.visible
 	)
-	if _reward.visible:
+	if _day_end.visible:
 		_summary.text = (
 			"守住第 %d 夜  /  击退 %d  /  幸存 %d 人  /  村庄耐久 %d"
 			% [
@@ -159,7 +162,7 @@ func _refresh_overlay() -> void:
 				_state.core_health,
 			]
 		)
-		_refresh_rewards()
+		_refresh_day_end()
 	if _game_over.visible:
 		_game_over_summary.text = (
 			"生存 %d 天  ·  总击退 %d  ·  种子 %d"
@@ -171,51 +174,22 @@ func _refresh_overlay() -> void:
 		)
 
 
-func _refresh_rewards() -> void:
-	if _offers == _state.rewards:
+func _refresh_day_end() -> void:
+	var event: DailyEvent = _state.current_day_end_event()
+	if event == null:
 		return
-	for child: Node in _reward_row.get_children():
-		_reward_row.remove_child(child)
-		child.queue_free()
-	_offers = _state.rewards.duplicate()
-	for index: int in _offers.size():
-		var view: VillageRewardCard = REWARD_CARD_SCENE.instantiate() as VillageRewardCard
-		_reward_row.add_child(view)
-		view.update_view(_offers[index], _state, index)
-		view.selected.connect(_on_reward_selected)
-
-
-func selected_region() -> GameTypes.Region:
-	return (%MapChoice as OptionButton).get_selected_id() as GameTypes.Region
-
-
-func _on_event_accept() -> void:
-	event_requested.emit(0)
-
-
-func _on_event_decline() -> void:
-	event_requested.emit(1)
-
-
-func _refresh_event() -> void:
-	var event: DailyEvent = LaborRules.event_for(_state)
-	(%EventTitle as Label).text = "第 %d 日 · %s" % [_state.day, event.display_name]
-	(%EventText as Label).text = (
-		event.description
-		+ "\n\n① "
-		+ event.options[0].description
-		+ "\n\n② "
-		+ event.options[1].description
-	)
-	for index: int in 2:
-		var button: Button = %EventAccept if index == 0 else %EventDecline
-		var option: CardDefinition = event.options[index]
-		button.text = option.display_name + " · " + _state.catalog.cost_text(option, _state)
-		var costs: PackedInt32Array = EffectResolver.cost_totals(option, _state)
-		var deltas: PackedInt32Array = EffectResolver.resource_deltas(_state, option)
-		button.disabled = false
-		for key: int in GameTypes.Stock.COUNT:
-			if _state.resources[key] < costs[key] or _state.resources[key] + deltas[key] < 0:
-				button.disabled = true
-		if button.disabled:
-			button.text += "（补给不足）"
+	(%DayEndTitle as Label).text = "第 %d 日结束 · %s" % [_state.day, event.display_name]
+	(%DayEndHint as Label).text = event.description
+	_day_end_skip.visible = event.skippable
+	if _day_end_id != event.id:
+		for child: Node in _day_end_row.get_children():
+			_day_end_row.remove_child(child)
+			child.queue_free()
+		_day_end_id = event.id
+		for index: int in event.options.size():
+			var view: DayEndOptionView = DAY_END_OPTION_SCENE.instantiate() as DayEndOptionView
+			_day_end_row.add_child(view)
+			view.selected.connect(_on_day_end_selected)
+	for index: int in event.options.size():
+		var view: DayEndOptionView = _day_end_row.get_child(index) as DayEndOptionView
+		view.update_view(event.options[index], _state, index)

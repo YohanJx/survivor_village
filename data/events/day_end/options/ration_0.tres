@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/event.tres" id="kw_event"]
+
+[sub_resource type="Resource" id="effect0"]
+script = ExtResource("effect")
+type = 0
+key = 1
+amount = 8.0
+
+[sub_resource type="Resource" id="effect1"]
+script = ExtResource("effect")
+type = 0
+key = 5
+amount = 4.0
+
+[sub_resource type="Resource" id="effect2"]
+script = ExtResource("effect")
+type = 0
+key = 6
+amount = 2.0
+
+[resource]
+script = ExtResource("card")
+id = "day_end_ration_0"
+display_name = "煮一锅热食"
+description = "食物 +8，先用于本日口粮结算；噪音 +4，污染 +2。确认后直接结算，不占用白天行动。"
+positive = "食物 +8，先用于本日口粮结算"
+negative = "噪音 +4，污染 +2"
+kind = 3
+icon = 11
+color = 2
+mood_delta = 0
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_event")])
+costs = Array[ExtResource("cost")]([])
+effects = Array[ExtResource("effect")]([SubResource("effect0"), SubResource("effect1"), SubResource("effect2")])

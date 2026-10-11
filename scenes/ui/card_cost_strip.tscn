@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/card_cost_strip.gd" id="script"]
+
+[node name="CardCostStrip" type="GridContainer"]
+script = ExtResource("script")
+columns = 3
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+
+[node name="NoCost" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+text = "无资源消耗"
+theme_override_font_sizes/font_size = 12

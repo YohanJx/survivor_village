@@ -11,12 +11,12 @@ const DIRECTIONS: Array[Vector2i] = [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN,
 const DIRECTION_NAMES: PackedStringArray = ["北", "东", "南", "西"]
 const NAMES: PackedStringArray = ["草甸", "林地", "岩地", "河流", "废墟", "油料遗址"]
 const COLORS: Array[Color] = [
-	Color("8c9560"),
-	Color("466b4b"),
-	Color("888174"),
-	Color("4b8b9b"),
-	Color("75787b"),
-	Color("997b50")
+	Color("747963"),
+	Color("455446"),
+	Color("777367"),
+	Color("506d70"),
+	Color("626963"),
+	Color("806c50")
 ]
 const CLUES: PackedStringArray = ["低矮植被与鸟鸣", "树冠与落叶", "裸岩与抬升的山脊", "水汽与流水声", "人工轮廓与碎砖", "金属残骸与油料气味"]
 

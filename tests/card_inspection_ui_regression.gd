@@ -10,6 +10,10 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 	var scroll: ScrollContainer = dashboard.hand_panel.get_node("HandScroll") as ScrollContainer
 	scroll.ensure_control_visible(card)
 	await tree.process_frame
+	check.call(
+		card.get_global_rect().encloses((card.get_node("%CardFace") as Control).get_global_rect()),
+		"Hand artwork fits its interactive card"
+	)
 	var resources: PackedInt32Array = game.state.resources.duplicate()
 	var actions: int = game.state.actions_used
 	var selected: String = (dashboard.detail.get_node("%CardTitle") as Label).text
@@ -20,7 +24,10 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 	)
 	check.call(
 		(
-			(inspection.get_node("%InspectTitle") as Label).text == card.card.display_name
+			(
+				(inspection.get_node("%InspectionFace/%FaceTitle") as Label).text
+				== card.card.display_name
+			)
 			and (
 				(inspection.get_node("%InspectDescription") as RichTextLabel)
 				. get_parsed_text()
@@ -44,10 +51,27 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 	for frame: int in 3:
 		await tree.process_frame
 	check.call(
-		Rect2(Vector2.ZERO, Vector2(tree.root.size)).encloses(inspection.get_global_rect()),
+		tree.root.get_visible_rect().encloses(inspection.get_global_rect()),
 		"Card inspection fits a small window"
 	)
 	await capture.call("ui_card_inspection_small")
+	check.call(
+		not (inspection.get_node("%InspectScroll") as Control).visible,
+		"Additional card notes start collapsed"
+	)
+	await CardUiRegression.click(tree, inspection.get_node("%InspectMore") as Control)
+	check.call(
+		(inspection.get_node("%InspectScroll") as Control).visible,
+		"More information exposes complete card notes"
+	)
+	await tree.process_frame
+	check.call(
+		tree.root.get_visible_rect().encloses(inspection.get_global_rect()),
+		"Expanded notes fit the small viewport"
+	)
+	await capture.call("ui_card_inspection_notes")
+	await CardUiRegression.click(tree, inspection.get_node("%InspectMore") as Control)
+	await _check_faces(tree, game.state, inspection, check)
 	await _key(tree, KEY_ESCAPE)
 	check.call(not overlay.visible, "Esc closes inspection")
 	tree.root.size = original_size
@@ -62,8 +86,8 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 	await _right_click(tree, card)
 	game.state.new_run(98765, GameTypes.Region.RURAL)
 	check.call(
-		not inspection.visible and (overlay.get_node("%EventContent") as Control).visible,
-		"Replacing the run closes inspection and presents the new daily event"
+		not inspection.visible and not overlay.visible,
+		"Replacing the run closes inspection and starts the day directly"
 	)
 	game.state.new_run(12345)
 	SurvivalTestSetup.developed(game.state)
@@ -74,7 +98,6 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 static func _check_night(
 	tree: SceneTree, game: VillageGame, dashboard: VillageDashboard, check: Callable
 ) -> void:
-	game.state.choose_daily_event(1)
 	game.state.begin_night()
 	var card: VillageCardButton = _card(dashboard, "forage")
 	await _right_click(tree, card)
@@ -131,3 +154,25 @@ static func _key(tree: SceneTree, key: Key) -> void:
 		event.pressed = pressed
 		tree.root.push_input(event, true)
 	await tree.process_frame
+
+
+static func _check_faces(
+	tree: SceneTree, state: VillageState, inspection: CardInspectionPanel, check: Callable
+) -> void:
+	var face: VillageCardFace = inspection.get_node("%InspectionFace") as VillageCardFace
+	var rules: RichTextLabel = face.get_node("%FaceRules") as RichTextLabel
+	for definition: CardDefinition in state.catalog.library.cards:
+		face.update_view(state, definition)
+		await tree.process_frame
+		await tree.process_frame
+		check.call(
+			rules.get_content_height() <= rules.size.y,
+			"Complete effect fits card: " + definition.id
+		)
+		check.call(
+			(
+				(face.get_node("%FaceCosts") as CardCostStrip).displayed_totals()
+				== EffectResolver.cost_totals(definition, state)
+			),
+			"Every card resource cost follows shared query: " + definition.id
+		)

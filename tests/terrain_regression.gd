@@ -16,7 +16,6 @@ static func _fresh(
 	var state: VillageState = VillageState.new()
 	state.persistence_enabled = false
 	state.new_run(seed_value, region)
-	state.choose_daily_event(1)
 	return state
 
 
@@ -193,6 +192,9 @@ static func _test_restore(check: Callable) -> void:
 	check.call(not copy.restore(data), "Save cannot target an already explored cell")
 	data = state.snapshot()
 	data.version = 6
+	# 旧版新局必有黎明事件 ID，构造符合旧版本格式的迁移样本。
+	data.progress.event_id = "settle"
+	data.progress.event_choice = 1
 	data.progress.explored_cells.clear()
 	data.progress.exploration_target = -1
 	data.progress.terrain_surveys = 3

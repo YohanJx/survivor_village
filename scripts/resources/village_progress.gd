@@ -20,6 +20,7 @@ extends Resource
 @export_storage var event_id: String = ""
 @export_storage var event_choice: int = -1
 @export_storage var recent_events: PackedStringArray = []
+@export_storage var recent_day_end_events: PackedStringArray = []
 @export_storage var low_mood_used: bool = false
 @export_storage var assigned_today: bool = false
 @export_storage var scouting: bool = false
@@ -37,6 +38,7 @@ func copy_progress() -> VillageProgress:
 	result.strategies = strategies.duplicate()
 	result.deposits = deposits.duplicate()
 	result.recent_events = recent_events.duplicate()
+	result.recent_day_end_events = recent_day_end_events.duplicate()
 	result.survivors = []
 	for person: SurvivorRecord in survivors:
 		result.survivors.append(person.copy_record())
