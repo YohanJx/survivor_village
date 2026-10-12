@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=12 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
@@ -8,6 +8,8 @@
 [ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
 [ext_resource type="Resource" path="res://data/keywords/builder.tres" id="kw_builder"]
 [ext_resource type="Resource" path="res://data/keywords/stone_site.tres" id="kw_stone_site"]
+
+[ext_resource type="Texture2D" path="res://assets/cards/individual/quarry.png" id="illustration"]
 
 [sub_resource type="Resource" id="cost0"]
 script = ExtResource("cost")
@@ -33,6 +35,7 @@ amount = 6.0
 
 [resource]
 script = ExtResource("card")
+illustration = ExtResource("illustration")
 id = "quarry"
 display_name = "开采石料"
 description = "石料 +10，山地丰度更高。噪音 +6"

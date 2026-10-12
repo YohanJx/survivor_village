@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=11 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
@@ -7,6 +7,8 @@
 
 [ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
 [ext_resource type="Resource" path="res://data/keywords/builder.tres" id="kw_builder"]
+
+[ext_resource type="Texture2D" path="res://assets/cards/individual/stoneworks.png" id="illustration"]
 
 [sub_resource type="Resource" id="cost0"]
 script = ExtResource("cost")
@@ -32,6 +34,7 @@ modifier = SubResource("stat0")
 
 [resource]
 script = ExtResource("card")
+illustration = ExtResource("illustration")
 id = "stoneworks"
 display_name = "石料加固"
 description = "两夜围墙耐久 +70，缓解爆燃伤害。石料 -6、体力 -12"

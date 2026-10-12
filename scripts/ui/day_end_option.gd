@@ -23,13 +23,21 @@ func update_view(card: CardDefinition, state: VillageState, index: int) -> void:
 	_kind.add_theme_color_override("default_color", UiElements.CARD_COLORS[card.color])
 	_kind.text = KeywordText.format_text("日终事件")
 	_title.text = card.display_name
-	_positive.text = KeywordText.format_text("＋ " + ProgressionEconomy.output_text(state, card))
-	_negative.text = KeywordText.format_text("－ " + card.negative)
+	_positive.text = (
+		""
+		if card.positive.is_empty()
+		else KeywordText.format_text("＋ " + ProgressionEconomy.output_text(state, card))
+	)
+	_negative.text = (
+		"" if card.negative.is_empty() else KeywordText.format_text("－ " + card.negative)
+	)
+	_positive.visible = not card.positive.is_empty()
+	_negative.visible = not card.negative.is_empty()
 	var error: String = DayEndEvents.option_error(state, index)
 	var cost_text: String = state.catalog.cost_text(card, state)
 	_cost.text = ("库存消耗：无（仍有上方代价）" if cost_text == "无资源消耗" else "库存消耗：" + cost_text)
 	_select.disabled = not error.is_empty()
-	_select.text = "处理事件 →" if error.is_empty() else error
+	_select.text = "选择此方案 →" if error.is_empty() else error
 
 
 func _on_select_pressed() -> void:

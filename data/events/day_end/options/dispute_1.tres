@@ -15,16 +15,16 @@ amount = 5.0
 [sub_resource type="Resource" id="effect1"]
 script = ExtResource("effect")
 type = 0
-key = 5
-amount = 6.0
+key = 6
+amount = 2.0
 
 [resource]
 script = ExtResource("card")
 id = "day_end_dispute_1"
 display_name = "围火谈开"
-description = "烦躁 -2，村庄耐久 +5；噪音 +6，影响下一夜尸群。确认后直接结算，不占用白天行动。"
+description = "烦躁 -2，村庄耐久 +5；污染 +2，产生清理废弃物。确认后直接结算，不占用白天行动。"
 positive = "烦躁 -2，村庄耐久 +5"
-negative = "噪音 +6，影响下一夜尸群"
+negative = "污染 +2，产生清理废弃物"
 kind = 3
 icon = 11
 color = 2

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=12 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
@@ -9,6 +9,8 @@
 [ext_resource type="Resource" path="res://data/keywords/production.tres" id="kw_production"]
 [ext_resource type="Resource" path="res://data/keywords/materials.tres" id="kw_materials"]
 [ext_resource type="Resource" path="res://data/keywords/engineer.tres" id="kw_engineer"]
+
+[ext_resource type="Texture2D" path="res://assets/cards/individual/workshop.png" id="illustration"]
 
 [sub_resource type="Resource" id="cost_0"]
 script = ExtResource("s_resource_cost")
@@ -28,6 +30,7 @@ building = ExtResource("b_workshop")
 
 [resource]
 script = ExtResource("s_card_definition")
+illustration = ExtResource("illustration")
 profession = 3
 id = "workshop"
 display_name = "修造工坊图纸"

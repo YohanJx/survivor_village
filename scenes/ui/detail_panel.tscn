@@ -1,51 +1,135 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=8 format=3]
 
-[ext_resource type="Texture2D" path="res://assets/ui/worn_iron_panel.png" id="worn_texture"]
 [ext_resource type="Script" path="res://scripts/ui/detail_panel.gd" id="ui_script"]
 
 
 [ext_resource type="PackedScene" path="res://scenes/ui/card_cost_strip.tscn" id="cost_strip"]
 
-[sub_resource type="StyleBoxTexture" id="card_face"]
-content_margin_left = 12.0
+[sub_resource type="StyleBoxFlat" id="card_face"]
+content_margin_left = 16.0
 content_margin_top = 12.0
-content_margin_right = 12.0
+content_margin_right = 16.0
 content_margin_bottom = 12.0
-texture = ExtResource("worn_texture")
-texture_margin_left = 8.0
-texture_margin_top = 8.0
-texture_margin_right = 8.0
-texture_margin_bottom = 8.0
-modulate_color = Color(1, 1, 1, 1)
+bg_color = Color(0.10, 0.12, 0.11, 0.98)
+border_width_left = 1
+border_color = Color(0.34, 0.36, 0.31, 1)
+
+[sub_resource type="StyleBoxFlat" id="execute_ready"]
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+bg_color = Color(0.35, 0.28, 0.16, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.78, 0.66, 0.42, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_left = 3
+corner_radius_bottom_right = 3
+shadow_color = Color(0, 0, 0, 0.8)
+shadow_size = 7
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="execute_hover"]
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+bg_color = Color(0.47, 0.36, 0.19, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95, 0.82, 0.56, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_left = 3
+corner_radius_bottom_right = 3
+shadow_color = Color(0, 0, 0, 0.8)
+shadow_size = 10
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="execute_pressed"]
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+bg_color = Color(0.24, 0.19, 0.12, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.71, 0.58, 0.36, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_left = 3
+corner_radius_bottom_right = 3
+shadow_color = Color(0, 0, 0, 0.8)
+shadow_size = 2
+shadow_offset = Vector2(0, 1)
+
+[sub_resource type="StyleBoxFlat" id="execute_disabled"]
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+bg_color = Color(0.14, 0.13, 0.11, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.27, 0.25, 0.20, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_left = 3
+corner_radius_bottom_right = 3
+shadow_color = Color(0, 0, 0, 0.8)
+shadow_size = 0
+shadow_offset = Vector2(0, 0)
 
 [node name="DetailPanel" type="PanelContainer"]
 unique_name_in_owner = true
 script = ExtResource("ui_script")
 custom_minimum_size = Vector2(320, 0)
+theme_override_styles/panel = SubResource("card_face")
 
 [node name="Content" type="VBoxContainer" parent="."]
 layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="PresentationScroll" type="ScrollContainer" parent="Content"]
+custom_minimum_size = Vector2(0, 96)
+layout_mode = 2
+size_flags_vertical = 0
+horizontal_scroll_mode = 0
+
+[node name="Presentation" type="VBoxContainer" parent="Content/PresentationScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/separation = 4
 
-[node name="CardHeader" type="VBoxContainer" parent="Content"]
+[node name="CardHeader" type="VBoxContainer" parent="Content/PresentationScroll/Presentation"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="Title" type="VBoxContainer" parent="Content/CardHeader"]
+[node name="Title" type="VBoxContainer" parent="Content/PresentationScroll/Presentation/CardHeader"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 3
 
-[node name="CardTitle" type="Label" parent="Content/CardHeader/Title"]
+[node name="CardTitle" type="Label" parent="Content/PresentationScroll/Presentation/CardHeader/Title"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 21
 autowrap_mode = 3
-theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
+theme_override_colors/font_color = Color(0.94, 0.91, 0.83, 1)
 
-[node name="CardKind" type="RichTextLabel" parent="Content/CardHeader/Title"]
+[node name="CardKind" type="RichTextLabel" parent="Content/PresentationScroll/Presentation/CardHeader/Title"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -53,9 +137,9 @@ theme_override_font_sizes/normal_font_size = 13
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
-theme_override_colors/default_color = Color(0.64, 0.60, 0.52, 1)
+theme_override_colors/default_color = Color(0.78, 0.74, 0.65, 1)
 
-[node name="ActionArt" type="TextureRect" parent="Content/CardHeader"]
+[node name="ActionArt" type="TextureRect" parent="Content/PresentationScroll/Presentation/CardHeader"]
 unique_name_in_owner = true
 layout_mode = 2
 custom_minimum_size = Vector2(0, 96)
@@ -63,16 +147,16 @@ expand_mode = 1
 stretch_mode = 6
 mouse_filter = 2
 
-[node name="PositiveHeading" type="Label" parent="Content"]
+[node name="PositiveHeading" type="Label" parent="Content/PresentationScroll/Presentation"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
 autowrap_mode = 3
-theme_override_colors/font_color = Color(0.80, 0.76, 0.65, 1)
+theme_override_colors/font_color = Color(0.88, 0.84, 0.72, 1)
 text = "行动收益"
 
-[node name="Positive" type="RichTextLabel" parent="Content"]
+[node name="Positive" type="RichTextLabel" parent="Content/PresentationScroll/Presentation"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -80,7 +164,15 @@ theme_override_font_sizes/normal_font_size = 17
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
-theme_override_colors/default_color = Color(0.80, 0.76, 0.65, 1)
+theme_override_colors/default_color = Color(0.88, 0.84, 0.72, 1)
+
+[node name="Cost" type="Label" parent="Content/PresentationScroll/Presentation"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.94, 0.91, 0.83, 1)
 
 [node name="Negative" type="RichTextLabel" parent="Content"]
 unique_name_in_owner = true
@@ -90,15 +182,7 @@ theme_override_font_sizes/normal_font_size = 14
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
-theme_override_colors/default_color = Color(0.733333, 0.513725, 0.439216, 1)
-
-[node name="Cost" type="Label" parent="Content"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 14
-autowrap_mode = 3
-theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
+theme_override_colors/default_color = Color(0.90, 0.66, 0.54, 1)
 
 [node name="SelectedCosts" parent="Content" instance=ExtResource("cost_strip")]
 unique_name_in_owner = true
@@ -110,13 +194,23 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
 autowrap_mode = 3
-theme_override_colors/font_color = Color(0.733333, 0.513725, 0.439216, 1)
+theme_override_colors/font_color = Color(0.90, 0.66, 0.54, 1)
 
 [node name="ExecuteButton" type="Button" parent="Content"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_default_cursor_shape = 2
 text = "确认执行卡牌"
+theme_override_colors/font_color = Color(1, 0.92, 0.73, 1)
+theme_override_colors/font_hover_color = Color(1, 0.97, 0.86, 1)
+theme_override_colors/font_disabled_color = Color(0.5, 0.47, 0.41, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_y = 1
+theme_override_styles/normal = SubResource("execute_ready")
+theme_override_styles/hover = SubResource("execute_hover")
+theme_override_styles/focus = SubResource("execute_hover")
+theme_override_styles/pressed = SubResource("execute_pressed")
+theme_override_styles/disabled = SubResource("execute_disabled")
 [node name="DetailScroll" type="ScrollContainer" parent="Content"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 32)
@@ -136,7 +230,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 15
 autowrap_mode = 3
-theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
+theme_override_colors/font_color = Color(0.94, 0.91, 0.83, 1)
 
 [node name="SurveyReport" type="Label" parent="Content/DetailScroll/DetailContainer"]
 unique_name_in_owner = true
@@ -173,7 +267,7 @@ theme_override_font_sizes/normal_font_size = 14
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
-theme_override_colors/default_color = Color(0.64, 0.60, 0.52, 1)
+theme_override_colors/default_color = Color(0.78, 0.74, 0.65, 1)
 
 [node name="CardKeywords" type="RichTextLabel" parent="Content/DetailScroll/DetailContainer/CardDetail/AdvancedDetails"]
 unique_name_in_owner = true
@@ -201,4 +295,4 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
 autowrap_mode = 3
-theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
+theme_override_colors/font_color = Color(0.94, 0.91, 0.83, 1)

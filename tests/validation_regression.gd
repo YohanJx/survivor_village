@@ -23,6 +23,9 @@ static func _fresh() -> VillageState:
 static func _library() -> CardLibrary:
 	var source: CardLibrary = load("res://data/card_library.tres") as CardLibrary
 	var library: CardLibrary = CardLibrary.new()
+	library.keyword_library = source.keyword_library
+	library.progression_rules = source.progression_rules
+	library.workforce_rules = source.workforce_rules
 	library.weather_rules = source.weather_rules
 	library.cards = source.cards.duplicate()
 	library.buildings = source.buildings.duplicate()
@@ -39,10 +42,12 @@ static func _reject_library(library: CardLibrary, check: Callable, message: Stri
 	)
 	check.call(catalog.buildings.is_empty(), "Invalid catalog publishes no partial buildings")
 	var state: VillageState = _fresh()
+	var previous_seed: int = state.run_seed
 	state.catalog = catalog
 	state.new_run(999)
 	check.call(
-		state.run_seed == 4242, "Invalid catalog prevents a new run without changing current state"
+		state.run_seed == previous_seed,
+		"Invalid catalog prevents a new run without changing current state"
 	)
 
 
@@ -162,6 +167,7 @@ static func _test_snapshot_failures(check: Callable) -> void:
 		VillageSaveData.new().version == VillageState.SAVE_VERSION,
 		"Default save version uses the authority"
 	)
+	state.core_health = 220.0
 	state.begin_night()
 	var report: BattleReport = BattleReport.new()
 	report.core_health = state.core_health

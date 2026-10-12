@@ -6,10 +6,14 @@ extends RefCounted
 static func draw_survey(
 	canvas: Control, state: VillageState, camera: MapViewCamera, art: ApocalypseMapArt
 ) -> void:
-	var scale_value: float = camera.get_view_transform(canvas.size).get_scale().x
+	var transform: Transform2D = camera.get_view_transform(canvas.size)
 	for y: int in TerrainGrid.SIZE.y:
 		for x: int in TerrainGrid.SIZE.x:
-			_draw_survey_cell(canvas, state, Vector2i(x, y), scale_value, art)
+			_draw_survey_cell(canvas, state, Vector2i(x, y), art)
+
+	for y: int in TerrainGrid.SIZE.y:
+		for x: int in TerrainGrid.SIZE.x:
+			_draw_survey_label(canvas, state, Vector2i(x, y), transform)
 
 
 static func draw_ground(
@@ -43,8 +47,28 @@ static func draw_ground(
 		canvas.draw_line(WorldLayout.CENTER, center, Color(0.36, 0.31, 0.23, 0.22), 14)
 
 
+## 只变换锚点；文字在控件坐标系按真实字号渲染，不拉伸低分辨率字形。
+static func draw_label(
+	canvas: Control,
+	transform: Transform2D,
+	world_point: Vector2,
+	text: String,
+	font_size: int,
+	color: Color
+) -> void:
+	var font: Font = canvas.get_theme_default_font()
+	var extent: Vector2 = font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size)
+	var point: Vector2 = (transform * world_point - Vector2(extent.x * 0.5, 0)).round()
+	canvas.draw_set_transform_matrix(Transform2D.IDENTITY)
+	canvas.draw_rect(
+		Rect2(point - Vector2(4, font_size), extent + Vector2(8, 4)), Color(0.08, 0.075, 0.06, 0.65)
+	)
+	canvas.draw_string(font, point, text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, color)
+	canvas.draw_set_transform_matrix(transform)
+
+
 static func _draw_survey_cell(
-	canvas: Control, state: VillageState, cell: Vector2i, scale_value: float, art: ApocalypseMapArt
+	canvas: Control, state: VillageState, cell: Vector2i, art: ApocalypseMapArt
 ) -> void:
 	var value: int = TerrainGrid.index(cell)
 	var area: Rect2 = Rect2(Vector2(cell) * TerrainGrid.CELL, Vector2.ONE * TerrainGrid.CELL)
@@ -64,6 +88,17 @@ static func _draw_survey_cell(
 			false,
 			3
 		)
+
+
+static func _draw_survey_label(
+	canvas: Control, state: VillageState, cell: Vector2i, transform: Transform2D
+) -> void:
+	var explored: bool = state.progress.explored_cells.has(TerrainGrid.index(cell))
+	var frontier: bool = TerrainGrid.is_frontier(cell, state.progress.explored_cells)
+	var center: Vector2 = Vector2(cell) * TerrainGrid.CELL + Vector2(48, 43)
+	var cell_width: float = transform.get_scale().x * TerrainGrid.CELL
+	if cell_width < 60 and not explored and not frontier:
+		return
 	var title: String = (
 		"营地"
 		if cell == TerrainGrid.CAMP
@@ -73,22 +108,15 @@ static func _draw_survey_cell(
 			else "?" if frontier else "未知"
 		)
 	)
-	canvas.draw_string(
-		canvas.get_theme_default_font(),
-		area.position + Vector2(4, 43),
-		title,
-		HORIZONTAL_ALIGNMENT_CENTER,
-		88,
-		roundi(14.0 / scale_value),
-		UiElements.TEXT_PRIMARY
+	draw_label(
+		canvas, transform, center, title, 13 if cell_width < 60 else 16, UiElements.TEXT_PRIMARY
 	)
-	if frontier:
-		canvas.draw_string(
-			canvas.get_theme_default_font(),
-			area.position + Vector2(4, 65),
+	if frontier and cell_width >= 60:
+		draw_label(
+			canvas,
+			transform,
+			center + Vector2(0, 22),
 			"距离 %d 格" % TerrainGrid.distance(cell),
-			HORIZONTAL_ALIGNMENT_CENTER,
-			88,
-			roundi(10.0 / scale_value),
+			13,
 			UiElements.TEXT_SECONDARY
 		)

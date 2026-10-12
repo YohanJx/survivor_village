@@ -8,12 +8,26 @@ const EXTRA_HUT: Rect2i = Rect2i(23, 13, 2, 2)
 const CENTER: Vector2 = Vector2(492, 300)
 const CAMP_PADDING: float = 18.0
 const FIRE_CLEARING: Rect2 = Rect2(468, 324, 48, 48)
+## 围墙内侧的驻守区；无围墙或围墙破损时仍不主动出村追敌。
+const DEFENSE_CELLS: Rect2i = Rect2i(15, 7, 11, 11)
 
 
 static func to_cell(point: Vector2) -> Vector2i:
 	return Vector2i(
 		clampi(int(point.x / CELL), 0, GRID.x - 1), clampi(int(point.y / CELL), 0, GRID.y - 1)
 	)
+
+
+## 篝火空地附近的紧密阵列，保证开局守卫射程重叠；岗位不随目标移动。
+static func guard_post(index: int, population: int) -> Vector2:
+	var columns: int = 5 if population >= 10 else 3
+	var point: Vector2 = (
+		CENTER
+		+ Vector2(
+			(index % columns - int(columns / 2.0)) * CELL, 48 + int(index / float(columns)) * CELL
+		)
+	)
+	return point.clamp(to_point(DEFENSE_CELLS.position), to_point(DEFENSE_CELLS.end - Vector2i.ONE))
 
 
 static func to_point(cell: Vector2i) -> Vector2:

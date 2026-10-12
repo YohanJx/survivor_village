@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=21 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=22 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
@@ -13,6 +13,8 @@
 [ext_resource type="Resource" path="res://data/keywords/synergy.tres" id="kw_synergy"]
 [ext_resource type="Resource" path="res://data/keywords/production.tres" id="kw_production"]
 [ext_resource type="Resource" path="res://data/keywords/builder.tres" id="kw_builder"]
+
+[ext_resource type="Texture2D" path="res://assets/cards/individual/greenhouse.png" id="illustration"]
 
 [sub_resource type="Resource" id="cost_0"]
 script = ExtResource("s_resource_cost")
@@ -58,6 +60,7 @@ amount = 3.0
 
 [resource]
 script = ExtResource("s_card_definition")
+illustration = ExtResource("illustration")
 profession = 2
 id = "greenhouse"
 display_name = "灌溉系统图纸"

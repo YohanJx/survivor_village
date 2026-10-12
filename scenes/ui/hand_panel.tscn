@@ -7,43 +7,21 @@ unique_name_in_owner = true
 script = ExtResource("ui_script")
 theme_override_constants/separation = 10
 
-[node name="Heading" type="HBoxContainer" parent="."]
-layout_mode = 2
-
-[node name="HandTitle" type="Label" parent="Heading"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 17
-theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
-text = "今日的选择"
-
-[node name="Hint" type="Label" parent="Heading"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
-text = "选择行动"
-clip_text = true
-
-[node name="KeywordFilter" type="OptionButton" parent="Heading"]
-unique_name_in_owner = true
-layout_mode = 2
-mouse_default_cursor_shape = 2
-theme_override_font_sizes/font_size = 13
-
-[node name="SkipButton" type="Button" parent="Heading"]
-unique_name_in_owner = true
-layout_mode = 2
-mouse_default_cursor_shape = 2
-text = "待命  ·  体力 +8"
-
 [node name="HandScroll" type="ScrollContainer" parent="."]
-custom_minimum_size = Vector2(0, 322)
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
-vertical_scroll_mode = 0
+size_flags_vertical = 3
+vertical_scroll_mode = 1
 
 [node name="HandContainer" type="HBoxContainer" parent="HandScroll"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 16
+
+[node name="EmptyCategory" type="Label" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "暂无符合条件的卡牌 · 探索与发展后可获得更多卡牌"
+horizontal_alignment = 1
+autowrap_mode = 3

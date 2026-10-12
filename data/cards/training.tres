@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=18 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=19 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
@@ -9,6 +9,8 @@
 [ext_resource type="Resource" path="res://data/keywords/temporary.tres" id="kw_temporary"]
 [ext_resource type="Resource" path="res://data/keywords/defense.tres" id="kw_defense"]
 [ext_resource type="Resource" path="res://data/keywords/guard.tres" id="kw_guard"]
+
+[ext_resource type="Texture2D" path="res://assets/cards/individual/training.png" id="illustration"]
 
 [sub_resource type="Resource" id="cost_0"]
 script = ExtResource("s_resource_cost")
@@ -34,9 +36,9 @@ modifier = SubResource("stat_0")
 
 [sub_resource type="Resource" id="stat_1"]
 script = ExtResource("s_stat_modifier")
-key = 3
-operation = 0
-amount = 10.0
+key = 2
+operation = 1
+amount = 0.9
 duration = 1
 
 [sub_resource type="Resource" id="effect_1"]
@@ -64,6 +66,7 @@ amount = 4.0
 
 [resource]
 script = ExtResource("s_card_definition")
+illustration = ExtResource("illustration")
 profession = 5
 id = "training"
 display_name = "守夜演练"
@@ -71,7 +74,7 @@ kind = 0
 icon = 6
 color = 3
 description = "一遍遍练习投掷、瞄准和队形，今晚才能少流一点血。"
-positive = "今晚攻击 +40%，移动速度 +10"
+positive = "今晚攻击 +40%，攻击间隔 -10%"
 negative = "今晚每名守卫生命 -10，噪音 +4"
 reusable = false
 costs = Array[ExtResource("s_resource_cost")]([SubResource("cost_0"), SubResource("cost_1")])

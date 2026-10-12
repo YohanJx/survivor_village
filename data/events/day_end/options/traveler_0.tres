@@ -15,8 +15,8 @@ amount = 1.0
 [sub_resource type="Resource" id="effect1"]
 script = ExtResource("effect")
 type = 0
-key = 5
-amount = 4.0
+key = 6
+amount = 2.0
 
 [sub_resource type="Resource" id="cost0"]
 script = ExtResource("cost")
@@ -32,9 +32,9 @@ amount = 3
 script = ExtResource("card")
 id = "day_end_traveler_0"
 display_name = "接纳旅人"
-description = "人口 +1，明日可分工并参与防守；食物消耗 3、水消耗 3、噪音 +4；新增人口也需本日口粮。确认后直接结算，不占用白天行动。"
+description = "人口 +1，明日可分工并参与防守；食物消耗 3、水消耗 3、污染 +2；新增人口也需本日口粮。确认后直接结算，不占用白天行动。"
 positive = "人口 +1，明日可分工并参与防守"
-negative = "食物消耗 3、水消耗 3、噪音 +4；新增人口也需本日口粮"
+negative = "食物消耗 3、水消耗 3、污染 +2；新增人口也需本日口粮"
 kind = 3
 icon = 11
 color = 2

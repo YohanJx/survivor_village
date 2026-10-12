@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="DailyEvent" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/daily_event.gd" id="event"]
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Resource" path="res://data/events/day_end/options/hunger_0.tres" id="o0"]
+[ext_resource type="Resource" path="res://data/events/day_end/options/hunger_1.tres" id="o1"]
+
+[resource]
+script = ExtResource("event")
+id = "day_end_hunger"
+display_name = "饥饿与虚弱"
+description = "昨日口粮结算后，居民没有获得足够食物。疲惫和虚弱会影响下一夜防守。药品只能缓解症状，必须恢复每日供应才能结束连续短缺。"
+trigger = 1
+min_deprivation_days = 1
+max_deprivation_days = 1
+options = Array[ExtResource("card")]([ExtResource("o0"), ExtResource("o1")])

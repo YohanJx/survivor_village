@@ -41,12 +41,20 @@ static func select_frontier(
 static func settle_day_end(state: VillageState) -> bool:
 	if state.phase != GameTypes.Phase.DAY_END:
 		return false
-	var event: DailyEvent = state.current_day_end_event()
-	if event == null:
-		return false
-	if event.skippable:
-		return state.skip_day_end_event()
-	for index: int in range(event.options.size() - 1, -1, -1):
-		if DayEndEvents.option_error(state, index).is_empty():
-			return state.choose_day_end_event(index)
+	for step: int in 8:
+		if state.phase != GameTypes.Phase.DAY_END:
+			return true
+		var event: DailyEvent = state.current_day_end_event()
+		if event == null:
+			return false
+		if event.skippable:
+			state.skip_day_end_event()
+			continue
+		var settled: bool = false
+		for index: int in range(event.options.size() - 1, -1, -1):
+			if DayEndEvents.option_error(state, index).is_empty():
+				settled = state.choose_day_end_event(index)
+				break
+		if not settled:
+			return false
 	return false

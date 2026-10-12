@@ -40,6 +40,7 @@ func _run() -> void:
 	await _capture("ui_day")
 	var map_tests: MapInteractionTests = MapInteractionTests.new()
 	await map_tests.run(self, _dashboard, _check, _capture)
+	await CardCategoryUiRegression.run(self, root, _game, _check)
 	await CardUiRegression.run(self, _dashboard, _check, _capture)
 	await CardInspectionUiRegression.run(self, _game, _check, _capture)
 	await CardAcquisitionUiRegression.run(self, _game, _check)
@@ -103,6 +104,8 @@ func _run() -> void:
 	_game.state.changed.emit()
 	await CardUiRegression.click(self, _dashboard.detail.get_node("%ExecuteButton") as Button)
 	_card_view("forage").pressed.emit()
+	# 驻守改善后可能无伤且无普通事件；显式满足争执条件以验证事件交互。
+	_game.state.progress.frustration = 2
 	await _key(KEY_ENTER)
 	_check(
 		_game.state.phase == GameTypes.Phase.NIGHT and _game.battle.active,
@@ -239,9 +242,13 @@ func _test_tradeoffs() -> void:
 			"Tradeoff risk remains fixed above confirmation: " + id
 		)
 		await _capture("ui_tradeoff_" + id)
+	var water_before: int = _game.state.resources[GameTypes.Stock.WATER]
 	await CardUiRegression.click(self, execute)
 	_check(
-		_game.state.resources[GameTypes.Stock.WATER] == 18 and _game.state.modifiers.size() == 1,
+		(
+			_game.state.resources[GameTypes.Stock.WATER] == water_before - 6
+			and _game.state.modifiers.size() == 1
+		),
 		"Mouse confirmation applies rations cost and penalty"
 	)
 	_game.state.add_card(_game.state.catalog.get_card("lure"))

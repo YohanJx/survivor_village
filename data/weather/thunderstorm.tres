@@ -5,9 +5,9 @@
 
 [sub_resource type="Resource" id="Modifier0"]
 script = ExtResource("2")
-key = 3
+key = 2
 operation = 1
-amount = 0.85
+amount = 1.176470588
 
 [sub_resource type="Resource" id="Modifier1"]
 script = ExtResource("2")
@@ -19,7 +19,7 @@ amount = 0.85
 script = ExtResource("1")
 kind = 3
 display_name = "雷雨"
-description = "每日水 +8；体力恢复 -6，守卫移动速度、射程 -15%。"
+description = "每日水 +8；体力恢复 -6，守卫攻击频率、射程 -15%。"
 weight = 12
 water_income = 8
 stamina_recovery = -6

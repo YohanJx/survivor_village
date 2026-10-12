@@ -5,6 +5,8 @@ extends RefCounted
 
 static func run(check: Callable) -> void:
 	_test_generation(check)
+	_test_viable_openings(check)
+	_test_opening_failure(check)
 	_test_exploration(check)
 	_test_dependencies(check)
 	_test_restore(check)
@@ -213,4 +215,61 @@ static func _test_restore(check: Callable) -> void:
 	)
 	check.call(
 		data.progress.explored_cells.is_empty(), "Migration does not mutate original save resource"
+	)
+
+
+static func _test_viable_openings(check: Callable) -> void:
+	var state: VillageState = _fresh()
+	for region: int in GameTypes.Region.COUNT:
+		var map: MapDefinition = state.catalog.library.progression_rules.map_for(
+			region as GameTypes.Region
+		)
+		for requested: int in range(1, 33):
+			var seed_value: int = OpeningRules.viable_seed(requested, map)
+			var grid: TerrainGrid = TerrainGrid.new()
+			grid.generate(seed_value, map)
+			check.call(
+				seed_value != -1 and OpeningRules.has_opening_sources(grid),
+				"New opening has food, wood and groundwater within two steps"
+			)
+		var restored: VillageState = _fresh(7, region as GameTypes.Region)
+		var copy: VillageState = _fresh(8)
+		check.call(
+			copy.restore(restored.snapshot()) and copy.run_seed == restored.run_seed,
+			"Restore keeps selected map seed without screening again"
+		)
+
+
+static func _test_opening_failure(check: Callable) -> void:
+	var state: VillageState = _fresh()
+	var previous_history: Array[VillageLogEntry] = state.history.duplicate()
+	var before: VillageSaveData = state.snapshot()
+	var map: MapDefinition = (
+		state.catalog.library.progression_rules.map_for(GameTypes.Region.RURAL).duplicate(false)
+		as MapDefinition
+	)
+	map.discoveries = PackedInt32Array([GameTypes.Discovery.STONE])
+	var rules: ProgressionRules = (
+		state.catalog.library.progression_rules.duplicate(false) as ProgressionRules
+	)
+	rules.maps = [map]
+	var library: CardLibrary = state.catalog.library.duplicate(false) as CardLibrary
+	library.progression_rules = rules
+	state.catalog.library = library
+	state.new_run(15, GameTypes.Region.RURAL)
+	check.call(
+		(
+			not state.last_error.is_empty()
+			and state.resources == before.resources
+			and state.run_seed == before.run_seed
+			and state.rng.state == before.rng_state
+		),
+		"Failed opening search preserves current resources and random sequence"
+	)
+	check.call(
+		(
+			state.progress.explored_cells == before.progress.explored_cells
+			and state.history == previous_history
+		),
+		"Failed opening search preserves current discovery and history"
 	)

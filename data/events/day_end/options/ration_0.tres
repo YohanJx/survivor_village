@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=9 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
 [ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
@@ -9,14 +9,14 @@
 [sub_resource type="Resource" id="effect0"]
 script = ExtResource("effect")
 type = 0
-key = 1
-amount = 8.0
+key = 0
+amount = 16.0
 
 [sub_resource type="Resource" id="effect1"]
 script = ExtResource("effect")
 type = 0
-key = 5
-amount = 4.0
+key = 6
+amount = 2.0
 
 [sub_resource type="Resource" id="effect2"]
 script = ExtResource("effect")
@@ -24,17 +24,27 @@ type = 0
 key = 6
 amount = 2.0
 
+[sub_resource type="Resource" id="cost0"]
+script = ExtResource("cost")
+key = 1
+amount = 4
+
+[sub_resource type="Resource" id="cost1"]
+script = ExtResource("cost")
+key = 2
+amount = 2
+
 [resource]
 script = ExtResource("card")
 id = "day_end_ration_0"
 display_name = "煮一锅热食"
-description = "食物 +8，先用于本日口粮结算；噪音 +4，污染 +2。确认后直接结算，不占用白天行动。"
-positive = "食物 +8，先用于本日口粮结算"
-negative = "噪音 +4，污染 +2"
+description = "体力 +16；食物消耗 4、水消耗 2；污染 +4。确认后直接结算，不占用白天行动。"
+positive = "体力 +16"
+negative = "食物消耗 4、水消耗 2；污染 +4"
 kind = 3
 icon = 11
 color = 2
 mood_delta = 0
 keywords = Array[ExtResource("keyword")]([ExtResource("kw_event")])
-costs = Array[ExtResource("cost")]([])
+costs = Array[ExtResource("cost")]([SubResource("cost0"), SubResource("cost1")])
 effects = Array[ExtResource("effect")]([SubResource("effect0"), SubResource("effect1"), SubResource("effect2")])

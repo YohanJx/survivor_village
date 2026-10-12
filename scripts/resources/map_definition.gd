@@ -14,3 +14,4 @@ extends Resource
 @export_range(0.01, 1.0) var noise_frequency: float = 0.19
 @export_range(0.01, 0.3) var river_width: float = 0.085
 @export var ground_tint: Color = Color.WHITE
+@export_range(0, 20) var pollution_recovery: int = 2

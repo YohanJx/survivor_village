@@ -112,7 +112,6 @@ func draw_structure(
 		false,
 		_tint(night)
 	)
-	_draw_label(canvas, structure.display_name, Vector2(rect.get_center().x, rect.end.y + 12))
 	if structure.key == GameTypes.Building.CORE:
 		_draw_core_health(canvas, state, battle, rect, night)
 	if night and structure.key == GameTypes.Building.LIGHTS and battle.stats.lights_active:
@@ -183,8 +182,6 @@ func draw_actor(
 				index = 1
 	var point: Vector2 = actor.pos + Vector2(0, sin(clock_time * 6 + actor.id) * 0.8)
 	var tint: Color = Color(1.3, 1.2, 1.05) if actor.flash > 0 else _tint(night)
-	if zombie and actor.kind >= GameTypes.Enemy.ARMORED:
-		_draw_label(canvas, GameTypes.ENEMY_NAMES[actor.kind], point - Vector2(0, extent.y + 7))
 	canvas.draw_texture_rect(
 		_people[index], Rect2(point - extent * Vector2(0.5, 0.8), extent), false, tint
 	)
@@ -195,21 +192,6 @@ func draw_actor(
 			Rect2(origin, Vector2(extent.x * maxf(0, actor.hp / actor.max_hp), 3)),
 			UiElements.NEGATIVE if zombie else UiElements.POSITIVE
 		)
-
-
-func _draw_label(canvas: Control, text: String, point: Vector2) -> void:
-	canvas.draw_rect(
-		Rect2(point - Vector2(36, 10), Vector2(72, 15)), Color(0.10, 0.09, 0.075, 0.65)
-	)
-	canvas.draw_string(
-		canvas.get_theme_default_font(),
-		point - Vector2(36, 0),
-		text,
-		HORIZONTAL_ALIGNMENT_CENTER,
-		72,
-		11,
-		UiElements.TEXT_PRIMARY
-	)
 
 
 func _draw_core_health(

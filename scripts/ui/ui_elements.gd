@@ -6,16 +6,16 @@ const BACKGROUND: Color = Color("191816")
 const PANEL: Color = Color("29251f")
 const BORDER: Color = Color("685d49")
 
-const TEXT_PRIMARY: Color = Color("dcd3bf")
-const TEXT_SECONDARY: Color = Color("a39985")
+const TEXT_PRIMARY: Color = Color("f0e8d4")
+const TEXT_SECONDARY: Color = Color("c7bda6")
 const ACCENT: Color = Color("c2ad80")
 
-const POSITIVE: Color = Color("b5b093")
-const WATER: Color = Color("839da0")
+const POSITIVE: Color = Color("d5cdb0")
+const WATER: Color = Color("abc5c7")
 const EMPHASIS: Color = Color("c2ad80")
-const NEGATIVE: Color = Color("bb8370")
+const NEGATIVE: Color = Color("e6a88a")
 const CARD_COLORS: Array[Color] = [
-	Color("b5b093"), Color("839da0"), Color("c2ad80"), Color("bb8370")
+	Color("d5cdb0"), Color("abc5c7"), Color("d8c395"), Color("e6a88a")
 ]
 const UNIT_COLORS: Array[Color] = [
 	Color("a6c3ba"),

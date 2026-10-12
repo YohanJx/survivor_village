@@ -30,22 +30,57 @@ func _run() -> void:
 	_viewport.add_child(_game)
 	_dashboard = _game.get_node("Dashboard") as VillageDashboard
 	_game.state.new_run(65012, GameTypes.Region.RURAL)
+	await _capture("categories_collapsed_opening")
+	await CardCategoryUiRegression.run(self, _viewport, _game, _check)
 	_select("explore")
 	SurvivalTestSetup.select_frontier(_game.state)
 	await _capture("survival_opening")
+	var map: VillageMap = _dashboard.get_node("%VillageMap") as VillageMap
+	map.view_camera.zoom_by(100.0, map.size * 0.5, map.size)
+	var camp_center: Vector2 = (Vector2(TerrainGrid.CAMP) + Vector2.ONE * 0.5) * TerrainGrid.CELL
+	map.view_camera.pan_by(
+		map.size * 0.5 - map.view_camera.get_view_transform(map.size) * camp_center, map.size
+	)
+	map.queue_redraw()
+	await _capture("defense_map_text_max_zoom")
+	map.view_camera.focus_village()
+	map.queue_redraw()
+	var clues: Label = _dashboard.get_node("%ExplorationClues") as Label
+	_check(
+		(
+			clues.is_visible_in_tree()
+			and clues.text.contains("北：")
+			and (
+				clues.get_global_rect().end.y
+				< (_dashboard.get_node("%StatusLabel") as Label).get_global_rect().position.y
+			)
+		),
+		"Directional opening clues are visible beside the map without scrolling"
+	)
+	var opening_report: Label = _dashboard.detail.get_node("%SurveyReport") as Label
+	_check(
+		opening_report.text.contains("北：") and opening_report.text.contains("南："),
+		"Opening shows directional clues before any actual discovery"
+	)
+	_check(
+		(_dashboard.get_node("%StatusLabel") as Label).text.contains("目标："),
+		"Development objective is visible beside the map"
+	)
 	SurvivalTestSetup.developed(_game.state)
 	_game.state.assign_jobs(PackedInt32Array([0, 1, 1, 1, 1, 1]))
 	(_dashboard.get_node("%CardAcquisition") as CardAcquisitionNotice).clear()
+	await CardCategoryUiRegression.run(self, _viewport, _game, _check)
+	var building_button: Button = _dashboard.get_node("%CardCategoryBar/Building/Button") as Button
+	await _drag_pointer(building_button.get_global_rect().get_center(), building_button.get_global_rect().get_center())
+	await _capture("categories_building")
+	(_dashboard.get_node("%CardCategoryBar/All/Button") as Button).pressed.emit()
 	_select("wall")
 	await _capture("survival_action_costs")
-	var selected_art: TextureRect = _dashboard.detail.get_node("%ActionArt") as TextureRect
+	await _capture_layout_options()
+	await _test_action_dock()
 	_check(
-		(
-			selected_art.is_visible_in_tree()
-			and selected_art.size.x >= 250.0
-			and selected_art.size.y >= 90.0
-		),
-		"Selected action shows a full-width illustration"
+		(_dashboard.detail.get_node("%CardTitle") as Label).is_visible_in_tree(),
+		"Floating confirmation shows the selected card title"
 	)
 	_game.state.resources[GameTypes.Stock.WOOD] = 0
 	_game.state.changed.emit()
@@ -73,6 +108,11 @@ func _run() -> void:
 	await create_timer(0.3).timeout
 	await _capture("survival_acquired")
 	await _capture_camp_conditions()
+	await _test_event_flow()
+	await _test_environment_views()
+	_game.hide()
+	await CardGalleryCapture.run(_viewport, _game.state, _check, _capture)
+	_game.show()
 	var result: String = "BACKGROUND UI RESULT: %d checks, %d failures" % [_checks, _failures]
 	print(result)
 	var file: FileAccess = FileAccess.open(
@@ -81,6 +121,113 @@ func _run() -> void:
 	file.store_string(result)
 	DisplayServer.unregister_additional_output(_viewport)
 	quit(0 if _failures == 0 else 1)
+
+
+func _capture_layout_options() -> void:
+	var dock: ActionDock = _dashboard.get_node("%ActionSplit") as ActionDock
+	dock.popup_width = 1120.0
+	dock.popup_height = 420.0
+	dock.refresh_layout()
+	await _capture("popup_layout_a_wide")
+	dock.popup_width = 1000.0
+	dock.popup_height = 420.0
+	dock.refresh_layout()
+	await _capture("popup_layout_b_compact")
+	dock.popup_width = 1000.0
+	dock.popup_height = 360.0
+	dock.refresh_layout()
+	await _capture("popup_layout_c_shallow")
+	dock.popup_height = 420.0
+	dock.refresh_layout()
+	await _capture("popup_layout_final")
+	(_dashboard.get_node("%CardCategoryBar/Event/Button") as Button).pressed.emit()
+	await _capture("popup_empty_category")
+	(_dashboard.get_node("%CardCategoryBar/All/Button") as Button).pressed.emit()
+	_select("wall")
+	await _capture("popup_selected_context")
+
+
+func _test_action_dock() -> void:
+	var dock: ActionDock = _dashboard.get_node("%ActionSplit") as ActionDock
+	var tray: Control = dock.get_node("ActionTray") as Control
+	var map: VillageMap = _dashboard.get_node("%VillageMap") as VillageMap
+	var original_map: Rect2 = map.get_global_rect()
+	var actions: int = _game.state.actions_used
+	await _capture("cards_floating_panel")
+	_check(tray.get_global_rect().intersects(original_map), "Card popup overlaps the map")
+	var navigation: CardCategoryBar = _dashboard.get_node("%CardCategoryBar") as CardCategoryBar
+	_check(
+		tray.get_global_rect().end.y < navigation.get_global_rect().position.y,
+		"Entire card popup floats above the category buttons"
+	)
+	var connector: Polygon2D = dock.get_node("Connector") as Polygon2D
+	_check(
+		connector.visible and connector.polygon.size() == 3,
+		"Popup has an ownership pointer to the active category"
+	)
+	var execute: Button = _dashboard.detail.get_node("%ExecuteButton") as Button
+	_check(tray.get_global_rect().encloses(execute.get_global_rect()), "Popup keeps confirmation visible")
+	_check(
+		tray.get_global_rect().encloses(
+			(_dashboard.detail.get_node("%SelectedCosts") as Control).get_global_rect()
+		),
+		"Popup keeps costs inside the card panel"
+	)
+	await _test_tray_visibility(dock, tray, map)
+	_check(_game.state.actions_used == actions, "Popup gestures consume no actions")
+
+
+func _test_tray_visibility(dock: ActionDock, tray: Control, map: VillageMap) -> void:
+	var toggle: Button = _dashboard.get_node("%ToggleCards") as Button
+	var original_map: Rect2 = map.get_global_rect()
+	var original_tray: Rect2 = tray.get_global_rect()
+	var actions: int = _game.state.actions_used
+	var point: Vector2 = (_dashboard.get_node("%CloseCards") as Button).get_global_rect().get_center()
+	await _drag_pointer(point, point)
+	await _capture("survival_cards_hidden")
+	_check(not tray.is_visible_in_tree(), "Hide button hides cards and confirmation together")
+	_check(map.get_global_rect().is_equal_approx(original_map), "Closing popup does not resize the map")
+	_check(toggle.is_visible_in_tree(), "Expand control remains accessible with popup closed")
+	var enter: InputEventKey = InputEventKey.new()
+	enter.keycode = KEY_ENTER
+	enter.pressed = true
+	_viewport.push_input(enter, true)
+	await process_frame
+	_check(_game.state.actions_used == actions, "Enter cannot execute an invisible card")
+	point = toggle.get_global_rect().get_center()
+	await _drag_pointer(point, point)
+	await _capture("survival_cards_restored")
+	_check(dock.is_expanded(), "Expand button restores the card popup")
+	_check(tray.get_global_rect().is_equal_approx(original_tray), "Popup restores the same location")
+	_check(map.get_global_rect().is_equal_approx(original_map), "Opening popup does not resize the map")
+
+
+func _drag_pointer(start: Vector2, finish: Vector2) -> void:
+	var move: InputEventMouseMotion = InputEventMouseMotion.new()
+	move.position = start
+	move.global_position = start
+	_viewport.push_input(move, true)
+	await process_frame
+	var press: InputEventMouseButton = InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_LEFT
+	press.pressed = true
+	press.position = start
+	press.global_position = start
+	_viewport.push_input(press, true)
+	await process_frame
+	move = InputEventMouseMotion.new()
+	move.position = finish
+	move.global_position = finish
+	move.relative = finish - start
+	move.button_mask = MOUSE_BUTTON_MASK_LEFT
+	_viewport.push_input(move, true)
+	await process_frame
+	press = InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_LEFT
+	press.position = finish
+	press.global_position = finish
+	_viewport.push_input(press, true)
+	await process_frame
 
 
 func _capture_camp_conditions() -> void:
@@ -218,3 +365,128 @@ func _set_capture_size(size: Vector2i) -> void:
 	var ratio: float = minf(float(size.x) / 1280.0, float(size.y) / 854.0)
 	_viewport.size_2d_override = Vector2i(Vector2(size) / ratio)
 	_viewport.size_2d_override_stretch = true
+
+
+func _test_environment_views() -> void:
+	_game.set_process(false)
+	_set_capture_size(Vector2i(1440, 960))
+	_game.state.new_run(65012, GameTypes.Region.RURAL)
+	for action: int in 3:
+		SurvivalTestSetup.select_frontier(_game.state)
+		_game.state.play_card(_game.state.hand[0].uid)
+	for tick: int in 300:
+		_game.battle.step(BattleSimulation.FIXED_STEP_SECONDS)
+	_dashboard.update_playback(_game.state, _game.battle, false, 1.0)
+	await _capture("environment_stationary_camp")
+	while _game.battle.active:
+		_game.battle.step(BattleSimulation.FIXED_STEP_SECONDS)
+	SurvivalTestSetup.settle_day_end(_game.state)
+	(_dashboard.get_node("%CardAcquisition") as CardAcquisitionNotice).clear()
+	_select("quiet")
+	await _capture("environment_concealment_card")
+	var uid: int = -1
+	for entry: CardInstance in _game.state.hand:
+		if entry.definition.id == "quiet":
+			uid = entry.uid
+	_check(_game.state.play_card(uid), "Rendered concealment executes real card costs")
+	_game.state.skip_slot()
+	_game.state.skip_slot()
+	_check(
+		(
+			_game.state.phase == GameTypes.Phase.NIGHT
+			and _game.state.night_stats.concealed
+			and _game.state.wave_count() == 0
+		),
+		"Quiet opening freezes an undetected night"
+	)
+	await _capture("environment_hidden_camp")
+	_game.battle.step(BattleSimulation.FIXED_STEP_SECONDS)
+	var event: DailyEvent = _game.state.current_day_end_event()
+	if event != null and event.trigger == DailyEvent.Trigger.AMBIENT:
+		var ignore: Button = _dashboard.overlay.get_node("%DayEndSkip") as Button
+		_check(ignore.is_visible_in_tree(), "Ordinary encounter actually offers ignore")
+		await _capture("environment_optional_encounter")
+		ignore.pressed.emit()
+	SurvivalTestSetup.settle_day_end(_game.state)
+	_check(_game.state.resources[GameTypes.Stock.NOISE] == 0, "Rendered next day starts quiet")
+
+
+func _test_event_flow() -> void:
+	_game.set_process(false)
+	_set_capture_size(Vector2i(1440, 960))
+	_game.state.new_run(65012, GameTypes.Region.RURAL)
+	SurvivalTestSetup.developed(_game.state)
+	_game.state.core_health = 200.0
+	_game.state.resources[GameTypes.Stock.FOOD] = 0
+	_game.state.resources[GameTypes.Stock.WATER] = 0
+	_game.state.resources[GameTypes.Stock.MEDICINE] = 0
+	_game.state.weather = _game.state.catalog.library.weather_rules.for_kind(
+		WeatherDefinition.Kind.CLEAR
+	)
+	_game.state.begin_night()
+	var report: BattleReport = BattleReport.new()
+	report.core_health = _game.state.core_health
+	report.started_survivors = _game.state.population
+	report.survivors = _game.state.population
+	report.has_identities = true
+	report.consumed.resize(GameTypes.Stock.COUNT)
+	for person: SurvivorRecord in _game.state.progress.survivors:
+		report.survivor_ids.append(person.id)
+	_game.state.finish_night(report)
+	(_dashboard.get_node("%CardAcquisition") as CardAcquisitionNotice).clear()
+	_check(
+		_game.state.phase == GameTypes.Phase.DAY_END,
+		"Synthetic background report belongs to the actual night"
+	)
+	_game.state.day_end_event_id = "day_end_ration"
+	_game.state.pending_day_end_events.clear()
+	_game.state.changed.emit()
+	await _capture("events_empty_food")
+	var row: HBoxContainer = _dashboard.overlay.get_node("%DayEndRow") as HBoxContainer
+	_check(
+		(row.get_child(0).get_node("%SelectButton") as Button).disabled,
+		"Rendered hot meal rejects empty food"
+	)
+	await _click_event_fallback()
+	await _capture("events_hunger_and_thirst")
+	_check(
+		(_dashboard.overlay.get_node("%DayEndTitle") as Label).text.contains("剩余 2 项"),
+		"Rendered morning shows both mandatory shortages"
+	)
+	_check(
+		not (_dashboard.overlay.get_node("%DayEndSkip") as Button).visible,
+		"Mandatory crisis has no skip control"
+	)
+	_set_capture_size(Vector2i(1024, 768))
+	await _capture("events_hunger_small")
+	row = _dashboard.overlay.get_node("%DayEndRow") as HBoxContainer
+	var button: Button = row.get_child(1).get_node("%SelectButton") as Button
+	_check(
+		Rect2(Vector2.ZERO, _game.size).encloses(button.get_global_rect()),
+		"Small viewport keeps hunger confirmation visible"
+	)
+	await _click_event_fallback()
+	await _capture("events_thirst_small")
+	_check(
+		_game.state.current_day_end_event().trigger == DailyEvent.Trigger.THIRST,
+		"Offscreen input advances from hunger to thirst"
+	)
+	await _click_event_fallback()
+	_check(
+		_game.state.phase == GameTypes.Phase.DAY and _game.state.modifiers.size() == 2,
+		"Both offscreen crisis decisions retain next-night penalties"
+	)
+	_set_capture_size(Vector2i(1440, 960))
+
+
+func _click_event_fallback() -> void:
+	var row: HBoxContainer = _dashboard.overlay.get_node("%DayEndRow") as HBoxContainer
+	var button: Button = row.get_child(1).get_node("%SelectButton") as Button
+	for pressed: bool in [true, false]:
+		var event: InputEventMouseButton = InputEventMouseButton.new()
+		event.button_index = MOUSE_BUTTON_LEFT
+		event.pressed = pressed
+		event.position = button.get_global_rect().get_center()
+		event.global_position = event.position
+		_viewport.push_input(event, true)
+	await process_frame

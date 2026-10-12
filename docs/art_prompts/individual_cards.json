@@ -1,0 +1,241 @@
+{
+  "generator": "built-in image_gen",
+  "transparent_background": false,
+  "assets": [
+    {
+      "id": "explore",
+      "file": "assets/cards/individual/explore.png",
+      "prompt": "Use case: stylized-concept. Asset type: one individual strategy game card illustration, wide 3:2 landscape, no border or text. Modern post-apocalyptic survivor village. Subject: EXPLORING terrain, an oversized battered brass field compass held above a folded paper map, with a simple fork in a rural path visible behind. Strong single focal object occupying 65% of image, centered within central 70% safe crop; distinct silhouette, readable at 180x110 pixels. Painterly graphic 2D art with bold clean shapes and a few rough brush marks, NOT a busy photographic scene. Quiet dark charcoal background, muted olive and warm ivory, small amber compass accent. Clear light-dark separation, subject substantially brighter than backdrop. No tiny detail clutter, no text, no lettering, no interface, no watermark, no ornate framing, no fantasy weapons. Designed for a cohesive set in which every action has a different immediately recognizable subject."
+    },
+    {
+      "id": "arrows",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a large bundle of newly crafted wooden arrows with pale feather fletching beside one worn knife; arrow silhouettes dominate, amber accent.",
+      "file": "assets/cards/individual/arrows.png"
+    },
+    {
+      "id": "battery",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a heavy rectangular industrial storage battery with two clearly visible terminals and bundled insulated cables, subdued electric blue accent.",
+      "file": "assets/cards/individual/battery.png"
+    },
+    {
+      "id": "bows",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: one improvised wooden recurve bow standing diagonally with its taut string clearly visible and a single arrow, ochre accent.",
+      "file": "assets/cards/individual/bows.png"
+    },
+    {
+      "id": "cache",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a half-open dented metal supply chest with an ominous red seal and a few cans inside, single strong box silhouette, warning red accent.",
+      "file": "assets/cards/individual/cache.png"
+    },
+    {
+      "id": "canal",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a worn shovel clearing a simple irrigation trench with blue water running toward a vegetable patch, shovel and trench dominate.",
+      "file": "assets/cards/individual/canal.png"
+    },
+    {
+      "id": "chant",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: three survivors raising their tools together in a rhythmic work chant, a leader with cupped hand at mouth, bold human silhouettes, muted amber accent.",
+      "file": "assets/cards/individual/chant.png"
+    },
+    {
+      "id": "clinic",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a makeshift modern medical shelter with an oversized white canvas medical bag bearing a simple green cross in foreground, pale mint accent.",
+      "file": "assets/cards/individual/clinic.png"
+    },
+    {
+      "id": "emergency_rations",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a torn silver ration pouch with dry compressed food bars and a small empty cup, large clear rectangular food pieces, muted orange accent.",
+      "file": "assets/cards/individual/emergency_rations.png"
+    },
+    {
+      "id": "exchange",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a weathered workbench with one broken scrap assembly being separated into three distinct large piles: wood, stones, mechanical parts.",
+      "file": "assets/cards/individual/exchange.png"
+    },
+    {
+      "id": "farm",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a single raised wooden vegetable bed with rows of recognizable cabbages and carrots, a hand trowel in front, restrained leaf green accent.",
+      "file": "assets/cards/individual/farm.png"
+    },
+    {
+      "id": "filter",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a homemade water purifier with a large cylindrical filter vessel, one muddy input jar and one clear output jar connected by tubing, cyan accent.",
+      "file": "assets/cards/individual/filter.png"
+    },
+    {
+      "id": "food_store",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a squat secure granary shed with one large sack of grain and a stack of sealed food tins foreground, warm wheat accent.",
+      "file": "assets/cards/individual/food_store.png"
+    },
+    {
+      "id": "forage",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a large woven basket of edible mushrooms and berries held low beside a mossy forest stump, mushrooms and basket dominate, muted berry red accent.",
+      "file": "assets/cards/individual/forage.png"
+    },
+    {
+      "id": "forced_march",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a exhausted survivor's gloved hands gripping a pickaxe, dirty bandaged forearm and tense posture, harsh small red accent, labour overexertion.",
+      "file": "assets/cards/individual/forced_march.png"
+    },
+    {
+      "id": "generator",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a compact battered diesel generator with clearly visible pull cord, engine housing and exhaust pipe, muted industrial yellow accent.",
+      "file": "assets/cards/individual/generator.png"
+    },
+    {
+      "id": "greenhouse",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a small improvised greenhouse with an overhead irrigation pipe spraying droplets onto rows of vegetables, broad glass dome silhouette, teal green accent.",
+      "file": "assets/cards/individual/greenhouse.png"
+    },
+    {
+      "id": "hold_position",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a determined survivor bracing a wooden defensive barricade with a broad metal shield, barricade and shield dominate, subdued steel blue accent.",
+      "file": "assets/cards/individual/hold_position.png"
+    },
+    {
+      "id": "lights",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: one large mounted searchlight pointing a bright ivory beam diagonally into darkness, circular lamp housing unmistakable.",
+      "file": "assets/cards/individual/lights.png"
+    },
+    {
+      "id": "lure",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a survivor holding a loud metal alarm bell in one hand and a stuffed salvage sack in the other, tiny distant zombie silhouettes only, warning orange accent.",
+      "file": "assets/cards/individual/lure.png"
+    },
+    {
+      "id": "medicine",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a worn mortar and pestle with medicinal herbs and three amber medicine bottles on a clean pale cloth, clinical sage green accent.",
+      "file": "assets/cards/individual/medicine.png"
+    },
+    {
+      "id": "oil",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a manual hand pump transferring black fuel from an old steel drum into a red jerrycan, oversized pump and can silhouettes.",
+      "file": "assets/cards/individual/oil.png"
+    },
+    {
+      "id": "overcharge",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a battered electrical generator's exposed coil throwing blue-white sparks, large glowing coil with warning orange wires, energy overload.",
+      "file": "assets/cards/individual/overcharge.png"
+    },
+    {
+      "id": "piercing",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: three large sharp steel arrowheads with reinforced pointed tips placed across a cracked armour plate, cold steel cyan accent.",
+      "file": "assets/cards/individual/piercing.png"
+    },
+    {
+      "id": "practice",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a survivor repeatedly shaping an identical set of wooden joints at a workbench, one finished joint prominent foreground, amber accent.",
+      "file": "assets/cards/individual/practice.png"
+    },
+    {
+      "id": "quarry",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a heavy pickaxe embedded in a large split grey boulder with three chunky stone blocks in foreground, stone and pickaxe dominate.",
+      "file": "assets/cards/individual/quarry.png"
+    },
+    {
+      "id": "quiet",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a gloved hand extinguishing a kerosene lantern under a dark cloth beside a silhouetted shelter, extinguishing light unmistakable, faint blue accent.",
+      "file": "assets/cards/individual/quiet.png"
+    },
+    {
+      "id": "repair",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a large hammer and a survivor's gloved hand nailing a fresh board over a clearly broken wooden wall, repaired crack unmistakable.",
+      "file": "assets/cards/individual/repair.png"
+    },
+    {
+      "id": "rest",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a seated survivor's boots beside a small warm campfire, steaming enamel cup and relaxed gloved hand, campfire dominates, warm orange accent.",
+      "file": "assets/cards/individual/rest.png"
+    },
+    {
+      "id": "rotation",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: two survivors exchanging a shovel and a wrench to change work duties, clear crossing tools and human hands, subtle balanced olive and blue accents.",
+      "file": "assets/cards/individual/rotation.png"
+    },
+    {
+      "id": "salvage",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a large wrench dismantling a wrecked radio and mechanical scrap, broad recognizable broken appliance silhouette, muted rust orange accent.",
+      "file": "assets/cards/individual/salvage.png"
+    },
+    {
+      "id": "stoneworks",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a robust fortified wooden wall newly faced with large grey masonry blocks, a mason's trowel and stone in front, clear stone reinforcement.",
+      "file": "assets/cards/individual/stoneworks.png"
+    },
+    {
+      "id": "survivors",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: two tired modern survivors standing at a weathered shelter door with travel backpacks, one gently knocking, hopeful small warm light accent.",
+      "file": "assets/cards/individual/survivors.png"
+    },
+    {
+      "id": "torch",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: one tall burning torch fixed beside a wooden barricade, strong flame silhouette against a dark night, fiery muted orange accent.",
+      "file": "assets/cards/individual/torch.png"
+    },
+    {
+      "id": "trade",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: two gloved hands exchanging mechanical parts for a small red fuel can across a rough table, battered travel pack behind, clear barter gesture.",
+      "file": "assets/cards/individual/trade.png"
+    },
+    {
+      "id": "training",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: two survivors practicing defensive fighting with blunt wooden training weapons beside simple target posts, bold active silhouettes, muted red accent.",
+      "file": "assets/cards/individual/training.png"
+    },
+    {
+      "id": "traps",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a simple ground trap of sharpened wooden stakes arranged in a low crossed frame, rough rope binding visible, clear dangerous spikes.",
+      "file": "assets/cards/individual/traps.png"
+    },
+    {
+      "id": "vent",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a frustrated survivor striking a hanging stuffed training sack with a wooden bat, strong diagonal action silhouette, deep brick red accent.",
+      "file": "assets/cards/individual/vent.png"
+    },
+    {
+      "id": "wall",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a sturdy wooden palisade made of thick pointed logs with one large construction mallet foreground, unmistakable wooden fence silhouette.",
+      "file": "assets/cards/individual/wall.png"
+    },
+    {
+      "id": "water",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a large battered blue metal water flask being filled directly from a flowing rural river, visible flowing water and hands, clear blue accent.",
+      "file": "assets/cards/individual/water.png"
+    },
+    {
+      "id": "water_tank",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: one large cylindrical water storage tank with a simple side tap and supporting wooden stand, unmistakable drum silhouette, dusty blue accent.",
+      "file": "assets/cards/individual/water_tank.png"
+    },
+    {
+      "id": "well",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a newly dug circular stone well mouth with a sturdy rope pulley and an empty bucket above clear water, well dominates, pale cyan accent.",
+      "file": "assets/cards/individual/well.png"
+    },
+    {
+      "id": "well_survey",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a survivor holding two metal water-divining survey rods above a shallow test hole, cutaway soil layers and a small moisture test vial foreground, pale blue accent.",
+      "file": "assets/cards/individual/well_survey.png"
+    },
+    {
+      "id": "well_tools",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a neatly arranged spade, heavy digging auger and coiled rope on a quiet dark workbench, tool silhouettes large and distinct, muted ochre accent.",
+      "file": "assets/cards/individual/well_tools.png"
+    },
+    {
+      "id": "well_water",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a dripping wooden bucket lifted by a rope from a dark stone well mouth, bucket fills most of frame with visible clear water, cool turquoise accent.",
+      "file": "assets/cards/individual/well_water.png"
+    },
+    {
+      "id": "woodcut",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a large chopping axe embedded in a freshly cut log with stacked timber behind, pale fresh wood cut face dominates, warm tan accent.",
+      "file": "assets/cards/individual/woodcut.png"
+    },
+    {
+      "id": "workshop",
+      "prompt": "Use case: stylized-concept. Asset type: one ORIGINAL individual game card illustration for a modern post-apocalyptic survivor village strategy game. Wide landscape 3:2 edge-to-edge, no border, no text. Cohesive painterly concept art with broad strongly lit shapes, restrained gritty texture, quiet charcoal background, muted khaki/ivory palette with specified subtle accent. NOT a busy scene. Subject centered within central 70% safe crop and fills 65% of image, distinct silhouette and strong light-dark separation, instantly readable as a small 180x110 pixel card thumbnail. Simple backdrop without detailed ruins or extra objects. No gold sunset, no UI, no lettering, no numbers, no watermark, no shiny fantasy equipment. Primary subject: a sturdy mechanic's repair workbench with a large bench vise, hanging hand tools and a salvaged machine, clear vise silhouette, muted industrial orange accent.",
+      "file": "assets/cards/individual/workshop.png"
+    }
+  ]
+}

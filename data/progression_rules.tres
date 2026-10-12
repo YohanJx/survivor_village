@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ProgressionRules" load_steps=40 format=3]
+[gd_resource type="Resource" script_class="ProgressionRules" load_steps=47 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/progression_rules.gd" id="s"]
 [ext_resource type="Script" path="res://scripts/resources/map_definition.gd" id="map"]
@@ -43,8 +43,24 @@
 [ext_resource type="Resource" path="res://data/events/day_end/traveler.tres" id="de_traveler"]
 [ext_resource type="Resource" path="res://data/events/day_end/trader.tres" id="de_trader"]
 
+[ext_resource type="Resource" path="res://data/events/day_end/hunger.tres" id="de_hunger"]
+
+[ext_resource type="Resource" path="res://data/events/day_end/hunger_severe.tres" id="de_hunger_severe"]
+
+[ext_resource type="Resource" path="res://data/events/day_end/thirst.tres" id="de_thirst"]
+
+[ext_resource type="Resource" path="res://data/events/day_end/thirst_severe.tres" id="de_thirst_severe"]
+
+[ext_resource type="Resource" path="res://data/events/day_end/generator.tres" id="de_generator"]
+
+[ext_resource type="Resource" path="res://data/events/day_end/store.tres" id="de_store"]
+
+[ext_resource type="Resource" path="res://data/night_threat_rules.tres" id="night_threat"]
+
 [resource]
 script = ExtResource("s")
+night_threat = ExtResource("night_threat")
+portable_storage = PackedInt32Array(30, 30, 0)
 maps = Array[ExtResource("map")]([ExtResource("m0"), ExtResource("m1"), ExtResource("m2"), ExtResource("m3")])
 events = Array[ExtResource("event")]([ExtResource("esettle"), ExtResource("eharvest"), ExtResource("eroad"), ExtResource("elow_mood"), ExtResource("efletcher"), ExtResource("escream"), ExtResource("econvoy"), ExtResource("eshelter")])
 
@@ -52,4 +68,4 @@ units = Array[ExtResource("unit_script")]([ExtResource("units_0"), ExtResource("
 
 enemies = Array[ExtResource("enemy_script")]([ExtResource("enemies_0"), ExtResource("enemies_1"), ExtResource("enemies_2"), ExtResource("enemies_3"), ExtResource("enemies_4"), ExtResource("enemies_5"), ExtResource("enemies_6"), ExtResource("enemies_7"), ExtResource("enemies_8")])
 
-day_end_events = Array[ExtResource("event")]([ExtResource("de_salvage"), ExtResource("de_ration"), ExtResource("de_repair"), ExtResource("de_dispute"), ExtResource("de_traveler"), ExtResource("de_trader")])
+day_end_events = Array[ExtResource("event")]([ExtResource("de_salvage"), ExtResource("de_ration"), ExtResource("de_repair"), ExtResource("de_dispute"), ExtResource("de_traveler"), ExtResource("de_trader"), ExtResource("de_hunger"), ExtResource("de_hunger_severe"), ExtResource("de_thirst"), ExtResource("de_thirst_severe"), ExtResource("de_generator"), ExtResource("de_store")])

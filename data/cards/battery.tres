@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=10 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
 [ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
@@ -7,6 +7,8 @@
 
 [ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
 [ext_resource type="Resource" path="res://data/keywords/engineer.tres" id="kw_engineer"]
+
+[ext_resource type="Texture2D" path="res://assets/cards/individual/battery.png" id="illustration"]
 
 [sub_resource type="Resource" id="stamina"]
 script = ExtResource("cost")
@@ -26,6 +28,7 @@ building = ExtResource("building")
 
 [resource]
 script = ExtResource("card")
+illustration = ExtResource("illustration")
 id = "battery"
 display_name = "建造蓄电池"
 profession = 3

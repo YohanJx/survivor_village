@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=13 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
@@ -8,6 +8,8 @@
 [ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
 [ext_resource type="Resource" path="res://data/keywords/engineer.tres" id="kw_engineer"]
 [ext_resource type="Resource" path="res://data/keywords/fuel_site.tres" id="kw_fuel_site"]
+
+[ext_resource type="Texture2D" path="res://assets/cards/individual/oil.png" id="illustration"]
 
 [sub_resource type="Resource" id="cost0"]
 script = ExtResource("cost")
@@ -39,6 +41,7 @@ amount = 5.0
 
 [resource]
 script = ExtResource("card")
+illustration = ExtResource("illustration")
 id = "oil"
 display_name = "抽取油料"
 description = "燃料 +6，城镇丰度更高。污染 +3、噪音 +5"

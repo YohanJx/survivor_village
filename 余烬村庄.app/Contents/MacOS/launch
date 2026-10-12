@@ -1,0 +1,21 @@
+#!/bin/bash
+# Finder runs this app without opening Terminal; keep the app next to the project.
+set -u
+
+project_directory="$(cd -- "$(dirname -- "$0")/../../.." && pwd)" || exit 1
+launch_log="$(mktemp "${TMPDIR:-/tmp}/ember_village_app_XXXXXX")" || exit 1
+if /bin/bash "$project_directory/run_macos.command" "$@" > "$launch_log" 2>&1 < /dev/null; then
+	exit 0
+fi
+
+# Pass paths as arguments, never interpolate them into AppleScript source.
+/usr/bin/osascript - "$launch_log" <<'APPLESCRIPT'
+on run arguments
+	set logPath to item 1 of arguments
+	display dialog "余烬村庄未能启动。请查看启动日志：" & return & logPath buttons {"打开日志", "关闭"} default button "打开日志" with icon caution
+	if button returned of result is "打开日志" then
+		do shell script "/usr/bin/open -t " & quoted form of logPath
+	end if
+end run
+APPLESCRIPT
+exit 1

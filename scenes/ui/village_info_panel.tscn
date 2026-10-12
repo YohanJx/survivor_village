@@ -16,7 +16,7 @@ texture_margin_left = 8.0
 texture_margin_top = 8.0
 texture_margin_right = 8.0
 texture_margin_bottom = 8.0
-modulate_color = Color(1, 1, 1, 1)
+modulate_color = Color(0.48, 0.46, 0.42, 1)
 
 [sub_resource type="StyleBoxTexture" id="tab_inactive"]
 content_margin_left = 18.0
@@ -28,7 +28,7 @@ texture_margin_left = 8.0
 texture_margin_top = 8.0
 texture_margin_right = 8.0
 texture_margin_bottom = 8.0
-modulate_color = Color(1, 1, 1, 1)
+modulate_color = Color(0.48, 0.46, 0.42, 1)
 
 [node name="VillageInfoPanel" type="VBoxContainer"]
 script = ExtResource("script")

@@ -10,6 +10,8 @@ static func is_valid(data: VillageSaveData, catalog: CardCatalog, max_health: fl
 		data.version
 		not in [
 			VillageSaveData.CURRENT_VERSION,
+			9,
+			8,
 			7,
 			6,
 			5,
@@ -80,10 +82,11 @@ static func is_valid(data: VillageSaveData, catalog: CardCatalog, max_health: fl
 			or (data.version < VillageSaveData.DAY_END_VERSION and data.rewards.is_empty())
 		):
 			return false
-		if data.last_report.survivors != data.population:
-			return false
-		if not is_equal_approx(data.last_report.core_health, data.core_health):
-			return false
+		if data.version < VillageSaveData.EVENT_QUEUE_VERSION or not data.day_end_effects_expired:
+			if data.last_report.survivors != data.population:
+				return false
+			if not is_equal_approx(data.last_report.core_health, data.core_health):
+				return false
 	if data.version >= VillageSaveData.DAY_END_VERSION and not _valid_day_end_event(data, catalog):
 		return false
 	return true
@@ -92,6 +95,8 @@ static func is_valid(data: VillageSaveData, catalog: CardCatalog, max_health: fl
 static func _valid_day_end_event(data: VillageSaveData, catalog: CardCatalog) -> bool:
 	if not data.rewards.is_empty():
 		return false
+	if data.version >= VillageSaveData.EVENT_QUEUE_VERSION:
+		return _valid_event_queue(data, catalog)
 	if data.phase != GameTypes.Phase.DAY_END:
 		return data.day_end_event_id.is_empty()
 	var event: DailyEvent = catalog.library.progression_rules.day_end_event_for(
@@ -102,7 +107,66 @@ static func _valid_day_end_event(data: VillageSaveData, catalog: CardCatalog) ->
 	return event.regions.is_empty() or event.regions.has(data.progress.region)
 
 
+static func _valid_event_queue(data: VillageSaveData, catalog: CardCatalog) -> bool:
+	if data.progress.hungry_days < 0 or data.progress.hungry_days > data.day:
+		return false
+	if data.progress.thirsty_days < 0 or data.progress.thirsty_days > data.day:
+		return false
+	if data.phase != GameTypes.Phase.DAY_END:
+		return (
+			data.day_end_event_id.is_empty()
+			and data.pending_day_end_events.is_empty()
+			and not data.day_end_settled
+			and not data.day_end_effects_expired
+		)
+	if (
+		data.day_end_event_id.is_empty()
+		or (data.day_end_settled and not data.day_end_effects_expired)
+	):
+		return false
+	var queue: PackedStringArray = data.pending_day_end_events.duplicate()
+	queue.insert(0, data.day_end_event_id)
+	if queue.size() > 2:
+		return false
+	var ids: Dictionary[String, bool] = {}
+	for id: String in queue:
+		var event: DailyEvent = catalog.library.progression_rules.day_end_event_for(id)
+		if event == null or ids.has(id):
+			return false
+		ids[id] = true
+		if not event.regions.is_empty() and not event.regions.has(data.progress.region):
+			return false
+		if (event.trigger != DailyEvent.Trigger.AMBIENT) != data.day_end_settled:
+			return false
+		if event.trigger == DailyEvent.Trigger.AMBIENT:
+			if data.progress.recent_day_end_events.has(id):
+				return false
+		else:
+			var days: int = (
+				data.progress.hungry_days
+				if event.trigger == DailyEvent.Trigger.HUNGER
+				else data.progress.thirsty_days
+			)
+			if (
+				days < event.min_deprivation_days
+				or (event.max_deprivation_days > 0 and days > event.max_deprivation_days)
+			):
+				return false
+	return true
+
+
 static func valid_stats(stats: VillageStats) -> bool:
+	if (
+		stats != null
+		and (
+			stats.threat_budget < 0
+			or stats.threat_budget > 4096
+			or not is_finite(stats.threat_level)
+			or stats.threat_level < 0
+			or stats.threat_level > 1
+		)
+	):
+		return false
 	if stats == null or stats.values.size() != GameTypes.Stat.COUNT:
 		return false
 	if (

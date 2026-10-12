@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=16 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=17 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
@@ -11,6 +11,8 @@
 [ext_resource type="Resource" path="res://data/keywords/water_source.tres" id="kw_water_source"]
 [ext_resource type="Resource" path="res://data/keywords/technology.tres" id="kw_technology"]
 [ext_resource type="Resource" path="res://data/keywords/engineer.tres" id="kw_engineer"]
+
+[ext_resource type="Texture2D" path="res://assets/cards/individual/filter.png" id="illustration"]
 
 [sub_resource type="Resource" id="cost_0"]
 script = ExtResource("s_resource_cost")
@@ -41,6 +43,7 @@ amount = -2.0
 
 [resource]
 script = ExtResource("s_card_definition")
+illustration = ExtResource("illustration")
 profession = 3
 id = "filter"
 display_name = "净水器图纸"

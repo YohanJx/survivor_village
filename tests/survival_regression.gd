@@ -5,6 +5,8 @@ extends RefCounted
 
 static func run(check: Callable) -> void:
 	_test_opening(check)
+	_test_supply_window(check)
+	_test_water_development(check)
 	_test_first_night(check)
 	_test_professions(check)
 	_test_wells(check)
@@ -84,10 +86,10 @@ static func _test_opening(check: Callable) -> void:
 		)
 		check.call(
 			(
-				state.resources[GameTypes.Stock.FOOD] == 0
-				and state.resources[GameTypes.Stock.WATER] == 0
+				state.resources[GameTypes.Stock.FOOD] > 0
+				and state.resources[GameTypes.Stock.WATER] > 0
 			),
-			"Opening provisions cannot carry over without storage"
+			"Portable supplies survive the first night"
 		)
 		check.call(
 			(
@@ -143,12 +145,12 @@ static func _test_professions(check: Callable) -> void:
 		state.resources == before.resources and state.slot == before.slot,
 		"Missing professional never charges higher stamina to execute"
 	)
-	var event: DailyEvent = DayEndEvents.for_day(state)
-	for card: CardDefinition in event.options:
-		check.call(
-			card.profession == GameTypes.Profession.GENERAL,
-			"Day-end events remain accessible without specialized professions"
-		)
+	for event: DailyEvent in state.catalog.library.progression_rules.day_end_events:
+		for card: CardDefinition in event.options:
+			check.call(
+				card.profession == GameTypes.Profession.GENERAL,
+				"Day-end events remain accessible without specialized professions"
+			)
 	var untrained: VillageState = _fresh()
 	untrained.assign_jobs(PackedInt32Array([5, 0, 0, 0, 0, 0]))
 	_explore(untrained)
@@ -272,14 +274,17 @@ static func _test_storage(check: Callable) -> void:
 	_win(state)
 	check.call(
 		(
-			state.resources[GameTypes.Stock.FOOD] == 40
+			state.resources[GameTypes.Stock.FOOD] == 60
 			and state.resources[GameTypes.Stock.POWER] == 24
 		),
 		"Storage preserves only its matching capacity"
 	)
 	check.call(
-		state.resources[GameTypes.Stock.WATER] == 0 and state.resources[GameTypes.Stock.WOOD] == 30,
-		"Missing water storage clears water while durable materials persist"
+		(
+			state.resources[GameTypes.Stock.WATER] == 30
+			and state.resources[GameTypes.Stock.WOOD] == 30
+		),
+		"Backpack caps water while durable materials persist"
 	)
 	var closed: VillageSaveData = state.snapshot()
 	state.advance_dawn()
@@ -408,6 +413,20 @@ static func _test_configuration(check: Callable) -> void:
 		not CardCatalog.new(library, false).is_valid,
 		"Non-finite well chance prevents library publication"
 	)
+	library = state.catalog.library.duplicate(false) as CardLibrary
+	library.progression_rules = (
+		state.catalog.library.progression_rules.duplicate(false) as ProgressionRules
+	)
+	library.progression_rules.portable_storage = PackedInt32Array([-1, 30, 0])
+	check.call(
+		not CardCatalog.new(library, false).is_valid,
+		"Negative portable capacity prevents catalog publication"
+	)
+	library.progression_rules.portable_storage = PackedInt32Array([30, 30])
+	check.call(
+		not CardCatalog.new(library, false).is_valid,
+		"Incomplete portable capacity prevents catalog publication"
+	)
 	check.call(
 		(
 			state.catalog.is_valid
@@ -420,3 +439,88 @@ static func _test_configuration(check: Callable) -> void:
 static func _explore(state: VillageState) -> bool:
 	SurvivalTestSetup.select_frontier(state)
 	return state.play_card(_uid(state, "explore"))
+
+
+static func _test_supply_window(check: Callable) -> void:
+	for region: GameTypes.Region in [
+		GameTypes.Region.MOUNTAIN, GameTypes.Region.RURAL, GameTypes.Region.RUINS
+	]:
+		var state: VillageState = _fresh(region)
+		for night: int in 3:
+			while state.phase == GameTypes.Phase.DAY:
+				state.skip_slot()
+			_win(state)
+			check.call(
+				state.progress.hungry_days == 0 and state.progress.thirsty_days == 0,
+				"Opening carry supplies cover the first three daily rations"
+			)
+		check.call(
+			state.day == 4 and state.resources[GameTypes.Stock.WATER] > 0,
+			"Supplies leave time to develop beyond day three"
+		)
+		var before: VillageSaveData = state.snapshot()
+		OpeningRules.next_step(state)
+		check.call(
+			state.resources == before.resources and state.rng.state == before.rng_state,
+			"Development advice has no resource or random side effects"
+		)
+
+
+static func _test_water_development(check: Callable) -> void:
+	for region: GameTypes.Region in [GameTypes.Region.MOUNTAIN, GameTypes.Region.RUINS]:
+		var state: VillageState = _fresh(region)
+		var target: Vector2i = TerrainGrid.CAMP
+		for value: int in TerrainGrid.SIZE.x * TerrainGrid.SIZE.y:
+			var cell: Vector2i = TerrainGrid.position(value)
+			if (
+				cell != TerrainGrid.CAMP
+				and TerrainGrid.distance(cell) <= OpeningRules.SUPPLY_RADIUS
+				and state.terrain_grid.biome(cell) == TerrainGrid.Biome.PLAIN
+			):
+				target = cell
+				break
+		var current: Vector2i = TerrainGrid.CAMP
+		while current != target:
+			if current.x != target.x:
+				current.x += 1 if current.x < target.x else -1
+			else:
+				current.y += 1 if current.y < target.y else -1
+			state.select_exploration(current)
+			check.call(
+				state.play_card(_uid(state, "explore")),
+				"Groundwater candidate is reachable in the opening"
+			)
+		while state.phase == GameTypes.Phase.DAY:
+			state.skip_slot()
+		_win(state)
+		check.call(
+			OpeningRules.next_step(state).contains("制作挖井工具"),
+			"Advice starts with tools after real candidate discovery"
+		)
+		for id: String in [
+			"well_tools",
+			"well_survey",
+			"well_survey",
+			"well_survey",
+			"well_survey",
+			"well_survey",
+			"well"
+		]:
+			check.call(
+				state.play_card(_uid(state, id)),
+				"Dry-map water route can be paid from opening supplies: " + id
+			)
+			if state.phase == GameTypes.Phase.NIGHT:
+				_win(state)
+		check.call(
+			state.buildings[GameTypes.Building.WELL] == 1 and state.day <= 4,
+			"Guaranteed well can be completed by day four without injected supplies"
+		)
+		check.call(
+			state.progress.hungry_days == 0 and state.progress.thirsty_days == 0,
+			"Water development finishes before carry supplies run out"
+		)
+		check.call(
+			OpeningRules.next_step(state).contains("扩充储水"),
+			"Advice advances to storage after water source construction"
+		)

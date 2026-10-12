@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="modifier"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/event.tres" id="kw_event"]
+
+[sub_resource type="Resource" id="modifier0"]
+script = ExtResource("modifier")
+key = 0
+operation = 1
+amount = 0.95
+duration = 1
+
+[sub_resource type="Resource" id="effect0"]
+script = ExtResource("effect")
+type = 2
+modifier = SubResource("modifier0")
+
+[sub_resource type="Resource" id="cost0"]
+script = ExtResource("cost")
+key = 12
+amount = 1
+
+[resource]
+script = ExtResource("card")
+id = "day_end_thirst_0"
+display_name = "用药品照护"
+description = "减轻身体损伤；药品消耗 1；下一夜守卫攻击 -5%。影响从下一夜开始，不能补回已经缺失的口粮。"
+positive = "减轻身体损伤"
+negative = "药品消耗 1；下一夜守卫攻击 -5%"
+kind = 3
+mood_delta = 1
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_event")])
+costs = Array[ExtResource("cost")]([SubResource("cost0")])
+effects = Array[ExtResource("effect")]([SubResource("effect0")])

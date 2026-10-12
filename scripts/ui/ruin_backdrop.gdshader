@@ -1,7 +1,7 @@
 shader_type canvas_item;
 render_mode unshaded;
 
-uniform float strength : hint_range(0.0, 1.0) = 0.22;
+uniform float strength : hint_range(0.0, 1.0) = 0.14;
 
 void fragment() {
 	vec4 source = texture(TEXTURE, UV);

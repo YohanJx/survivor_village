@@ -7,8 +7,10 @@ script = ExtResource("s")
 kind = 2
 display_name = "河谷农村"
 description = "粮水丰富，零件和燃料短缺"
-initial_resources = PackedInt32Array(70, 24, 24, 0, 0, 0, 0, 18, 10, 8, 3, 50, 3)
+initial_resources = PackedInt32Array(70, 35, 35, 0, 0, 0, 0, 18, 10, 8, 3, 50, 3)
 abundance = PackedFloat64Array(1.0, 1.25, 1.25, 1.0, 1.0, 1.0, 1.0, 1.2, 1.0, 0.6, 0.6, 1.0, 1.0)
 ground_tint = Color(0.85, 1, 0.8, 1)
 
 discoveries = PackedInt32Array(0, 1, 2, 3, 4, 6)
+
+pollution_recovery = 5

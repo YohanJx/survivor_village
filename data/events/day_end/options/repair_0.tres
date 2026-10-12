@@ -15,8 +15,8 @@ amount = 0.0
 [sub_resource type="Resource" id="effect1"]
 script = ExtResource("effect")
 type = 0
-key = 5
-amount = 3.0
+key = 6
+amount = 1.0
 
 [sub_resource type="Resource" id="cost0"]
 script = ExtResource("cost")
@@ -27,9 +27,9 @@ amount = 4
 script = ExtResource("card")
 id = "day_end_repair_0"
 display_name = "连夜修补"
-description = "清除全部围墙损伤；木材消耗 4，噪音 +3。确认后直接结算，不占用白天行动。"
+description = "清除全部围墙损伤；木材消耗 4，污染 +1。确认后直接结算，不占用白天行动。"
 positive = "清除全部围墙损伤"
-negative = "木材消耗 4，噪音 +3"
+negative = "木材消耗 4，污染 +1"
 kind = 3
 icon = 11
 color = 2

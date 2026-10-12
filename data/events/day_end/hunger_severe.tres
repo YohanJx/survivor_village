@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="DailyEvent" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/daily_event.gd" id="event"]
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Resource" path="res://data/events/day_end/options/hunger_severe_0.tres" id="o0"]
+[ext_resource type="Resource" path="res://data/events/day_end/options/hunger_severe_1.tres" id="o1"]
+
+[resource]
+script = ExtResource("event")
+id = "day_end_hunger_severe"
+display_name = "长期饥饿"
+description = "昨日口粮结算后，居民没有获得足够食物。短缺已经持续至少两天，身体状况继续恶化。药品只能缓解症状，必须恢复每日供应才能结束连续短缺。"
+trigger = 1
+min_deprivation_days = 2
+max_deprivation_days = 0
+options = Array[ExtResource("card")]([ExtResource("o0"), ExtResource("o1")])

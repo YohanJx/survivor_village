@@ -11,6 +11,7 @@ const KIND_NAMES: PackedStringArray = ["行动", "建造", "科技", "事件"]
 
 @export var id: String = ""
 @export var display_name: String = ""
+@export var illustration: Texture2D
 @export var kind: Kind = Kind.ACTION
 @export var icon: GameTypes.Icon = GameTypes.Icon.LEAF
 @export var color: GameTypes.Palette = GameTypes.Palette.GREEN
@@ -19,6 +20,7 @@ const KIND_NAMES: PackedStringArray = ["行动", "建造", "科技", "事件"]
 @export_multiline var negative: String = ""
 @export var keywords: Array[KeywordDefinition] = []
 @export var reusable: bool = false
+@export var conceals: bool = false
 @export var profession: GameTypes.Profession = GameTypes.Profession.GENERAL
 @export var labor: GameTypes.Labor = GameTypes.Labor.NONE
 @export var expedition: bool = false

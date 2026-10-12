@@ -76,16 +76,25 @@ func report(cell: Vector2i, explored: PackedInt32Array) -> String:
 
 
 func report_short(cell: Vector2i, explored: PackedInt32Array) -> String:
-	var lines: PackedStringArray = ["勘探报告 · (%d, %d) %s" % [cell.x, cell.y, NAMES[biome(cell)]]]
+	var title: String = (
+		"营地四周线索" if cell == CAMP else "勘探报告 · (%d, %d) %s" % [cell.x, cell.y, NAMES[biome(cell)]]
+	)
+	var lines: PackedStringArray = [title]
 	var names: PackedStringArray = []
 	for source: int in sources(cell):
 		names.append(GameTypes.DISCOVERY_NAMES[source])
 	lines.append("发现：" + ("、".join(names) if not names.is_empty() else "暂无资源"))
+	lines.append_array(direction_clues(cell, explored))
+	return "\n".join(lines)
+
+
+func direction_clues(cell: Vector2i, explored: PackedInt32Array) -> PackedStringArray:
+	var lines: PackedStringArray = []
 	for direction: int in DIRECTIONS.size():
 		var neighbor: Vector2i = cell + DIRECTIONS[direction]
 		if contains(neighbor) and not explored.has(index(neighbor)):
 			lines.append("%s：%s" % [DIRECTION_NAMES[direction], CLUES[biome(neighbor)]])
-	return "\n".join(lines)
+	return lines
 
 
 static func contains(cell: Vector2i) -> bool:

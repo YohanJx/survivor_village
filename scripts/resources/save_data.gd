@@ -1,7 +1,9 @@
 class_name VillageSaveData
 extends Resource
 
-const CURRENT_VERSION: int = 8
+const CURRENT_VERSION: int = 10
+const THREAT_VERSION: int = 10
+const EVENT_QUEUE_VERSION: int = 9
 const DAY_END_VERSION: int = 8
 const WORKFORCE_VERSION: int = 3
 const LEGACY_VERSION: int = 2
@@ -26,6 +28,9 @@ const LEGACY_VERSION: int = 2
 # 旧版 rewards 仅用于校验迁移，新存档不再写入奖励卡。
 @export_storage var rewards: Array[CardDefinition] = []
 @export_storage var day_end_event_id: String = ""
+@export_storage var pending_day_end_events: PackedStringArray = []
+@export_storage var day_end_settled: bool = false
+@export_storage var day_end_effects_expired: bool = false
 @export_storage var history: Array[VillageLogEntry] = []
 @export_storage var wall_damage: Dictionary[Vector2i, float] = {}
 @export_storage var night_stats: VillageStats

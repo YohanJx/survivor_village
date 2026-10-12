@@ -15,8 +15,8 @@ amount = 18.0
 [sub_resource type="Resource" id="effect1"]
 script = ExtResource("effect")
 type = 0
-key = 5
-amount = 2.0
+key = 6
+amount = 1.0
 
 [sub_resource type="Resource" id="cost0"]
 script = ExtResource("cost")
@@ -27,9 +27,9 @@ amount = 1
 script = ExtResource("card")
 id = "day_end_traveler_1"
 display_name = "请他救治伤者"
-description = "村庄耐久 +18；药品消耗 1，噪音 +2。确认后直接结算，不占用白天行动。"
+description = "村庄耐久 +18；药品消耗 1，污染 +1。确认后直接结算，不占用白天行动。"
 positive = "村庄耐久 +18"
-negative = "药品消耗 1，噪音 +2"
+negative = "药品消耗 1，污染 +1"
 kind = 3
 icon = 11
 color = 2

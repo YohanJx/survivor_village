@@ -68,7 +68,9 @@ static func _test_effects(state: VillageState, check: Callable) -> void:
 	var storm: VillageStats = EffectResolver.derive(state)
 	check.call(storm.income[GameTypes.Stock.WATER] == 16, "Storm water stacks with well")
 	check.call(storm.stamina_recovery == base.stamina_recovery - 6, "Storm reduces recovery")
-	check.call(is_equal_approx(storm.speed, base.speed * 0.85), "Storm slows guards")
+	check.call(
+		is_equal_approx(storm.cooldown, base.cooldown / 0.85), "Storm reduces attack cadence"
+	)
 	check.call(is_equal_approx(storm.attack_range, base.attack_range * 0.85), "Storm reduces range")
 
 

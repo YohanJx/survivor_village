@@ -10,6 +10,16 @@ static func rules_error(
 		return "发展规则缺失或费用非法"
 	if rules.max_frustration != 5 or rules.max_crew != 4:
 		return "发展上限与规则不一致"
+	if not NightThreat.valid_rules(rules.night_threat):
+		return "夜间威胁配置非法"
+	if rules.portable_storage.size() != 3:
+		return "随身存储容量不完整"
+	for index: int in 3:
+		if (
+			rules.portable_storage[index] < 0
+			or rules.portable_storage[index] > GameTypes.STOCK_LIMITS[GameTypes.Stock.FOOD + index]
+		):
+			return "随身存储容量非法"
 	var combat: String = combat_error(rules)
 	if not combat.is_empty():
 		return combat
@@ -23,6 +33,8 @@ static func rules_error(
 		):
 			return "地图定义缺失或重复"
 		maps[definition.kind] = true
+		if definition.pollution_recovery < 0 or definition.pollution_recovery > 20:
+			return "地形污染恢复量非法"
 		if (
 			not is_finite(definition.well_base_chance)
 			or definition.well_base_chance < 0.0
@@ -281,7 +293,16 @@ static func valid_frozen_roster(data: VillageSaveData) -> bool:
 		return false
 	if not stats.modern_combat:
 		return true
-	if stats.supplies.size() != GameTypes.Stock.COUNT or stats.roster.size() < data.population:
+	if stats.supplies.size() != GameTypes.Stock.COUNT:
+		return false
+	if (
+		stats.roster.size() < data.population
+		and not (
+			data.version >= VillageSaveData.EVENT_QUEUE_VERSION
+			and data.phase == GameTypes.Phase.DAY_END
+			and data.day_end_effects_expired
+		)
+	):
 		return false
 	if data.phase == GameTypes.Phase.NIGHT:
 		if stats.roster.size() != data.population:
@@ -314,6 +335,12 @@ static func valid_frozen_roster(data: VillageSaveData) -> bool:
 				return false
 			originals[person.id] = person
 		for person: SurvivorRecord in data.progress.survivors:
+			if (
+				data.version >= VillageSaveData.EVENT_QUEUE_VERSION
+				and data.day_end_effects_expired
+				and not originals.has(person.id)
+			):
+				continue
 			if not report.survivor_ids.has(person.id) or not originals.has(person.id):
 				return false
 			var original: SurvivorRecord = originals[person.id]

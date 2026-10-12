@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=10 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
@@ -7,6 +7,8 @@
 
 [ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
 [ext_resource type="Resource" path="res://data/keywords/guard.tres" id="kw_guard"]
+
+[ext_resource type="Texture2D" path="res://assets/cards/individual/forced_march.png" id="illustration"]
 
 [sub_resource type="Resource" id="cost0"]
 script = ExtResource("cost")
@@ -26,6 +28,7 @@ amount = 35.0
 
 [resource]
 script = ExtResource("card")
+illustration = ExtResource("illustration")
 id = "forced_march"
 display_name = "透支劳作"
 description = "体力 +35。烦躁 +2；不清除连续劳动"

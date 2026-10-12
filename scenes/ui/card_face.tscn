@@ -1,20 +1,23 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=4 format=3]
 
-[ext_resource type="Texture2D" path="res://assets/ui/worn_iron_panel.png" id="worn_texture"]
 [ext_resource type="Script" path="res://scripts/ui/card_face.gd" id="script"]
 [ext_resource type="PackedScene" path="res://scenes/ui/card_cost_strip.tscn" id="costs"]
 
-[sub_resource type="StyleBoxTexture" id="card"]
-content_margin_left = 10.0
-content_margin_right = 10.0
-content_margin_top = 10.0
+[sub_resource type="StyleBoxFlat" id="card"]
+content_margin_left = 12.0
+content_margin_right = 12.0
+content_margin_top = 12.0
 content_margin_bottom = 10.0
-texture = ExtResource("worn_texture")
-texture_margin_left = 8.0
-texture_margin_top = 8.0
-texture_margin_right = 8.0
-texture_margin_bottom = 8.0
-modulate_color = Color(1, 1, 1, 1)
+bg_color = Color(0.11, 0.13, 0.12, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.32, 0.34, 0.30, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_left = 5
+corner_radius_bottom_right = 5
 
 [node name="CardFace" type="PanelContainer"]
 script = ExtResource("script")
@@ -25,7 +28,7 @@ theme_override_styles/panel = SubResource("card")
 [node name="Content" type="VBoxContainer" parent="."]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 6
 
 [node name="FaceTitle" type="Label" parent="Content"]
 unique_name_in_owner = true
@@ -33,15 +36,17 @@ layout_mode = 2
 mouse_filter = 2
 autowrap_mode = 3
 theme_override_font_sizes/font_size = 24
-horizontal_alignment = 1
+theme_override_constants/outline_size = 0
+horizontal_alignment = 0
 
 [node name="FaceKind" type="Label" parent="Content"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
-theme_override_font_sizes/font_size = 11
-horizontal_alignment = 1
-theme_override_colors/font_color = Color(0.69, 0.62, 0.49, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_constants/outline_size = 0
+horizontal_alignment = 0
+theme_override_colors/font_color = Color(0.82, 0.75, 0.59, 1)
 
 [node name="FaceArt" type="TextureRect" parent="Content"]
 unique_name_in_owner = true
@@ -58,7 +63,8 @@ mouse_filter = 2
 autowrap_mode = 3
 max_lines_visible = 2
 text_overrun_behavior = 3
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 14
+theme_override_constants/outline_size = 0
 
 [node name="FaceRules" type="RichTextLabel" parent="Content"]
 unique_name_in_owner = true
@@ -78,7 +84,7 @@ bbcode_enabled = true
 fit_content = true
 scroll_active = false
 theme_override_font_sizes/normal_font_size = 14
-theme_override_colors/default_color = Color(0.73, 0.49, 0.40, 1)
+theme_override_colors/default_color = Color(0.90, 0.66, 0.54, 1)
 
 [node name="FaceRiskSummary" type="Label" parent="Content"]
 unique_name_in_owner = true
@@ -87,14 +93,17 @@ mouse_filter = 2
 autowrap_mode = 3
 max_lines_visible = 1
 text_overrun_behavior = 3
-theme_override_font_sizes/font_size = 11
-horizontal_alignment = 1
-theme_override_colors/font_color = Color(0.73, 0.49, 0.40, 1)
+theme_override_font_sizes/font_size = 13
+horizontal_alignment = 0
+theme_override_colors/font_color = Color(0.82, 0.68, 0.57, 1)
 
-[node name="Divider" type="HSeparator" parent="Content"]
-layout_mode = 2
-mouse_filter = 2
 
 [node name="FaceCosts" parent="Content" instance=ExtResource("costs")]
 unique_name_in_owner = true
 layout_mode = 2
+
+[node name="KeywordSlot" type="Control" parent="Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+mouse_filter = 2

@@ -6,15 +6,15 @@ var hazards: Array[CombatHazard] = []
 var summons: int = 0
 
 
-func types_for(day: int, region: GameTypes.Region) -> PackedInt32Array:
-	if day < 3:
+func types_for(pressure_tier: int, region: GameTypes.Region) -> PackedInt32Array:
+	if pressure_tier < 4:
 		return []
 	var types: PackedInt32Array = [GameTypes.Enemy.ARMORED, GameTypes.Enemy.LURKER]
-	if day >= 5:
+	if pressure_tier >= 7:
 		types = [GameTypes.Enemy.SPITTER, GameTypes.Enemy.SCREAMER]
-	if day >= 8:
+	if pressure_tier >= 9:
 		types = [GameTypes.Enemy.BURNER, GameTypes.Enemy.ARMORED]
-	if region == GameTypes.Region.MOUNTAIN and day >= 5:
+	if region == GameTypes.Region.MOUNTAIN and pressure_tier >= 7:
 		types[0] = GameTypes.Enemy.LURKER
 	return types
 
@@ -61,5 +61,7 @@ func _damage_walls(simulation: BattleSimulation, hazard: CombatHazard, delta: fl
 			continue
 		wall.hp = maxf(0.0, wall.hp - hazard.damage * delta)
 		if wall.hp <= 0:
-			simulation.guard_grid.set_point_solid(cell, false)
+			simulation.guard_grid.set_point_solid(
+				cell, not WorldLayout.DEFENSE_CELLS.has_point(cell)
+			)
 			simulation.enemy_grid.set_point_weight_scale(cell, 1.0)

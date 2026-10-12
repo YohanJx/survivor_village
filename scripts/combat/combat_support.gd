@@ -89,6 +89,15 @@ func target_for(guard: CombatActor, simulation: BattleSimulation) -> CombatActor
 			or (simulation.stats.modern_combat and not visible(enemy, guard, simulation))
 		):
 			continue
+		var defense: Rect2 = Rect2(
+			Vector2(WorldLayout.DEFENSE_CELLS.position) * WorldLayout.CELL,
+			Vector2(WorldLayout.DEFENSE_CELLS.size) * WorldLayout.CELL
+		)
+		if (
+			not defense.grow(guard.attack_range).has_point(enemy.pos)
+			or not simulation.can_attack(guard, enemy)
+		):
+			continue
 		var priority: float = 1.0
 		if (
 			guard.unit in [GameTypes.Unit.ARCHER, GameTypes.Unit.SCOUT]

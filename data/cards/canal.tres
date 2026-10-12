@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=14 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
@@ -11,6 +11,8 @@
 [ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
 [ext_resource type="Resource" path="res://data/keywords/builder.tres" id="kw_builder"]
 [ext_resource type="Resource" path="res://data/keywords/river.tres" id="kw_river"]
+
+[ext_resource type="Texture2D" path="res://assets/cards/individual/canal.png" id="illustration"]
 
 [sub_resource type="Resource" id="cost0"]
 script = ExtResource("cost")
@@ -35,6 +37,7 @@ level = 1
 
 [resource]
 script = ExtResource("card")
+illustration = ExtResource("illustration")
 id = "canal"
 display_name = "清理沟渠"
 description = "今日人工灌溉，农田产出 +25%，立即获得 8 水。体力 -12、木材 -3"

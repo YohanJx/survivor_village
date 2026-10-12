@@ -132,6 +132,8 @@ static func click(tree: SceneTree, control: Control) -> void:
 	event.pressed = false
 	tree.root.push_input(event, true)
 	await tree.process_frame
+	await tree.process_frame
+	await tree.process_frame
 
 
 static func _has_tooltip(node: Node, explanation: String) -> bool:

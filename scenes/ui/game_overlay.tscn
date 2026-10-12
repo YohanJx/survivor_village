@@ -16,7 +16,7 @@ texture_margin_left = 8.0
 texture_margin_top = 8.0
 texture_margin_right = 8.0
 texture_margin_bottom = 8.0
-modulate_color = Color(1, 1, 1, 1)
+modulate_color = Color(0.48, 0.46, 0.42, 1)
 
 [node name="GameOverlay" type="ColorRect"]
 unique_name_in_owner = true
@@ -79,7 +79,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 30
 autowrap_mode = 3
-theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
+theme_override_colors/font_color = Color(0.94, 0.91, 0.83, 1)
 text = "在废土里，留下一个家"
 
 [node name="HelpText" type="Label" parent="Center/Panel/OverlayContent/HelpContent"]
@@ -88,8 +88,8 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
 autowrap_mode = 3
-theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
-text = "你决定村庄如何发展，幸存者自动战斗。\n\n01  第一天只勘探地形；发现河流才开放河畔取水。无河流时先备工具，再勘探井位、打井，勘探越多成功率越高。食物、水、电力需建粮仓、储水罐、蓄电池才能跨日保留。\n每日先选择黎明事件，不占行动；地图与选择会保存。每天三个时段，每 5 人增加一次时段行动，最低 1 次、最多 4 次。\n02  连续同类劳动产生烦躁，每层让下一张劳动体力 +15%，最多 5 层。轮换防止积累；休整减 2，待命恢复 8 体力并减 1。宣泄演练把烦躁转为今晚攻击。\n03  村庄信息中可在每日第一次行动前调整一次分工，并设置守卫使用弓箭或长矛。没有对应职业就无法解锁或执行专业卡牌。可选较小劳动队伍，实际费用与收益见详情。\n04  木材用于围墙与箭，石料用于水井，零件用于工业；柴油机每级每天耗 2 燃料。弓箭不耗电，逐次消耗箭矢，用完改投石。\n05  采集者发现潜伏者；建造者耗木修墙；工程师耗零件维修村庄；医护耗药救治；守卫使用长矛或弓箭。\n06  披甲者减伤，酸液影响站位，尖啸者有限召援，潜伏者需侦察或照明，爆燃者留下火焰。火把与探照灯发现潜伏者，电灯不增强物理攻击。\n07  黄昏行动用完后自动守夜。守夜结束处理日终事件，收益与代价一起结算；特殊事件可以跳过。随后结算生产和口粮。缺粮缺水伤害村庄；噪音增加威胁，污染影响水井。每七夜有大尸潮与 Boss。\n08  村庄耐久归零或全部幸存者死亡，本局结束。\n\nEnter 确认卡牌；Space 暂停；Esc 关闭窗口。\n每次决策与战后自动保存。夜间继续从同一黄昏重新模拟，电力不重复扣除。"
+theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
+text = "你决定村庄如何发展，幸存者固定岗位守村。\n\n01  第一天只勘探地形；发现河流才开放河畔取水。无河流时先备工具，再勘探井位、打井，勘探越多成功率越高。食物、水、电力需建粮仓、储水罐、蓄电池才能跨日保留。\n每日先选择黎明事件，不占行动；地图与选择会保存。每天三个时段，每 5 人增加一次时段行动，最低 1 次、最多 4 次。\n02  连续同类劳动产生烦躁，每层让下一张劳动体力 +15%，最多 5 层。轮换防止积累；休整减 2，待命恢复 8 体力并减 1。宣泄演练把烦躁转为今晚攻击。\n03  村庄信息中可在每日第一次行动前调整一次分工，并设置守卫使用弓箭或长矛。没有对应职业就无法解锁或执行专业卡牌。可选较小劳动队伍，实际费用与收益见详情。\n04  木材用于围墙与箭，石料用于水井，零件用于工业；柴油机每级每天耗 2 燃料。弓箭不耗电，逐次消耗箭矢，用完改投石。\n05  采集者发现潜伏者；建造者耗木修墙；工程师耗零件维修村庄；医护耗药救治；守卫使用长矛或弓箭。\n06  披甲者减伤，酸液影响站位，尖啸者有限召援，潜伏者需侦察或照明，爆燃者留下火焰。火把与探照灯发现潜伏者，电灯不增强物理攻击。\n07  黄昏行动用完后自动守夜。守夜结束处理日终事件，收益与代价一起结算；普通遭遇可以忽略，饥渴后果不可忽略。随后结算生产和口粮。缺粮缺水伤害村庄；噪声计入当晚，黎明清零；污染按地形消退且有上限。尸潮综合探索、发展、当日噪声与污染；高发展且高压力才可能遇到 Boss。\n08  村庄耐久归零或全部幸存者死亡，本局结束。\n\nEnter 确认卡牌；Space 暂停；Esc 关闭窗口。\n每次决策与战后自动保存。夜间继续从同一黄昏重新模拟，电力不重复扣除。"
 
 [node name="HelpClose" type="Button" parent="Center/Panel/OverlayContent/HelpContent"]
 unique_name_in_owner = true
@@ -103,7 +103,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 27
 autowrap_mode = 3
-theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
+theme_override_colors/font_color = Color(0.94, 0.91, 0.83, 1)
 text = "开启一个新的村庄"
 
 [node name="NewRunText" type="Label" parent="Center/Panel/OverlayContent/NewRunContent"]
@@ -112,7 +112,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 15
 autowrap_mode = 3
-theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
+theme_override_colors/font_color = Color(0.94, 0.91, 0.83, 1)
 text = "新一局的自动存档将替换当前进度。每次生存会有不同地图和奖励。"
 
 [node name="NewRunButtons" type="HBoxContainer" parent="Center/Panel/OverlayContent/NewRunContent"]
@@ -137,7 +137,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 32
 autowrap_mode = 3
-theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
+theme_override_colors/font_color = Color(0.94, 0.91, 0.83, 1)
 text = "日终事件"
 
 [node name="DayEndSummary" type="Label" parent="Center/Panel/OverlayContent/DayEndContent"]
@@ -153,7 +153,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
 autowrap_mode = 3
-theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
+theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
 text = "事件同时带来收益与代价，确认后直接结算。"
 
 [node name="DayEndRow" type="HBoxContainer" parent="Center/Panel/OverlayContent/DayEndContent"]
@@ -167,14 +167,14 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
 autowrap_mode = 3
-theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
+theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
 text = "处理事件后结算生产与每日消耗，迎接下一天。新获得的临时效果从下一夜开始计时。"
 
 [node name="DayEndSkip" type="Button" parent="Center/Panel/OverlayContent/DayEndContent"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_default_cursor_shape = 2
-text = "跳过事件，进入下一天"
+text = "忽略本次遭遇"
 
 [node name="GameOverTitle" type="Label" parent="Center/Panel/OverlayContent/GameOverContent"]
 unique_name_in_owner = true
@@ -182,7 +182,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 34
 autowrap_mode = 3
-theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
+theme_override_colors/font_color = Color(0.94, 0.91, 0.83, 1)
 text = "火光熄灭了"
 
 [node name="GameOverHint" type="Label" parent="Center/Panel/OverlayContent/GameOverContent"]
@@ -191,7 +191,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 15
 autowrap_mode = 3
-theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
+theme_override_colors/font_color = Color(0.94, 0.91, 0.83, 1)
 text = "让这次的经验，成为下一座村庄的基石。"
 
 [node name="GameOverSummary" type="Label" parent="Center/Panel/OverlayContent/GameOverContent"]
@@ -200,7 +200,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 18
 autowrap_mode = 3
-theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
+theme_override_colors/font_color = Color(0.94, 0.91, 0.83, 1)
 
 [node name="GameOverRestart" type="Button" parent="Center/Panel/OverlayContent/GameOverContent"]
 unique_name_in_owner = true

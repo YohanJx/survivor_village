@@ -49,6 +49,7 @@ static func derive(state: VillageState) -> VillageStats:
 	stats.values[GameTypes.Stat.SPEED] = maxf(20.0, stats.speed)
 	stats.values[GameTypes.Stat.COOLDOWN] = maxf(0.65, stats.cooldown)
 	stats.values[GameTypes.Stat.WAVE_SIZE] = clampf(stats.wave_size, 0.35, 3.0)
+	NightThreat.derive(state, stats)
 	return stats
 
 
@@ -107,6 +108,8 @@ static func apply(
 		state.modifiers.append(modifier)
 		state.progress.frustration -= consumed_mood
 	LaborRules.commit(state, card)
+	if card.conceals:
+		state.progress.concealed = true
 	PopulationRules.reconcile(state)
 
 

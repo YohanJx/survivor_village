@@ -4,25 +4,57 @@ extends RefCounted
 
 
 static func for_day(state: VillageState) -> DailyEvent:
+	var queue: PackedStringArray = queue_for_day(state)
+	return (
+		state.catalog.library.progression_rules.day_end_event_for(queue[0])
+		if not queue.is_empty()
+		else null
+	)
+
+
+static func for_legacy_save(state: VillageState) -> DailyEvent:
+	var event: DailyEvent = for_day(state)
+	if event != null:
+		return event
+	var fallback: DailyEvent = null
+	for candidate: DailyEvent in state.catalog.library.progression_rules.day_end_events:
+		if candidate.trigger != DailyEvent.Trigger.AMBIENT:
+			continue
+		if not candidate.regions.is_empty() and not candidate.regions.has(state.progress.region):
+			continue
+		fallback = candidate if fallback == null else fallback
+		if candidate.skippable:
+			return candidate
+	return fallback
+
+
+static func queue_for_day(state: VillageState, consequences: bool = false) -> PackedStringArray:
 	var candidates: Array[DailyEvent] = []
-	var weight: int = 0
+	var result: PackedStringArray = []
 	for event: DailyEvent in state.catalog.library.progression_rules.day_end_events:
-		if not event.regions.is_empty() and not event.regions.has(state.progress.region):
+		if (event.trigger != DailyEvent.Trigger.AMBIENT) != consequences:
 			continue
-		if state.progress.recent_day_end_events.has(event.id):
-			continue
-		candidates.append(event)
-		weight += event.weight
-	if candidates.is_empty():
-		return null
+		if EventEligibility.matches(state, event):
+			candidates.append(event)
+	if consequences:
+		for event: DailyEvent in candidates:
+			result.append(event.id)
+		return result
 	var generator: RandomNumberGenerator = RandomNumberGenerator.new()
 	generator.seed = state.run_seed ^ (state.day * 193939 + 92717)
-	var roll: int = generator.randi_range(1, weight)
-	for event: DailyEvent in candidates:
-		roll -= event.weight
-		if roll <= 0:
-			return event
-	return null
+	var limit: int = 2 if state.day >= 7 and state.progress.explored_cells.size() >= 12 else 1
+	while not candidates.is_empty() and result.size() < limit:
+		var weight: int = 0
+		for event: DailyEvent in candidates:
+			weight += event.weight
+		var roll: int = generator.randi_range(1, weight)
+		for index: int in candidates.size():
+			roll -= candidates[index].weight
+			if roll <= 0:
+				result.append(candidates[index].id)
+				candidates.remove_at(index)
+				break
+	return result
 
 
 static func option_error(state: VillageState, index: int) -> String:
@@ -71,12 +103,18 @@ static func configuration_error(
 			or not event.output_stocks.is_empty()
 		):
 			return "日终事件缺失、重复或选项不完整"
+		var context_error: String = EventEligibility.configuration_error(event)
+		if not context_error.is_empty():
+			return context_error
 		ids[event.id] = true
 		for region: int in event.regions:
 			if region < 0 or region >= GameTypes.Region.COUNT:
 				return "日终事件地图条件非法"
 		for region: int in GameTypes.Region.COUNT:
-			if event.regions.is_empty() or event.regions.has(region):
+			if (
+				event.trigger == DailyEvent.Trigger.AMBIENT
+				and (event.regions.is_empty() or event.regions.has(region))
+			):
 				counts[region] += 1
 		var fallback: bool = event.skippable
 		for option: CardDefinition in event.options:
@@ -95,8 +133,8 @@ static func configuration_error(
 			return "不可跳过的日终事件必须有补给耗尽时仍可处理的选项"
 	for count: int in counts:
 		if count < 3:
-			return "每张地图至少需要三个日终事件，避免连续重复后事件池为空"
-	return ""
+			return "每张地图至少需要三个普通遭遇定义"
+	return EventEligibility.crisis_coverage_error(rules.day_end_events)
 
 
 static func _option_configuration_error(option: CardDefinition) -> String:
@@ -112,8 +150,7 @@ static func _option_configuration_error(option: CardDefinition) -> String:
 		or not option.regions.is_empty()
 		or option.strategy != GameTypes.Strategy.NONE
 		or option.vent
-		or option.positive.is_empty()
-		or option.negative.is_empty()
+		or (option.positive.is_empty() and option.negative.is_empty())
 	):
 		return "日终选项必须是不依赖白天行动前置的事件定义"
 	var positive: bool = option.mood_delta < 0
@@ -143,7 +180,7 @@ static func _option_configuration_error(option: CardDefinition) -> String:
 				negative = negative or not _modifier_is_positive(effect.modifier)
 			_:
 				return "日终事件不能执行建造或勘探等白天行动"
-	return "" if positive and negative else "日终事件选项必须同时有实际正面与负面效果"
+	return "" if positive or negative else "日终事件选项必须有实际效果"
 
 
 static func _modifier_is_positive(modifier: StatModifier) -> bool:

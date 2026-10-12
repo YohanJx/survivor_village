@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3]
+[gd_scene load_steps=27 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/ui/worn_iron_panel.png" id="worn_texture"]
 [ext_resource type="Script" path="res://scripts/ui/dashboard.gd" id="ui_script"]
@@ -17,6 +17,30 @@
 [ext_resource type="Texture2D" path="res://assets/cards/survey.png" id="ruin_art"]
 [ext_resource type="Shader" path="res://scripts/ui/ruin_backdrop.gdshader" id="ruin_shader"]
 
+[ext_resource type="Script" path="res://scripts/ui/action_dock.gd" id="action_dock"]
+[ext_resource type="Script" path="res://scripts/ui/map_hud_layout.gd" id="map_hud"]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/card_category_bar.tscn" id="categories"]
+
+[sub_resource type="StyleBoxFlat" id="popup_panel"]
+content_margin_left = 16.0
+content_margin_top = 12.0
+content_margin_right = 16.0
+content_margin_bottom = 14.0
+bg_color = Color(0.12, 0.13, 0.12, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.76, 0.66, 0.43, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_left = 12
+corner_radius_bottom_right = 12
+shadow_color = Color(0, 0, 0, 0.75)
+shadow_size = 16
+shadow_offset = Vector2(0, 6)
+
 [sub_resource type="ShaderMaterial" id="ruin_material"]
 shader = ExtResource("ruin_shader")
 
@@ -31,7 +55,7 @@ texture_margin_left = 2.0
 texture_margin_top = 2.0
 texture_margin_right = 2.0
 texture_margin_bottom = 2.0
-modulate_color = Color(1, 1, 1, 1)
+modulate_color = Color(0.48, 0.46, 0.42, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxFlat_ln0ri"]
 content_margin_left = 10.0
@@ -44,7 +68,7 @@ texture_margin_left = 2.0
 texture_margin_top = 2.0
 texture_margin_right = 2.0
 texture_margin_bottom = 2.0
-modulate_color = Color(1, 1, 1, 1)
+modulate_color = Color(0.48, 0.46, 0.42, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxFlat_1qoam"]
 content_margin_left = 10.0
@@ -57,7 +81,7 @@ texture_margin_left = 2.0
 texture_margin_top = 2.0
 texture_margin_right = 2.0
 texture_margin_bottom = 2.0
-modulate_color = Color(1, 1, 1, 1)
+modulate_color = Color(0.48, 0.46, 0.42, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxFlat_bwlxt"]
 content_margin_left = 10.0
@@ -70,7 +94,7 @@ texture_margin_left = 2.0
 texture_margin_top = 2.0
 texture_margin_right = 2.0
 texture_margin_bottom = 2.0
-modulate_color = Color(1, 1, 1, 1)
+modulate_color = Color(0.48, 0.46, 0.42, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxFlat_o7t5d"]
 content_margin_left = 10.0
@@ -83,7 +107,7 @@ texture_margin_left = 2.0
 texture_margin_top = 2.0
 texture_margin_right = 2.0
 texture_margin_bottom = 2.0
-modulate_color = Color(1, 1, 1, 1)
+modulate_color = Color(0.48, 0.46, 0.42, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxFlat_pnaqj"]
 content_margin_left = 10.0
@@ -96,7 +120,7 @@ texture_margin_left = 2.0
 texture_margin_top = 2.0
 texture_margin_right = 2.0
 texture_margin_bottom = 2.0
-modulate_color = Color(1, 1, 1, 1)
+modulate_color = Color(0.48, 0.46, 0.42, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxFlat_h5vli"]
 content_margin_left = 10.0
@@ -109,7 +133,7 @@ texture_margin_left = 2.0
 texture_margin_top = 2.0
 texture_margin_right = 2.0
 texture_margin_bottom = 2.0
-modulate_color = Color(1, 1, 1, 1)
+modulate_color = Color(0.48, 0.46, 0.42, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxFlat_uuwn2"]
 content_margin_left = 10.0
@@ -122,7 +146,7 @@ texture_margin_left = 2.0
 texture_margin_top = 2.0
 texture_margin_right = 2.0
 texture_margin_bottom = 2.0
-modulate_color = Color(1, 1, 1, 1)
+modulate_color = Color(0.48, 0.46, 0.42, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxFlat_j8l84"]
 content_margin_left = 2.0
@@ -135,7 +159,7 @@ texture_margin_left = 2.0
 texture_margin_top = 2.0
 texture_margin_right = 2.0
 texture_margin_bottom = 2.0
-modulate_color = Color(1, 1, 1, 1)
+modulate_color = Color(0.48, 0.46, 0.42, 1)
 
 [node name="Dashboard" type="Control"]
 script = ExtResource("ui_script")
@@ -191,7 +215,7 @@ custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 
 [node name="Logo" type="TextureRect" parent="Margin/Layout/Header"]
-custom_minimum_size = Vector2(46, 46)
+custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
 texture = ExtResource("2_30qwi")
 expand_mode = 1
@@ -203,14 +227,15 @@ theme_override_constants/separation = 2
 
 [node name="TitleLabel" type="Label" parent="Margin/Layout/Header/Title"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 27
-theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
+theme_override_font_sizes/font_size = 23
+theme_override_colors/font_color = Color(0.94, 0.91, 0.83, 1)
 text = "余烬村庄"
 
 [node name="Subtitle" type="Label" parent="Margin/Layout/Header/Title"]
+visible = false
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
-theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
+theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
 text = "E M B E R H A V E N    /    活下去，再建一个家"
 
 [node name="HeaderStretch" type="Control" parent="Margin/Layout/Header"]
@@ -224,8 +249,8 @@ theme_override_constants/separation = 2
 [node name="DayLabel" type="Label" parent="Margin/Layout/Header/Date"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
-theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
+theme_override_font_sizes/font_size = 21
+theme_override_colors/font_color = Color(0.94, 0.91, 0.83, 1)
 text = "第 01 日"
 horizontal_alignment = 2
 
@@ -233,7 +258,7 @@ horizontal_alignment = 2
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
+theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
 text = "距离大尸潮还有 6 天"
 
 [node name="HeaderSpacer" type="Control" parent="Margin/Layout/Header"]
@@ -271,6 +296,7 @@ mouse_default_cursor_shape = 2
 text = "新村庄"
 
 [node name="ProgressLine" type="Button" parent="Margin/Layout"]
+visible = false
 unique_name_in_owner = true
 layout_mode = 2
 alignment = 0
@@ -304,7 +330,7 @@ theme_override_constants/separation = 1
 [node name="StaminaCaption" type="Label" parent="Margin/Layout/Resources/StaminaPanel/StaminaRow/StaminaColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
+theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
 text = "体力"
 
 [node name="Stock0" type="Label" parent="Margin/Layout/Resources/StaminaPanel/StaminaRow/StaminaColumn"]
@@ -336,14 +362,14 @@ theme_override_constants/separation = 1
 [node name="FoodCaption" type="Label" parent="Margin/Layout/Resources/FoodPanel/FoodRow/FoodColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
+theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
 text = "食物"
 
 [node name="Stock1" type="Label" parent="Margin/Layout/Resources/FoodPanel/FoodRow/FoodColumn"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-theme_override_colors/font_color = Color(0.80, 0.76, 0.65, 1)
+theme_override_colors/font_color = Color(0.88, 0.84, 0.72, 1)
 text = "0"
 
 [node name="WaterPanel" type="PanelContainer" parent="Margin/Layout/Resources"]
@@ -368,7 +394,7 @@ theme_override_constants/separation = 1
 [node name="WaterCaption" type="Label" parent="Margin/Layout/Resources/WaterPanel/WaterRow/WaterColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
+theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
 text = "水"
 
 [node name="Stock2" type="Label" parent="Margin/Layout/Resources/WaterPanel/WaterRow/WaterColumn"]
@@ -400,7 +426,7 @@ theme_override_constants/separation = 1
 [node name="PowerCaption" type="Label" parent="Margin/Layout/Resources/PowerPanel/PowerRow/PowerColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
+theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
 text = "电力"
 
 [node name="Stock3" type="Label" parent="Margin/Layout/Resources/PowerPanel/PowerRow/PowerColumn"]
@@ -433,7 +459,7 @@ theme_override_constants/separation = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
+theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
 text = "材料"
 
 [node name="Stock4" type="Label" parent="Margin/Layout/Resources/MaterialsPanel/MaterialsRow/MaterialsColumn"]
@@ -465,7 +491,7 @@ theme_override_constants/separation = 1
 [node name="PopulationCaption" type="Label" parent="Margin/Layout/Resources/PopulationPanel/PopulationRow/PopulationColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
+theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
 text = "幸存者"
 
 [node name="PopulationLabel" type="Label" parent="Margin/Layout/Resources/PopulationPanel/PopulationRow/PopulationColumn"]
@@ -497,14 +523,14 @@ theme_override_constants/separation = 1
 [node name="CoreCaption" type="Label" parent="Margin/Layout/Resources/CorePanel/CoreRow/CoreColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
+theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
 text = "村庄耐久"
 
 [node name="CoreLabel" type="Label" parent="Margin/Layout/Resources/CorePanel/CoreRow/CoreColumn"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-theme_override_colors/font_color = Color(0.80, 0.76, 0.65, 1)
+theme_override_colors/font_color = Color(0.88, 0.84, 0.72, 1)
 text = "0"
 
 [node name="RiskPanel" type="PanelContainer" parent="Margin/Layout/Resources"]
@@ -529,62 +555,58 @@ theme_override_constants/separation = 1
 [node name="RiskCaption" type="Label" parent="Margin/Layout/Resources/RiskPanel/RiskRow/RiskColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
+theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
 text = "噪音 / 污染"
 
 [node name="RiskLabel" type="Label" parent="Margin/Layout/Resources/RiskPanel/RiskRow/RiskColumn"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-theme_override_colors/font_color = Color(0.733333, 0.513725, 0.439216, 1)
+theme_override_colors/font_color = Color(0.90, 0.66, 0.54, 1)
 text = "0"
 
-[node name="CenterRow" type="HBoxContainer" parent="Margin/Layout"]
+[node name="ActionSplit" type="Control" parent="Margin/Layout"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+script = ExtResource("action_dock")
+mouse_filter = 2
 
-[node name="MapColumn" type="VBoxContainer" parent="Margin/Layout/CenterRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="MapHeading" type="HBoxContainer" parent="Margin/Layout/CenterRow/MapColumn"]
-layout_mode = 2
-
-[node name="MapTitle" type="Label" parent="Margin/Layout/CenterRow/MapColumn/MapHeading"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 17
-theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
-text = "村庄与周围林地"
-
-[node name="WeatherLabel" type="Label" parent="Margin/Layout/CenterRow/MapColumn/MapHeading"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
-text = "天气：晴朗"
-mouse_filter = 1
-
-[node name="MapHint" type="Label" parent="Margin/Layout/CenterRow/MapColumn/MapHeading"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
-text = "清晨  /  第一个决策时段"
-horizontal_alignment = 2
-
-[node name="MapPanel" type="PanelContainer" parent="Margin/Layout/CenterRow/MapColumn"]
-layout_mode = 2
+[node name="CenterRow" type="Control" parent="Margin/Layout/ActionSplit"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+custom_minimum_size = Vector2(0, 120)
 size_flags_vertical = 3
+
+[node name="MapColumn" type="Control" parent="Margin/Layout/ActionSplit/CenterRow"]
+script = ExtResource("map_hud")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="MapPanel" type="PanelContainer" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_j8l84")
 
-[node name="VillageMap" type="Control" parent="Margin/Layout/CenterRow/MapColumn/MapPanel"]
+[node name="VillageMap" type="Control" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/MapPanel"]
 unique_name_in_owner = true
 layout_mode = 2
 script = ExtResource("3_ye1ve")
 
-[node name="MapAtmosphere" type="Control" parent="Margin/Layout/CenterRow/MapColumn/MapPanel/VillageMap"]
+[node name="MapAtmosphere" type="Control" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/MapPanel/VillageMap"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -595,72 +617,188 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("atmosphere")
 
-[node name="BattleControls" type="HBoxContainer" parent="Margin/Layout/CenterRow/MapColumn"]
-layout_mode = 2
+[node name="MapHudBackground" type="ColorRect" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn"]
+layout_mode = 1
+anchor_right = 1.0
+offset_bottom = 120.0
+color = Color(0.08, 0.09, 0.08, 0.92)
+mouse_filter = 2
 
-[node name="StatusLabel" type="Label" parent="Margin/Layout/CenterRow/MapColumn/BattleControls"]
+[node name="MapHeading" type="HBoxContainer" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn"]
+layout_mode = 1
+anchor_right = 1.0
+offset_left = 14.0
+offset_top = 10.0
+offset_right = -14.0
+offset_bottom = 34.0
+
+[node name="MapTitle" type="Label" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/MapHeading"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.94, 0.91, 0.83, 1)
+text = "村庄与周围林地"
+
+[node name="WeatherLabel" type="Label" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/MapHeading"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
+text = "天气：晴朗"
+mouse_filter = 1
+
+[node name="MapHint" type="Label" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/MapHeading"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
+theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
+text = "清晨  /  第一个决策时段"
+horizontal_alignment = 2
+
+[node name="ExplorationClues" type="Label" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchor_right = 1.0
+offset_left = 14.0
+offset_top = 43.0
+offset_right = -14.0
+offset_bottom = 67.0
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.75, 0.82, 0.77, 1)
+autowrap_mode = 3
+
+[node name="BattleControls" type="HBoxContainer" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn"]
+layout_mode = 1
+anchor_right = 1.0
+offset_left = 14.0
+offset_top = 75.0
+offset_right = -14.0
+offset_bottom = 112.0
+
+[node name="StatusLabel" type="Label" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/BattleControls"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.94, 0.91, 0.83, 1)
 text = "●  防线平静  ·  守卫会自行寻路与攻击"
 clip_text = true
 
-[node name="MapZoomOut" type="Button" parent="Margin/Layout/CenterRow/MapColumn/BattleControls"]
+[node name="MapZoomOut" type="Button" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/BattleControls"]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "缩小地图（也可使用滚轮）"
 mouse_default_cursor_shape = 2
 text = "−"
 
-[node name="MapZoomIn" type="Button" parent="Margin/Layout/CenterRow/MapColumn/BattleControls"]
+[node name="MapZoomIn" type="Button" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/BattleControls"]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "放大地图（也可使用滚轮）"
 mouse_default_cursor_shape = 2
 text = "+"
 
-[node name="MapFocusButton" type="Button" parent="Margin/Layout/CenterRow/MapColumn/BattleControls"]
+[node name="MapFocusButton" type="Button" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/BattleControls"]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "回到村庄（也可双击地图）"
 mouse_default_cursor_shape = 2
-text = "回到村庄"
+text = "营地"
 
-[node name="MapFitButton" type="Button" parent="Margin/Layout/CenterRow/MapColumn/BattleControls"]
+[node name="MapFitButton" type="Button" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/BattleControls"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_default_cursor_shape = 2
-text = "查看全图"
+text = "全图"
 
-[node name="PauseButton" type="Button" parent="Margin/Layout/CenterRow/MapColumn/BattleControls"]
+[node name="ToggleCards" type="Button" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/BattleControls"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+tooltip_text = "隐藏下方卡牌与确认区，扩大地图"
+text = "收起卡牌 ▾"
+
+[node name="PauseButton" type="Button" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/BattleControls"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_default_cursor_shape = 2
 text = "暂停"
 
-[node name="SpeedButton" type="Button" parent="Margin/Layout/CenterRow/MapColumn/BattleControls"]
+[node name="SpeedButton" type="Button" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/BattleControls"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_default_cursor_shape = 2
 text = "1×"
 
-[node name="ActionTray" type="HBoxContainer" parent="Margin/Layout"]
-layout_mode = 2
-theme_override_constants/separation = 12
+[node name="ActionTray" type="PanelContainer" parent="Margin/Layout/ActionSplit"]
+layout_mode = 0
+mouse_filter = 0
+theme_override_styles/panel = SubResource("popup_panel")
 
-[node name="HandPanel" type="VBoxContainer" parent="Margin/Layout/ActionTray" instance=ExtResource("5_ykaip")]
+[node name="PopupContent" type="VBoxContainer" parent="Margin/Layout/ActionSplit/ActionTray"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="PopupHeading" type="HBoxContainer" parent="Margin/Layout/ActionSplit/ActionTray/PopupContent"]
+layout_mode = 2
+
+[node name="CategoryTitle" type="Label" parent="Margin/Layout/ActionSplit/ActionTray/PopupContent/PopupHeading"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 0
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.94, 0.83, 0.58, 1)
+text = "全部卡牌"
+clip_text = true
+
+[node name="HandTitle" type="Label" parent="Margin/Layout/ActionSplit/ActionTray/PopupContent/PopupHeading"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
+text = "0 张"
+
+[node name="KeywordFilter" type="OptionButton" parent="Margin/Layout/ActionSplit/ActionTray/PopupContent/PopupHeading"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+
+[node name="SkipButton" type="Button" parent="Margin/Layout/ActionSplit/ActionTray/PopupContent/PopupHeading"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "待命 · 体力 +8"
+
+[node name="CloseCards" type="Button" parent="Margin/Layout/ActionSplit/ActionTray/PopupContent/PopupHeading"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+text = "收起 ×"
+tooltip_text = "收起面板，保留当前卡牌选择；勘探时可先收起再选地图目标"
+
+[node name="CardRow" type="HBoxContainer" parent="Margin/Layout/ActionSplit/ActionTray/PopupContent"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="HandPanel" type="VBoxContainer" parent="Margin/Layout/ActionSplit/ActionTray/PopupContent/CardRow" instance=ExtResource("5_ykaip")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_constants/separation = 8
 
-[node name="DetailPanel" type="PanelContainer" parent="Margin/Layout/ActionTray" instance=ExtResource("4_q7oii")]
+[node name="DetailPanel" type="PanelContainer" parent="Margin/Layout/ActionSplit/ActionTray/PopupContent/CardRow" instance=ExtResource("4_q7oii")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(320, 0)
 layout_mode = 2
+
+[node name="Connector" type="Polygon2D" parent="Margin/Layout/ActionSplit"]
+color = Color(0.76, 0.66, 0.43, 1)
 
 [node name="Footer" type="HBoxContainer" parent="Margin/Layout"]
 layout_mode = 2
@@ -668,7 +806,7 @@ layout_mode = 2
 [node name="VersionLabel" type="Label" parent="Margin/Layout/Footer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.64, 0.60, 0.52, 1)
+theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
 text = "原型 0.1   /   三个白天时段 · 自动守夜 · 每七日大尸潮"
 
 [node name="Notification" type="Label" parent="Margin/Layout/Footer"]
@@ -676,9 +814,22 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.86, 0.83, 0.75, 1)
+theme_override_colors/font_color = Color(0.94, 0.91, 0.83, 1)
 text = "选择一张卡牌，决定村庄的明天。"
 horizontal_alignment = 2
+
+[node name="CardCategoryBar" parent="." instance=ExtResource("categories")]
+layout_mode = 1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -290.0
+offset_top = -154.0
+offset_right = 290.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 0
 
 [node name="CardAcquisition" parent="." instance=ExtResource("acquisition")]
 unique_name_in_owner = true

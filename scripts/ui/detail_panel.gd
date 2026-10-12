@@ -23,6 +23,7 @@ var _selected_uid: int = -1
 
 
 func _ready() -> void:
+	resized.connect(_on_detail_resized)
 	_execute.pressed.connect(execute_requested.emit)
 	(%AdvancedToggle as Button).toggled.connect(_on_advanced_toggled)
 
@@ -37,11 +38,18 @@ func update_view(state: VillageState, selected_uid: int, selection_changed: bool
 	_refresh_detail()
 
 
+func _on_detail_resized() -> void:
+	# 工作台缩小时先让出插画空间，保持名称、收益、风险和费用可读。
+	(%ActionArt as Control).visible = size.y >= 380.0
+	_kind.visible = size.y >= 380.0
+
+
 func _refresh_detail() -> void:
 	if _state == null:
 		return
 	var card: CardDefinition = _state.find_card(_selected_uid)
 	_empty_hint.visible = card == null
+	visible = card != null
 	_card_detail.visible = card != null
 	_positive.visible = card != null
 	(%CardHeader as Control).visible = card != null
@@ -98,12 +106,9 @@ func _refresh_card(card: CardDefinition) -> void:
 	_reason.visible = not _reason.text.is_empty()
 	_execute.disabled = _reason.visible
 	if SurvivalRules.is_survey(card):
-		_survey_report.text = "点击亮边未知格选择目标。\n每远一格，额外消耗 2 体力。"
-		if _state.progress.explored_cells.size() > 1:
-			_survey_report.text = _state.terrain_grid.report_short(
-				TerrainGrid.position(_state.progress.explored_cells[-1]),
-				_state.progress.explored_cells
-			)
+		_survey_report.text = _state.terrain_grid.report_short(
+			TerrainGrid.position(_state.progress.explored_cells[-1]), _state.progress.explored_cells
+		)
 		_positive.text = "探索相邻区域，发现地形、资源与线索。"
 	_preview.text = (
 		(

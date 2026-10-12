@@ -178,8 +178,18 @@ func _refresh_day_end() -> void:
 	var event: DailyEvent = _state.current_day_end_event()
 	if event == null:
 		return
-	(%DayEndTitle as Label).text = "第 %d 日结束 · %s" % [_state.day, event.display_name]
+	var period: String = (
+		"第 %d 日清晨" % (_state.day + 1) if _state.day_end_settled else "第 %d 夜之后" % _state.day
+	)
+	(%DayEndTitle as Label).text = (
+		"%s · %s · 剩余 %d 项" % [period, event.display_name, _state.pending_day_end_events.size() + 1]
+	)
 	(%DayEndHint as Label).text = event.description
+	(%DawnHint as Label).text = (
+		"口粮已结算。处理剩余后果后开始今日行动；恢复稳定供应才能结束连续短缺。药品只能缓解症状。"
+		if _state.day_end_settled
+		else "选择或忽略遭遇后统一结算当日产出与口粮；补给不足将继续处理清晨后果。新效果从下一夜生效。"
+	)
 	_day_end_skip.visible = event.skippable
 	if _day_end_id != event.id:
 		for child: Node in _day_end_row.get_children():

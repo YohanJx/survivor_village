@@ -18,7 +18,7 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 			check.call(
 				overlay.visible and row.get_child_count() == 2, "Closing event renders two choices"
 			)
-			check.call(skip.visible == event.skippable, "Only special events display skip")
+			check.call(skip.visible == event.skippable, "Only optional encounters display ignore")
 			check.call(
 				(overlay.get_node("%DayEndTitle") as Label).text.contains(event.display_name),
 				"Closing window names the actual event"
@@ -26,18 +26,33 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 			for index: int in row.get_child_count():
 				var view: DayEndOptionView = row.get_child(index) as DayEndOptionView
 				var select: Button = view.get_node("%SelectButton") as Button
+				var benefit_text: String = (
+					(view.get_node("%Positive") as RichTextLabel).get_parsed_text()
+				)
+				var risk_text: String = (
+					(view.get_node("%Negative") as RichTextLabel).get_parsed_text()
+				)
 				check.call(
 					(
-						(view.get_node("%Positive") as RichTextLabel).get_parsed_text().contains(
-							event.options[index].positive
+						(view.get_node("%Positive") as RichTextLabel).is_visible_in_tree()
+						== (not event.options[index].positive.is_empty())
+					),
+					"Pure consequences hide an absent benefit instead of inventing one"
+				)
+				check.call(
+					(
+						(
+							benefit_text.is_empty()
+							if event.options[index].positive.is_empty()
+							else benefit_text.contains(event.options[index].positive)
 						)
 						and (
-							(view.get_node("%Negative") as RichTextLabel)
-							. get_parsed_text()
-							. contains(event.options[index].negative)
+							risk_text.is_empty()
+							if event.options[index].negative.is_empty()
+							else risk_text.contains(event.options[index].negative)
 						)
 					),
-					"Positive and negative event effects are both displayed"
+					"Actual event effects are displayed and absent effects remain empty"
 				)
 				check.call(
 					(
@@ -89,7 +104,15 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 	await capture.call("ui_day_end_unaffordable_skip")
 	day = game.state.day
 	await CardUiRegression.click(tree, dashboard.overlay.get_node("%DayEndSkip") as Button)
-	check.call(game.state.day == day + 1, "Actual mouse skip advances an optional event")
+	check.call(
+		game.state.day == day and game.state.day_end_settled,
+		"Mouse skip retains mandatory morning shortages"
+	)
+	for step: int in 2:
+		await tree.process_frame
+		row = dashboard.overlay.get_node("%DayEndRow") as HBoxContainer
+		await CardUiRegression.click(tree, row.get_child(1).get_node("%SelectButton") as Button)
+	check.call(game.state.day == day + 1, "Both shortage choices must resolve before the next day")
 	check.call(
 		game.state.resources[GameTypes.Stock.PARTS] == 0, "Mouse skip grants no trader parts"
 	)
@@ -129,4 +152,15 @@ static func _present(game: VillageGame, event_id: String) -> void:
 	report.survivors = game.state.population
 	game.state.finish_night(report)
 	game.state.day_end_event_id = event_id
+	game.state.pending_day_end_events.clear()
+	var event: DailyEvent = game.state.current_day_end_event()
+	if event.trigger != DailyEvent.Trigger.AMBIENT:
+		game.state.day_end_settled = true
+		game.state.day_end_effects_expired = true
+		game.state.progress.hungry_days = (
+			event.min_deprivation_days if event.trigger == DailyEvent.Trigger.HUNGER else 0
+		)
+		game.state.progress.thirsty_days = (
+			event.min_deprivation_days if event.trigger == DailyEvent.Trigger.THIRST else 0
+		)
 	game.state.changed.emit()

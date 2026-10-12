@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=9 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
@@ -7,6 +7,8 @@
 
 [ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
 [ext_resource type="Resource" path="res://data/keywords/gatherer.tres" id="kw_gatherer"]
+
+[ext_resource type="Texture2D" path="res://assets/cards/individual/practice.png" id="illustration"]
 
 [sub_resource type="Resource" id="cost0"]
 script = ExtResource("cost")
@@ -21,6 +23,7 @@ amount = 0.0
 
 [resource]
 script = ExtResource("card")
+illustration = ExtResource("illustration")
 id = "practice"
 display_name = "熟能生巧"
 description = "今日连续同类劳动基础产出 +25%。材料投入，烦躁加价照常"

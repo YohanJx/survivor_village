@@ -113,12 +113,16 @@ func _on_card_selected(uid: int) -> void:
 	if _dashboard.overlay.visible:
 		return
 	_selected_uid = uid
+	if uid >= 0:
+		(_dashboard.get_node("%ActionSplit") as ActionDock).set_expanded(true)
 	_dashboard.hand_panel.update_view(state, uid, false)
 	_dashboard.update_view(state, battle, uid)
 	_dashboard.detail.update_view(state, uid, true)
 
 
 func _on_execute_pressed() -> void:
+	if not _dashboard.detail.is_visible_in_tree():
+		return
 	if _dashboard.overlay.visible or state.phase != GameTypes.Phase.DAY or _selected_uid < 0:
 		return
 	if state.play_card(_selected_uid):

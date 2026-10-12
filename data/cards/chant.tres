@@ -1,9 +1,11 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=7 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
 [ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
 [ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="stat"]
+
+[ext_resource type="Texture2D" path="res://assets/cards/individual/chant.png" id="illustration"]
 
 [sub_resource type="Resource" id="cost0"]
 script = ExtResource("cost")
@@ -18,6 +20,7 @@ amount = 0.0
 
 [resource]
 script = ExtResource("card")
+illustration = ExtResource("illustration")
 id = "chant"
 display_name = "劳动号子"
 description = "今日劳动实际产生烦躁后恢复体力 3，最多两次。食物 -3，不会消除烦躁"

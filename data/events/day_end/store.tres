@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="DailyEvent" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/daily_event.gd" id="event"]
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Resource" path="res://data/events/day_end/options/store_0.tres" id="o0"]
+[ext_resource type="Resource" path="res://data/events/day_end/options/store_1.tres" id="o1"]
+
+[resource]
+script = ExtResource("event")
+id = "day_end_store"
+display_name = "粮仓霉变"
+description = "扩建后的粮仓需要定期清洁。墙角发现霉斑，处理不及时会使居民接触到污染。"
+min_day = 10
+required_building = 13
+min_population = 5
+required_stock = 1
+min_stock = 1
+options = Array[ExtResource("card")]([ExtResource("o0"), ExtResource("o1")])
+
+skippable = true

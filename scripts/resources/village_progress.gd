@@ -11,6 +11,8 @@ extends Resource
 @export_storage var well_surveys: int = 0
 @export_storage var granted_cards: PackedStringArray = []
 @export_storage var region: GameTypes.Region = GameTypes.Region.LEGACY
+@export_storage var hungry_days: int = 0
+@export_storage var thirsty_days: int = 0
 @export_storage var frustration: int = 0
 @export_storage var last_labor: GameTypes.Labor = GameTypes.Labor.NONE
 @export_storage var streak: int = 0
@@ -24,6 +26,7 @@ extends Resource
 @export_storage var low_mood_used: bool = false
 @export_storage var assigned_today: bool = false
 @export_storage var scouting: bool = false
+@export_storage var concealed: bool = false
 @export_storage var deposits: PackedInt32Array = [400, 400, 400]
 @export_storage var survivors: Array[SurvivorRecord] = []
 @export_storage var next_person_id: int = 1

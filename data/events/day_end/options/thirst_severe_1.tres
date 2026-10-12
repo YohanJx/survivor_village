@@ -1,0 +1,45 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="modifier"]
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+[ext_resource type="Resource" path="res://data/keywords/event.tres" id="kw_event"]
+
+[sub_resource type="Resource" id="modifier0"]
+script = ExtResource("modifier")
+key = 0
+operation = 1
+amount = 0.65
+duration = 1
+
+[sub_resource type="Resource" id="effect0"]
+script = ExtResource("effect")
+type = 2
+modifier = SubResource("modifier0")
+
+[sub_resource type="Resource" id="modifier1"]
+script = ExtResource("modifier")
+key = 2
+operation = 1
+amount = 1.176470588
+duration = 1
+
+[sub_resource type="Resource" id="effect1"]
+script = ExtResource("effect")
+type = 2
+modifier = SubResource("modifier1")
+
+[resource]
+script = ExtResource("card")
+id = "day_end_thirst_severe_1"
+display_name = "承受短缺"
+description = "下一夜守卫攻击 -35%，攻击频率 -15%，烦躁 +4。影响从下一夜开始，不能补回已经缺失的口粮。"
+positive = ""
+negative = "下一夜守卫攻击 -35%，攻击频率 -15%，烦躁 +4"
+kind = 3
+mood_delta = 4
+keywords = Array[ExtResource("keyword")]([ExtResource("kw_event")])
+costs = Array[ExtResource("cost")]([])
+effects = Array[ExtResource("effect")]([SubResource("effect0"), SubResource("effect1")])

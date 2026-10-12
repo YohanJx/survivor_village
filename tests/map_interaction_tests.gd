@@ -8,6 +8,10 @@ var _check: Callable
 
 
 func run(tree: SceneTree, dashboard: VillageDashboard, check: Callable, capture: Callable) -> void:
+	var dock: ActionDock = dashboard.get_node("%ActionSplit") as ActionDock
+	var was_expanded: bool = dock.is_expanded()
+	dock.set_expanded(false)
+	await tree.process_frame
 	_tree = tree
 	_map = dashboard.get_node("%VillageMap") as VillageMap
 	_check = check
@@ -99,6 +103,8 @@ func run(tree: SceneTree, dashboard: VillageDashboard, check: Callable, capture:
 		"Double click centers the village"
 	)
 	await capture.call("ui_map_village")
+	dock.set_expanded(was_expanded)
+	await tree.process_frame
 
 
 func _button(

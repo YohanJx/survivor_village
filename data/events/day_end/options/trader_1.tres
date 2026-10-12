@@ -21,8 +21,8 @@ amount = 6.0
 [sub_resource type="Resource" id="effect2"]
 script = ExtResource("effect")
 type = 0
-key = 5
-amount = 3.0
+key = 6
+amount = 1.0
 
 [sub_resource type="Resource" id="cost0"]
 script = ExtResource("cost")
@@ -33,9 +33,9 @@ amount = 4
 script = ExtResource("card")
 id = "day_end_trader_1"
 display_name = "交换药品箭矢"
-description = "药品 +3、箭矢 +6；零件消耗 4，噪音 +3。确认后直接结算，不占用白天行动。"
+description = "药品 +3、箭矢 +6；零件消耗 4，污染 +1。确认后直接结算，不占用白天行动。"
 positive = "药品 +3、箭矢 +6"
-negative = "零件消耗 4，噪音 +3"
+negative = "零件消耗 4，污染 +1"
 kind = 3
 icon = 11
 color = 2

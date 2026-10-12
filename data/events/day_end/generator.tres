@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="DailyEvent" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/daily_event.gd" id="event"]
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+[ext_resource type="Resource" path="res://data/events/day_end/options/generator_0.tres" id="o0"]
+[ext_resource type="Resource" path="res://data/events/day_end/options/generator_1.tres" id="o1"]
+
+[resource]
+script = ExtResource("event")
+id = "day_end_generator"
+display_name = "柴油机停机征兆"
+description = "已投入使用的柴油机出现漏油和异常震动。检修需要零件，继续运行会让下一夜照明受损。"
+min_day = 7
+required_building = 6
+required_stock = 10
+min_stock = 2
+options = Array[ExtResource("card")]([ExtResource("o0"), ExtResource("o1")])
+
+skippable = true

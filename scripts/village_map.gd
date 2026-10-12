@@ -25,7 +25,7 @@ var _drag_button: MouseButton = MOUSE_BUTTON_NONE
 
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(600, 160)
+	custom_minimum_size = Vector2(600, 80)
 	clip_contents = true
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	mouse_default_cursor_shape = Control.CURSOR_MOVE
@@ -92,15 +92,15 @@ func _draw() -> void:
 				22
 			)
 	else:
-		draw_string(
-			get_theme_default_font(),
+		TerrainMapRenderer.draw_label(
+			self,
+			view_camera.get_view_transform(size),
 			Vector2(24, 550),
 			state.catalog.library.progression_rules.map_for(state.progress.region).display_name,
-			HORIZONTAL_ALIGNMENT_LEFT,
-			-1,
 			13,
 			Color("96a98b")
 		)
+	_draw_structure_labels()
 	_draw_compass()
 	draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
 
@@ -244,12 +244,39 @@ func _draw_camp_objects(night: bool) -> void:
 			_art.draw_fence(self, WorldLayout.to_point(cell), cell.y in [6, 18], hp_ratio, night)
 	for structure: StructurePlacement in _structures:
 		_art.draw_structure(self, state, battle, structure, night)
-	_art.draw_fire(self, Vector2(492, 348), night)
+	if not night or not battle.stats.concealed:
+		_art.draw_fire(self, Vector2(492, 348), night)
+
+
+func _draw_structure_labels() -> void:
+	var transform: Transform2D = view_camera.get_view_transform(size)
+	for structure: StructurePlacement in _structures:
+		var rect: Rect2 = Rect2(
+			Vector2(structure.rect.position) * WorldLayout.CELL,
+			Vector2(structure.rect.size) * WorldLayout.CELL
+		)
+		TerrainMapRenderer.draw_label(
+			self,
+			transform,
+			Vector2(rect.get_center().x, rect.end.y + 12),
+			structure.display_name,
+			14,
+			UiElements.TEXT_PRIMARY
+		)
 
 
 func _draw_battle() -> void:
 	for enemy: CombatActor in battle.enemies:
 		_art.draw_actor(self, enemy, true, true, _clock_time)
+		if enemy.kind >= GameTypes.Enemy.ARMORED:
+			TerrainMapRenderer.draw_label(
+				self,
+				view_camera.get_view_transform(size),
+				enemy.pos - Vector2(0, 33),
+				GameTypes.ENEMY_NAMES[enemy.kind],
+				13,
+				UiElements.TEXT_PRIMARY
+			)
 	for guard: CombatActor in battle.guards:
 		_art.draw_actor(self, guard, false, true, _clock_time)
 	for shot: ProjectileState in battle.projectiles:
@@ -261,12 +288,11 @@ func _draw_battle() -> void:
 		if particle.text.is_empty():
 			draw_arc(particle.pos, (1 - particle.life) * 18 + 3, 0, TAU, 16, particle.color, 1.5)
 		else:
-			draw_string(
-				get_theme_default_font(),
+			TerrainMapRenderer.draw_label(
+				self,
+				view_camera.get_view_transform(size),
 				particle.pos - Vector2(0, (1 - particle.life) * 16),
 				particle.text,
-				HORIZONTAL_ALIGNMENT_CENTER,
-				-1,
 				13,
 				particle.color
 			)
@@ -274,16 +300,7 @@ func _draw_battle() -> void:
 
 func _draw_idle_people() -> void:
 	for guard: CombatActor in _idle_guards:
-		var angle: float = (
-			float(guard.id) * TAU / maxf(1, state.population)
-			+ sin(_clock_time * 0.18 + guard.id) * 0.4
-		)
-		guard.pos = (
-			WorldLayout.CENTER
-			+ Vector2.from_angle(angle) * (76 + sin(_clock_time * 0.5 + guard.id) * 14)
-		)
-		if Rect2(454, 254, 92, 62).has_point(guard.pos):
-			guard.pos.y += 50
+		guard.pos = WorldLayout.guard_post(guard.id, state.population)
 		_art.draw_actor(self, guard, false, false, _clock_time)
 
 
@@ -303,12 +320,11 @@ func _draw_compass() -> void:
 		),
 		Color("b4bea0")
 	)
-	draw_string(
-		get_theme_default_font(),
+	TerrainMapRenderer.draw_label(
+		self,
+		view_camera.get_view_transform(size),
 		point + Vector2(-4, -22),
 		"N",
-		HORIZONTAL_ALIGNMENT_LEFT,
-		-1,
 		12,
 		Color("b4bea0")
 	)

@@ -79,7 +79,9 @@ printf '游戏日志：%s\n' "$launch_log"
 # Close only the launcher's Terminal tab after this shell has finished.
 if [[ "${TERM_PROGRAM:-}" == "Apple_Terminal" && -t 1 ]]; then
 	terminal_tty="$(tty)"
-	nohup /usr/bin/osascript - "$terminal_tty" > /dev/null 2>&1 < /dev/null <<'APPLESCRIPT' &
+	close_log="${launch_log%.log}_terminal.log"
+	printf '终端关闭日志：%s\n' "$close_log"
+	nohup /usr/bin/osascript - "$terminal_tty" > "$close_log" 2>&1 < /dev/null <<'APPLESCRIPT' &
 on run arguments
 	delay 1
 	set launcherTty to item 1 of arguments
@@ -87,7 +89,13 @@ on run arguments
 		repeat with terminalWindow in windows
 			repeat with terminalTab in tabs of terminalWindow
 				if tty of terminalTab is launcherTty then
-					close terminalTab
+					if (count of tabs of terminalWindow) is not 1 then
+						error "启动标签与其他会话共用窗口，保留窗口。请使用余烬村庄.app 启动。"
+					end if
+					if busy of terminalTab then
+						error "启动终端仍有运行任务，保留窗口。"
+					end if
+					close terminalWindow
 					return
 				end if
 			end repeat

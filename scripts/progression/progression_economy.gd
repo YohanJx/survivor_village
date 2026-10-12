@@ -4,6 +4,7 @@ extends RefCounted
 
 
 static func start_day(state: VillageState) -> void:
+	NightThreat.start_day(state)
 	var progress: VillageProgress = state.progress
 	progress.frustration = maxi(0, progress.frustration - 1)
 	progress.last_labor = GameTypes.Labor.NONE
@@ -47,6 +48,15 @@ static func derive(state: VillageState, stats: VillageStats) -> void:
 	var fuel: int = state.buildings[GameTypes.Building.GENERATOR] * 2
 	if state.resources[GameTypes.Stock.FUEL] < fuel:
 		stats.income[GameTypes.Stock.POWER] = 0
+		var generator: ProductionProfile = (
+			state.catalog.buildings[GameTypes.Building.GENERATOR].production
+		)
+		stats.income[GameTypes.Stock.NOISE] -= (
+			generator.noise * state.buildings[GameTypes.Building.GENERATOR]
+		)
+		stats.income[GameTypes.Stock.POLLUTION] -= (
+			generator.pollution * state.buildings[GameTypes.Building.GENERATOR]
+		)
 		stats.synergies.append("柴油机缺燃料：不生产电力")
 	else:
 		stats.upkeep[GameTypes.Stock.FUEL] += fuel

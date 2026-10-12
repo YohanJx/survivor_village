@@ -14,6 +14,12 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 		card.get_global_rect().encloses((card.get_node("%CardFace") as Control).get_global_rect()),
 		"Hand artwork fits its interactive card"
 	)
+	check.call(
+		(card.get_node("%CardFace") as Control).get_global_rect().encloses(
+			(card.get_node("%Keywords") as Control).get_global_rect()
+		),
+		"Keywords are integrated within the card frame"
+	)
 	var resources: PackedInt32Array = game.state.resources.duplicate()
 	var actions: int = game.state.actions_used
 	var selected: String = (dashboard.detail.get_node("%CardTitle") as Label).text
@@ -100,6 +106,9 @@ static func _check_night(
 ) -> void:
 	game.state.begin_night()
 	var card: VillageCardButton = _card(dashboard, "forage")
+	(dashboard.hand_panel.get_node("HandScroll") as ScrollContainer).ensure_control_visible(card)
+	await tree.process_frame
+	await tree.process_frame
 	await _right_click(tree, card)
 	var elapsed: float = game.battle.elapsed
 	await tree.create_timer(0.15).timeout

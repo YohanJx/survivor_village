@@ -10,5 +10,6 @@ script = ExtResource("event")
 id = "day_end_dispute"
 display_name = "守夜后的争执"
 description = "疲劳让大家起了争执。留人休息，或组织一次公开讨论。"
-skippable = false
+skippable = true
+min_frustration = 2
 options = Array[ExtResource("card")]([ExtResource("o0"), ExtResource("o1")])

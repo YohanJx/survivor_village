@@ -9,3 +9,5 @@ attack_multiplier = 0.8
 health_multiplier = 1.0
 speed_multiplier = 1.0
 range_multiplier = 1.0
+
+range_limit = 100.0

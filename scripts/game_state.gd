@@ -39,6 +39,9 @@ var buildings: PackedInt32Array = []
 var modifiers: Array[StatModifier] = []
 var hand: Array[CardInstance] = []
 var day_end_event_id: String = ""
+var pending_day_end_events: PackedStringArray = []
+var day_end_settled: bool = false
+var day_end_effects_expired: bool = false
 var history: Array[VillageLogEntry] = []
 var wall_damage: Dictionary[Vector2i, float] = {}
 var night_stats: VillageStats
@@ -61,10 +64,19 @@ func new_run(seed_value: int = 0, region: GameTypes.Region = GameTypes.Region.LE
 	if catalog.library.progression_rules.map_for(region) == null:
 		last_error = "地图定义缺失"
 		return
+	var requested_seed: int = (
+		seed_value if seed_value != 0 else int(Time.get_unix_time_from_system())
+	)
+	var selected_seed: int = OpeningRules.viable_seed(
+		requested_seed, catalog.library.progression_rules.map_for(region)
+	)
+	if selected_seed == -1:
+		last_error = "未找到可发展的营地，请更换种子或地图"
+		return
 	progress = VillageProgress.new()
 	progress.region = region
 	last_error = ""
-	run_seed = seed_value if seed_value != 0 else int(Time.get_unix_time_from_system())
+	run_seed = selected_seed
 	rng.seed = run_seed
 	terrain_grid.generate(run_seed, catalog.library.progression_rules.map_for(region))
 	progress.explored_cells = PackedInt32Array([TerrainGrid.index(TerrainGrid.CAMP)])
@@ -84,6 +96,9 @@ func new_run(seed_value: int = 0, region: GameTypes.Region = GameTypes.Region.LE
 	hand.clear()
 	_pending_card_uids.clear()
 	day_end_event_id = ""
+	pending_day_end_events.clear()
+	day_end_settled = false
+	day_end_effects_expired = false
 	history.clear()
 	wall_damage.clear()
 	night_stats = null
@@ -94,7 +109,17 @@ func new_run(seed_value: int = 0, region: GameTypes.Region = GameTypes.Region.LE
 	PopulationRules.reconcile(self)
 	ProgressionEconomy.start_day(self)
 	_pending_card_uids.clear()
-	log_event("五位幸存者在村庄落脚。第一天只勘探地形，随身补给供今日使用。")
+	log_event(
+		(
+			"五位幸存者在村庄落脚。携带食物 %d、水 %d；随身容量各 %d/%d。第一天寻找草甸与林地。"
+			% [
+				resources[GameTypes.Stock.FOOD],
+				resources[GameTypes.Stock.WATER],
+				SurvivalRules.storage_capacity(self, GameTypes.Stock.FOOD),
+				SurvivalRules.storage_capacity(self, GameTypes.Stock.WATER)
+			]
+		)
+	)
 	_publish_changes(true)
 
 
@@ -195,7 +220,9 @@ func begin_night() -> void:
 	night_stats = EffectResolver.derive(self)
 	add_resource(GameTypes.Stock.POWER, -night_stats.upkeep[GameTypes.Stock.POWER])
 	phase = GameTypes.Phase.NIGHT
-	log_event("夜幕降临%s，幸存者开始自动防守。" % [" · 第七日大尸潮" if day % 7 == 0 else ""])
+	log_event("夜幕降临：预计威胁 %d，幸存者在营地岗位驻守。" % wave_count())
+	if night_stats.concealed and night_stats.threat_budget == 0:
+		log_event("营地熄火隐蔽，今夜未被感染者发现；仍照常结算生产与口粮。")
 	_publish_changes(true)
 
 
@@ -234,16 +261,21 @@ func finish_night(report: BattleReport) -> void:
 			),
 			3 + int(report.kills / 5.0)
 		)
-		var event: DailyEvent = DayEndEvents.for_day(self)
-		day_end_event_id = event.id
+		pending_day_end_events = DayEndEvents.queue_for_day(self)
+		day_end_settled = false
+		day_end_effects_expired = false
+		_take_next_day_end_event()
 		log_event(
 			(
-				"守住第 %d 夜！击退 %d，幸存 %d / %d。日终事件等待处理。"
+				"守住第 %d 夜！击退 %d，幸存 %d / %d。处理当夜遭遇与补给结算。"
 				% [day, report.kills, population, report.started_survivors]
 			)
 		)
-	_publish_changes(true)
-	autosave()
+	if phase == GameTypes.Phase.DAY_END and day_end_event_id.is_empty():
+		advance_dawn()
+	else:
+		_publish_changes(true)
+		autosave()
 
 
 ## 返回当前待处理的只读原生定义；无事件时返回 null，查询不修改状态。
@@ -252,7 +284,7 @@ func current_day_end_event() -> DailyEvent:
 
 
 ## 仅在日终阶段处理一次；准入失败不扣费、不推进日期或发信号。
-## 成功直接结算双向效果与黎明，发 changed/phase_changed 并自动保存。
+## 成功提交当前选项后展示下一事件，队列结束才推进黎明；发 changed/phase_changed 并自动保存。
 func choose_day_end_event(index: int) -> bool:
 	if _publishing_changes:
 		return false
@@ -279,34 +311,26 @@ func advance_dawn() -> void:
 		return
 	if phase != GameTypes.Phase.DAY_END or not day_end_event_id.is_empty():
 		return
-	var shortage: int = 0
-	var daily_upkeep: PackedInt32Array = EffectResolver.daily_upkeep(self)
-	for key: int in [
-		GameTypes.Stock.FOOD,
-		GameTypes.Stock.WATER,
-		GameTypes.Stock.MATERIALS,
-		GameTypes.Stock.WOOD,
-		GameTypes.Stock.STONE,
-		GameTypes.Stock.PARTS,
-		GameTypes.Stock.FUEL,
-		GameTypes.Stock.ARROWS,
-		GameTypes.Stock.MEDICINE
-	]:
-		var upkeep: int = daily_upkeep[key]
-		var balance: int = resources[key] + night_stats.income[key] - upkeep
-		if balance < 0 and key in [GameTypes.Stock.FOOD, GameTypes.Stock.WATER]:
-			shortage -= balance
-		resources[key] = clampi(balance, 0, GameTypes.STOCK_LIMITS[key])
-	add_resource(GameTypes.Stock.POWER, night_stats.income[GameTypes.Stock.POWER])
-	add_resource(GameTypes.Stock.NOISE, night_stats.income[GameTypes.Stock.NOISE] - 3)
-	add_resource(GameTypes.Stock.POLLUTION, night_stats.income[GameTypes.Stock.POLLUTION])
-	add_resource(GameTypes.Stock.STAMINA, night_stats.stamina_recovery - shortage * 2)
-	if night_stats.clinic_active:
-		core_health = minf(core_max_health, core_health + 15)
-	if shortage > 0:
-		core_health = maxf(0, core_health - shortage * 3)
-		log_event("补给短缺 %d：村庄耐久 -%d，恢复体力减少。" % [shortage, shortage * 3])
-	SurvivalRules.close_day(self)
+	if not day_end_effects_expired:
+		EffectResolver.expire_after_night(self)
+		day_end_effects_expired = true
+	if not day_end_settled:
+		_settle_daily_supplies()
+		if core_health <= 0 or population <= 0:
+			phase = GameTypes.Phase.GAME_OVER
+			day_end_settled = false
+			day_end_effects_expired = false
+			_publish_changes(true)
+			autosave()
+			return
+		pending_day_end_events = DayEndEvents.queue_for_day(self, true)
+		_take_next_day_end_event()
+		if not day_end_event_id.is_empty():
+			_publish_changes(true)
+			autosave()
+			return
+	day_end_settled = false
+	day_end_effects_expired = false
 	day += 1
 	weather = catalog.library.weather_rules.for_day(run_seed, day)
 	slot = 0
@@ -322,7 +346,12 @@ func advance_dawn() -> void:
 
 
 func add_resource(key: GameTypes.Stock, amount: int) -> void:
-	resources[key] = clampi(resources[key] + amount, 0, GameTypes.STOCK_LIMITS[key])
+	var limit: int = (
+		catalog.library.progression_rules.night_threat.pollution_cap
+		if key == GameTypes.Stock.POLLUTION
+		else GameTypes.STOCK_LIMITS[key]
+	)
+	resources[key] = clampi(resources[key] + amount, 0, limit)
 
 
 func environment_period() -> int:
@@ -339,10 +368,7 @@ func wave_count() -> int:
 	var stats: VillageStats = (
 		night_stats if phase == GameTypes.Phase.NIGHT else EffectResolver.derive(self)
 	)
-	var base: int = 8 + day * 3 + int(resources[GameTypes.Stock.NOISE] / 4.0)
-	if day % 7 == 0:
-		base = int(base * 1.45)
-	return maxi(4, int(base * stats.wave_size))
+	return stats.threat_budget
 
 
 func preview_card(card: CardDefinition) -> VillageStats:
@@ -377,6 +403,9 @@ func snapshot() -> VillageSaveData:
 	for instance: CardInstance in hand:
 		data.hand.append(CardInstance.new(instance.definition, instance.uid))
 	data.day_end_event_id = day_end_event_id
+	data.pending_day_end_events = pending_day_end_events.duplicate()
+	data.day_end_settled = day_end_settled
+	data.day_end_effects_expired = day_end_effects_expired
 	for entry: VillageLogEntry in history:
 		data.history.append(VillageLogEntry.new(entry.day, entry.text))
 	data.wall_damage = wall_damage.duplicate()
@@ -433,11 +462,35 @@ func restore(data: VillageSaveData) -> bool:
 	day_end_event_id = (
 		data.day_end_event_id if data.version >= VillageSaveData.DAY_END_VERSION else ""
 	)
+	pending_day_end_events = (
+		data.pending_day_end_events.duplicate()
+		if data.version >= VillageSaveData.EVENT_QUEUE_VERSION
+		else PackedStringArray()
+	)
+	day_end_settled = (
+		data.day_end_settled if data.version >= VillageSaveData.EVENT_QUEUE_VERSION else false
+	)
+	day_end_effects_expired = (
+		data.day_end_effects_expired
+		if data.version >= VillageSaveData.EVENT_QUEUE_VERSION
+		else false
+	)
+	if data.version < VillageSaveData.EVENT_QUEUE_VERSION:
+		progress.hungry_days = 0
+		progress.thirsty_days = 0
 	history.clear()
 	for entry: VillageLogEntry in data.history:
 		history.append(VillageLogEntry.new(entry.day, entry.text))
 	wall_damage = data.wall_damage.duplicate()
 	night_stats = data.night_stats.copy_snapshot() if data.night_stats != null else null
+	if data.version < VillageSaveData.THREAT_VERSION and night_stats != null:
+		# 旧档当夜规模保持，下一次黄昏才采用新威胁规则。
+		var old_budget: int = 8 + day * 3 + int(resources[GameTypes.Stock.NOISE] / 4.0)
+		if day % 7 == 0:
+			old_budget = int(old_budget * 1.45)
+		night_stats.threat_budget = maxi(4, int(old_budget * night_stats.wave_size))
+		night_stats.threat_level = clampf(day / 20.0, 0.0, 1.0)
+		night_stats.boss_possible = day % 7 == 0
 	last_report = data.last_report.copy_snapshot() if data.last_report != null else null
 	next_uid = data.next_uid
 	total_kills = data.total_kills
@@ -464,7 +517,11 @@ func restore(data: VillageSaveData) -> bool:
 		SurvivalRules.migrate_completions(self)
 	ProgressionEconomy.expand_snapshot(night_stats)
 	if data.version < VillageSaveData.DAY_END_VERSION and phase == GameTypes.Phase.DAY_END:
-		day_end_event_id = DayEndEvents.for_day(self).id
+		pending_day_end_events = DayEndEvents.queue_for_day(self)
+		_take_next_day_end_event()
+		if day_end_event_id.is_empty():
+			# 旧奖励界面已有待处理机会；保留阶段，读档不结算口粮或写盘。
+			day_end_event_id = DayEndEvents.for_legacy_save(self).id
 	_publish_changes(true)
 	return true
 
@@ -559,15 +616,55 @@ func exploration_error() -> String:
 	return ""
 
 
+func _settle_daily_supplies() -> void:
+	var shortage: int = 0
+	var food_shortage: bool = false
+	var water_shortage: bool = false
+	var daily_upkeep: PackedInt32Array = EffectResolver.daily_upkeep(self)
+	for key: int in [
+		GameTypes.Stock.FOOD,
+		GameTypes.Stock.WATER,
+		GameTypes.Stock.MATERIALS,
+		GameTypes.Stock.WOOD,
+		GameTypes.Stock.STONE,
+		GameTypes.Stock.PARTS,
+		GameTypes.Stock.FUEL,
+		GameTypes.Stock.ARROWS,
+		GameTypes.Stock.MEDICINE
+	]:
+		var upkeep: int = daily_upkeep[key]
+		var balance: int = resources[key] + night_stats.income[key] - upkeep
+		if balance < 0 and key in [GameTypes.Stock.FOOD, GameTypes.Stock.WATER]:
+			shortage -= balance
+			food_shortage = food_shortage or key == GameTypes.Stock.FOOD
+			water_shortage = water_shortage or key == GameTypes.Stock.WATER
+		resources[key] = clampi(balance, 0, GameTypes.STOCK_LIMITS[key])
+	add_resource(GameTypes.Stock.POWER, night_stats.income[GameTypes.Stock.POWER])
+	add_resource(GameTypes.Stock.POLLUTION, night_stats.income[GameTypes.Stock.POLLUTION])
+	add_resource(GameTypes.Stock.STAMINA, night_stats.stamina_recovery - shortage * 2)
+	if night_stats.clinic_active:
+		core_health = minf(core_max_health, core_health + 15)
+	if shortage > 0:
+		core_health = maxf(0, core_health - shortage * 3)
+		log_event("补给短缺 %d：村庄耐久 -%d，恢复体力减少。" % [shortage, shortage * 3])
+	SurvivalRules.close_day(self)
+	progress.hungry_days = progress.hungry_days + 1 if food_shortage else 0
+	progress.thirsty_days = progress.thirsty_days + 1 if water_shortage else 0
+	day_end_settled = true
+
+
 func _settle_day_end(option: CardDefinition) -> void:
 	last_error = ""
 	var event: DailyEvent = current_day_end_event()
 	day_end_event_id = ""
-	progress.recent_day_end_events.append(event.id)
-	if progress.recent_day_end_events.size() > 2:
-		progress.recent_day_end_events.remove_at(0)
+	if event.trigger == DailyEvent.Trigger.AMBIENT:
+		progress.recent_day_end_events.append(event.id)
+		if progress.recent_day_end_events.size() > 2:
+			progress.recent_day_end_events.remove_at(0)
 	# 先结束已完成夜晚的临时效果，再施加新事件，保留其下一夜期限。
-	EffectResolver.expire_after_night(self)
+	if not day_end_effects_expired:
+		EffectResolver.expire_after_night(self)
+		day_end_effects_expired = true
 	if option != null:
 		EffectResolver.apply(self, option, true)
 		log_event(
@@ -578,7 +675,18 @@ func _settle_day_end(option: CardDefinition) -> void:
 		)
 	else:
 		log_event("跳过日终事件：%s，没有取得收益或承担代价。" % event.display_name)
-	advance_dawn()
+	_take_next_day_end_event()
+	if day_end_event_id.is_empty():
+		advance_dawn()
+	else:
+		_publish_changes(true)
+		autosave()
+
+
+func _take_next_day_end_event() -> void:
+	day_end_event_id = "" if pending_day_end_events.is_empty() else pending_day_end_events[0]
+	if not pending_day_end_events.is_empty():
+		pending_day_end_events.remove_at(0)
 
 
 func _advance_slot() -> void:

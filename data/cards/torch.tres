@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=9 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
@@ -7,6 +7,8 @@
 
 [ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
 [ext_resource type="Resource" path="res://data/keywords/guard.tres" id="kw_guard"]
+
+[ext_resource type="Texture2D" path="res://assets/cards/individual/torch.png" id="illustration"]
 
 [sub_resource type="Resource" id="cost0"]
 script = ExtResource("cost")
@@ -21,6 +23,7 @@ amount = 2.0
 
 [resource]
 script = ExtResource("card")
+illustration = ExtResource("illustration")
 id = "torch"
 display_name = "布置火把"
 description = "今晚火把发现附近潜伏者。木材 -2，噪音 +2"

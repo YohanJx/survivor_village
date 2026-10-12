@@ -31,6 +31,7 @@ var _spawn_timer: float = 0
 var _next_id: int = 0
 var _terrain: Array[Vector2i] = []
 var _buildings: Array[StructurePlacement] = []
+var _boss_allowed: bool = false
 
 
 func start(game_state: VillageState) -> void:
@@ -39,6 +40,11 @@ func start(game_state: VillageState) -> void:
 	support.initialize(stats)
 	special = SpecialEnemies.new()
 	_rng.seed = state.run_seed + state.day * 901
+	var threat_rules: NightThreatRules = state.catalog.library.progression_rules.night_threat
+	var boss_chance: float = (
+		threat_rules.boss_chance * (threat_rules.conceal_multiplier if stats.concealed else 1.0)
+	)
+	_boss_allowed = stats.boss_possible and _rng.randf() < boss_chance
 	guards.clear()
 	enemies.clear()
 	walls.clear()
@@ -57,13 +63,11 @@ func start(game_state: VillageState) -> void:
 	_buildings = WorldLayout.active_structures(state)
 	_setup_navigation()
 	for i: int in state.population:
-		var angle: float = TAU * float(i) / state.population
-		var point: Vector2 = _nearest_open(
-			WorldLayout.CENTER + Vector2.from_angle(angle) * 85, guard_grid
-		)
+		var point: Vector2 = _nearest_open(WorldLayout.guard_post(i, state.population), guard_grid)
 		var guard: CombatActor = CombatActor.new()
 		guard.id = i
 		guard.pos = point
+		guard.home_pos = point
 		guard.hp = stats.health
 		guard.max_hp = stats.health
 		guard.attack_range = stats.attack_range
@@ -87,7 +91,7 @@ func step(delta: float) -> void:
 	_spawn_timer -= delta
 	if spawned < total_to_spawn and _spawn_timer <= 0:
 		_spawn_enemy()
-		_spawn_timer = maxf(0.22, 1.4 - state.day * 0.065)
+		_spawn_timer = lerpf(1.5, 0.55, stats.threat_level)
 	if stats.modern_combat:
 		support.update(self, delta)
 		special.update(self, delta)
@@ -124,6 +128,16 @@ func step(delta: float) -> void:
 		_complete()
 
 
+## 查询射程和遮挡，无副作用；驻守选敌与执行使用同一准入。
+func can_attack(guard: CombatActor, enemy: CombatActor) -> bool:
+	return (
+		guard.hp > 0
+		and enemy.hp > 0
+		and guard.pos.distance_to(enemy.pos) <= guard.attack_range
+		and _clear_shot(guard.pos, enemy.pos)
+	)
+
+
 func _setup_navigation() -> void:
 	for grid: AStarGrid2D in [enemy_grid, guard_grid]:
 		grid.region = Rect2i(Vector2i.ZERO, WorldLayout.GRID)
@@ -145,6 +159,12 @@ func _setup_navigation() -> void:
 			walls[key] = WallSegment.new(cell, hp, stats.wall_health)
 			guard_grid.set_point_solid(cell, hp > 0)
 			enemy_grid.set_point_weight_scale(cell, 4.0 if hp > 0 else 1.0)
+	# 路径的每个节点均在驻守区内，不能经门口绕出村庄。
+	for x: int in WorldLayout.GRID.x:
+		for y: int in WorldLayout.GRID.y:
+			var cell: Vector2i = Vector2i(x, y)
+			if not WorldLayout.DEFENSE_CELLS.has_point(cell):
+				guard_grid.set_point_solid(cell, true)
 
 
 func _spawn_enemy() -> void:
@@ -161,20 +181,22 @@ func _spawn_enemy() -> void:
 			point = Vector2(_rng.randf_range(24, 936), 564)
 	point = _nearest_open(point, enemy_grid)
 	var kind: GameTypes.Enemy = GameTypes.Enemy.WALKER
-	if state.day % 7 == 0 and not boss_spawned and spawned >= int(total_to_spawn * 0.4):
+	if _boss_allowed and not boss_spawned and spawned >= int(total_to_spawn * 0.4):
 		kind = GameTypes.Enemy.BOSS
 		boss_spawned = true
-	elif state.day >= 3 and _rng.randf() < 0.14:
+	elif stats.threat_level >= 0.55 and _rng.randf() < 0.14:
 		kind = GameTypes.Enemy.BRUTE
-	elif state.day >= 2 and _rng.randf() < 0.22:
+	elif stats.threat_level >= 0.30 and _rng.randf() < 0.22:
 		kind = GameTypes.Enemy.RUNNER
 	if stats.modern_combat and kind != GameTypes.Enemy.BOSS:
-		var types: PackedInt32Array = special.types_for(state.day, state.progress.region)
+		var types: PackedInt32Array = special.types_for(
+			ceili(stats.threat_level * 10), state.progress.region
+		)
 		if not types.is_empty() and _rng.randf() < 0.18:
 			kind = types[_rng.randi_range(0, types.size() - 1)] as GameTypes.Enemy
-	var hp: float = 28 + state.day * 2.0
-	var speed: float = 24.0 + minf(state.day, 20) * 0.45
-	var damage: float = 4.0 + state.day * 0.45
+	var hp: float = 28 + stats.threat_level * 20.0
+	var speed: float = 24.0 + stats.threat_level * 9.0
+	var damage: float = 4.0 + stats.threat_level * 6.0
 	match kind:
 		GameTypes.Enemy.RUNNER:
 			hp *= 0.7
@@ -184,7 +206,7 @@ func _spawn_enemy() -> void:
 			speed *= 0.72
 			damage *= 1.8
 		GameTypes.Enemy.BOSS:
-			hp = 270 + state.day * 18
+			hp = 270 + stats.threat_level * 126
 			speed *= 0.68
 			damage *= 3.5
 	if stats.modern_combat:
@@ -193,9 +215,9 @@ func _spawn_enemy() -> void:
 			kind = GameTypes.Enemy.WALKER
 			definition = state.catalog.library.progression_rules.enemies[kind]
 		total_to_spawn -= definition.threat_cost - 1
-		hp = (28 + state.day * 2.0) * definition.health_multiplier
-		speed = (24.0 + minf(state.day, 20) * 0.45) * definition.speed_multiplier
-		damage = (4.0 + state.day * 0.45) * definition.damage_multiplier
+		hp = (28 + stats.threat_level * 20.0) * definition.health_multiplier
+		speed = (24.0 + stats.threat_level * 9.0) * definition.speed_multiplier
+		damage = (4.0 + stats.threat_level * 6.0) * definition.damage_multiplier
 	var enemy: CombatActor = CombatActor.new()
 	enemy.id = _next_id
 	enemy.pos = point
@@ -214,33 +236,19 @@ func _update_guards(delta: float) -> void:
 		if guard.hp <= 0:
 			continue
 		guard.cooldown -= delta
-		guard.repath -= delta
 		guard.flash = maxf(0, guard.flash - delta)
+		# 自动守村固定岗位；目标超出射程或被遮挡时等待，不追击或退让。
 		var target: CombatActor = support.target_for(guard, self)
 		if target == null:
 			continue
 		var distance: float = guard.pos.distance_to(target.pos)
 		guard.facing = (target.pos - guard.pos).normalized()
-		if distance <= guard.attack_range and _clear_shot(guard.pos, target.pos):
-			guard.path = PackedVector2Array()
-			if guard.cooldown <= 0 and not support.shoot(guard, target, distance, self):
-				continue
-			if distance < 34 and guard.repath <= 0 and guard.unit != GameTypes.Unit.SPEAR:
-				var retreat: Vector2 = guard.pos - guard.facing * 42
-				_request_path(guard, retreat, guard_grid)
-				guard.repath = 0.4
-		else:
-			if guard.repath <= 0:
-				var desired: Vector2 = (
-					target.pos
-					+ (WorldLayout.CENTER - target.pos).normalized() * guard.attack_range * 0.65
-				)
-				# Automatic defenders stay near the village instead of chasing to the edge.
-				if desired.distance_to(WorldLayout.CENTER) > 205:
-					desired = WorldLayout.CENTER + (desired - WorldLayout.CENTER).normalized() * 205
-				_request_path(guard, desired, guard_grid)
-				guard.repath = 0.65
-		_move_along_path(guard, stats.speed * guard.speed_multiplier * delta, false)
+		if (
+			distance <= guard.attack_range
+			and _clear_shot(guard.pos, target.pos)
+			and guard.cooldown <= 0
+		):
+			support.shoot(guard, target, distance, self)
 
 
 func _update_enemies(delta: float) -> void:
@@ -313,6 +321,10 @@ func _update_projectiles(delta: float) -> void:
 
 
 func _request_path(actor: CombatActor, destination: Vector2, grid: AStarGrid2D) -> void:
+	if grid == guard_grid:
+		var first: Vector2 = WorldLayout.to_point(WorldLayout.DEFENSE_CELLS.position)
+		var last: Vector2 = WorldLayout.to_point(WorldLayout.DEFENSE_CELLS.end - Vector2i.ONE)
+		destination = destination.clamp(first, last)
 	# Finish the current segment before replanning. Re-centering on the current cell
 	# every frame makes slow actors oscillate forever at diagonal cell boundaries.
 	var anchor: Vector2 = (
@@ -339,7 +351,10 @@ func _move_along_path(actor: CombatActor, distance: float, zombie: bool) -> void
 				actor.cooldown = 1.0
 				particles.append(CombatParticle.new(goal, 0.3, Color("dca06e")))
 				if walls[key].hp <= 0:
-					guard_grid.set_point_solid(walls[key].cell, false)
+					# 敌人可穿过缺口，村民驻守区不会随围墙破损扩张。
+					guard_grid.set_point_solid(
+						walls[key].cell, not WorldLayout.DEFENSE_CELLS.has_point(walls[key].cell)
+					)
 					enemy_grid.set_point_weight_scale(walls[key].cell, 1.0)
 			return
 	actor.pos = actor.pos.move_toward(goal, distance)

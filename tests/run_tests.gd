@@ -28,6 +28,8 @@ func _run() -> void:
 	_test_dawn()
 	_test_snapshots_and_save()
 	_test_navigation()
+	BattleDefenseRegression.run(_check)
+	NightThreatRegression.run(_check)
 	_test_battles()
 	print("TEST RESULT: %d checks, %d failures" % [_checks, _failures])
 	quit(0 if _failures == 0 else 1)
@@ -128,6 +130,7 @@ func _test_transactions() -> void:
 	_check(
 		state.resources[GameTypes.Stock.POWER] == power_before, "Repeated night entry is idempotent"
 	)
+	state.core_health = 220.0
 	state.finish_night(_win_report(state))
 	_check(
 		state.phase == GameTypes.Phase.DAY_END and state.current_day_end_event() != null,
@@ -393,14 +396,20 @@ func _test_navigation() -> void:
 	sim.enemies.append(actor)
 	sim.step(BattleSimulation.FIXED_STEP_SECONDS)
 	_check(
-		sim.walls[Vector2i(14, 6)].hp == 0 and not sim.guard_grid.is_point_solid(Vector2i(14, 6)),
-		"Broken fence updates navigation"
+		(
+			sim.walls[Vector2i(14, 6)].hp == 0
+			and sim.enemy_grid.get_point_weight_scale(Vector2i(14, 6)) == 1.0
+			and sim.guard_grid.is_point_solid(Vector2i(14, 6))
+		),
+		"Broken fence admits enemies while defenders keep the interior boundary"
 	)
 
 
 func _test_battles() -> void:
 	for scenario: int in [1, 7]:
 		var state: VillageState = _fresh()
+		# 保留战后必须进入事件阶段的断言；夹具明确满足原生争执事件的条件。
+		state.progress.frustration = 2
 		if scenario == 1:
 			state.play_card(_uid_for(state, "wall"))
 			state.play_card(_uid_for(state, "bows"))
@@ -420,6 +429,12 @@ func _test_battles() -> void:
 			state.resources[GameTypes.Stock.FOOD] = 100
 			state.resources[GameTypes.Stock.WATER] = 100
 			state.begin_night()
+		_check(
+			EventEligibility.matches(
+				state, state.catalog.library.progression_rules.day_end_event_for("day_end_dispute")
+			),
+			"Battle fixture has a real pending dispute condition"
+		)
 		var sim: BattleSimulation = BattleSimulation.new()
 		sim.finished.connect(state.finish_night)
 		sim.start(state)
@@ -436,8 +451,8 @@ func _test_battles() -> void:
 		)
 		if scenario == 7:
 			_check(
-				sim.boss_spawned and state.last_report.boss_defeated,
-				"Seventh-night boss spawns and is defeated"
+				not sim.boss_spawned or state.last_report.boss_defeated,
+				"Any pressure-driven boss that spawns is defeated"
 			)
 		print(
 			(

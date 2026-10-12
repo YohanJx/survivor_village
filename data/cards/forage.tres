@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=13 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
@@ -9,6 +9,8 @@
 [ext_resource type="Resource" path="res://data/keywords/food.tres" id="kw_food"]
 [ext_resource type="Resource" path="res://data/keywords/gatherer.tres" id="kw_gatherer"]
 [ext_resource type="Resource" path="res://data/keywords/forage_site.tres" id="kw_forage_site"]
+
+[ext_resource type="Texture2D" path="res://assets/cards/individual/forage.png" id="illustration"]
 
 [sub_resource type="Resource" id="cost_0"]
 script = ExtResource("s_resource_cost")
@@ -35,6 +37,7 @@ amount = 3.0
 
 [resource]
 script = ExtResource("s_card_definition")
+illustration = ExtResource("illustration")
 profession = 1
 id = "forage"
 display_name = "林地采集"

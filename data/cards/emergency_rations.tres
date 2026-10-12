@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=13 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="definition"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
@@ -8,6 +8,8 @@
 [ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
 [ext_resource type="Resource" path="res://data/keywords/temporary.tres" id="kw_temporary"]
 [ext_resource type="Resource" path="res://data/keywords/supplies.tres" id="kw_supplies"]
+
+[ext_resource type="Texture2D" path="res://assets/cards/individual/emergency_rations.png" id="illustration"]
 
 [sub_resource type="Resource" id="cost_0"]
 script = ExtResource("cost")
@@ -40,6 +42,7 @@ modifier = SubResource("modifier_2")
 
 [resource]
 script = ExtResource("definition")
+illustration = ExtResource("illustration")
 id = "emergency_rations"
 display_name = "脱水口粮"
 kind = 0

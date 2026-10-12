@@ -1,8 +1,10 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=6 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
 [ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+
+[ext_resource type="Texture2D" path="res://assets/cards/individual/explore.png" id="illustration"]
 
 [sub_resource type="Resource" id="stamina"]
 script = ExtResource("cost")
@@ -13,8 +15,15 @@ amount = 8
 script = ExtResource("effect")
 type = 6
 
+[sub_resource type="Resource" id="noise"]
+script = ExtResource("effect")
+type = 0
+key = 5
+amount = 1.0
+
 [resource]
 script = ExtResource("card")
+illustration = ExtResource("illustration")
 id = "explore"
 display_name = "勘探地形"
 profession = 0
@@ -23,8 +32,8 @@ icon = 13
 color = 1
 description = "选择与已探索区域毗邻的未知格子。噪声生成的地形决定资源发现，返回邻近方向的环境线索。"
 positive = "揭示目标区域的地形、资源与方向线索"
-negative = "基础体力 8；离营地每多一格额外消耗体力 2"
+negative = "基础体力 8；离营地每多一格额外消耗体力 2；噪声 +1"
 reusable = true
 guaranteed_unlock = true
 costs = Array[ExtResource("cost")]([SubResource("stamina")])
-effects = Array[ExtResource("effect")]([SubResource("result")])
+effects = Array[ExtResource("effect")]([SubResource("result"), SubResource("noise")])

@@ -48,7 +48,10 @@ static func _test_cards(check: Callable) -> void:
 		match id:
 			"emergency_rations":
 				check.call(
-					state.resources[2] == 18 and state.resources[1] == 42,
+					(
+						state.resources[2] == before.resources[2] - 6
+						and state.resources[1] == before.resources[1] + 18
+					),
 					"Rations exchange water for food"
 				)
 				check.call(is_equal_approx(preview.health, 52.0), "Rations weaken guards")
@@ -70,7 +73,7 @@ static func _test_cards(check: Callable) -> void:
 				check.call(
 					(
 						is_equal_approx(preview.wall_health, 144.0)
-						and is_equal_approx(preview.speed, 46.2)
+						and is_equal_approx(preview.cooldown, 1.38)
 					),
 					"Fortification slows support"
 				)
@@ -150,8 +153,13 @@ static func _test_availability(check: Callable) -> void:
 	state.buildings[GameTypes.Building.WALL] = 1
 	state.buildings[GameTypes.Building.GENERATOR] = 1
 	var hand_before: int = state.hand.size()
+	state.day = 7
+	state.resources[GameTypes.Stock.FUEL] = 10
 	var event: DailyEvent = DayEndEvents.for_day(state)
-	check.call(event != null, "Day-end opportunity exists without awarding tradeoff cards")
+	check.call(
+		event != null and EventEligibility.matches(state, event),
+		"Developed facilities produce a contextual opportunity without awarding cards"
+	)
 	check.call(state.hand.size() == hand_before, "Event queries never stuff cards into the hand")
 
 

@@ -102,11 +102,18 @@ func update_view(state: VillageState) -> void:
 		lines
 		. append(
 			(
-				"黎明体力 +%d  ·  噪音 %+d  ·  污染 +%d"
+				"黎明体力 +%d · 噪声清零 · 生产污染 +%d / 生态恢复 %d"
 				% [
 					stats.stamina_recovery,
-					stats.income[GameTypes.Stock.NOISE] - 3,
 					stats.income[GameTypes.Stock.POLLUTION],
+					(
+						state
+						. catalog
+						. library
+						. progression_rules
+						. map_for(state.progress.region)
+						. pollution_recovery
+					),
 				]
 			)
 		)

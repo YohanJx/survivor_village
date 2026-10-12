@@ -59,6 +59,8 @@ static func library_error(library: CardLibrary) -> String:
 		var error: String = card_error(card, buildings)
 		if not error.is_empty():
 			return "%s：%s" % [card.id if card != null else "空卡牌", error]
+		if card.illustration == null:
+			return "卡牌缺少独立插画：" + card.id
 		var registered_error: String = KeywordRules.registered_error(card, library.keyword_library)
 		if not registered_error.is_empty():
 			return registered_error
@@ -115,8 +117,13 @@ static func card_error(card: CardDefinition, buildings: Array[BuildingDefinition
 		return "卡牌图标非法"
 	if card.color < 0 or card.color > GameTypes.Palette.RED:
 		return "卡牌颜色非法"
-	if card.positive.is_empty() or card.negative.is_empty() or card.effects.is_empty():
-		return "缺少正负效果说明或效果"
+	if card.effects.is_empty():
+		return "缺少实际效果"
+	if card.kind == CardDefinition.Kind.EVENT:
+		if card.positive.is_empty() and card.negative.is_empty():
+			return "事件缺少效果说明"
+	elif card.positive.is_empty() or card.negative.is_empty():
+		return "发展卡缺少正负效果说明"
 	if card.building != null and not _registered(card.building, buildings):
 		return "展示建筑未注册"
 	for cost: ResourceCost in card.costs:
@@ -132,7 +139,7 @@ static func card_error(card: CardDefinition, buildings: Array[BuildingDefinition
 	for effect: CardEffect in card.effects:
 		if effect != null and effect.type == CardEffect.Type.SURVEY:
 			if (
-				card.effects.size() != 1
+				not _valid_survey_effects(card.effects)
 				or card.profession != GameTypes.Profession.GENERAL
 				or not card.reusable
 				or not card.required_cards.is_empty()
@@ -144,6 +151,23 @@ static func card_error(card: CardDefinition, buildings: Array[BuildingDefinition
 		if not error.is_empty():
 			return error
 	return ""
+
+
+static func _valid_survey_effects(effects: Array[CardEffect]) -> bool:
+	var surveys: int = 0
+	for effect: CardEffect in effects:
+		if effect == null:
+			return false
+		if effect.type == CardEffect.Type.SURVEY:
+			surveys += 1
+		elif (
+			effect.type != CardEffect.Type.RESOURCE
+			or effect.key != GameTypes.Stock.NOISE
+			or effect.amount < 0
+			or effect.required_building != null
+		):
+			return false
+	return surveys == 1
 
 
 static func _registered(building: BuildingDefinition, buildings: Array[BuildingDefinition]) -> bool:

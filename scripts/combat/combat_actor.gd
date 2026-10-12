@@ -3,6 +3,7 @@ extends RefCounted
 
 var id: int = 0
 var pos: Vector2 = Vector2.ZERO
+var home_pos: Vector2 = Vector2.ZERO
 var hp: float = 65
 var max_hp: float = 65
 var speed: float = 24

@@ -11,4 +11,7 @@ id = "day_end_trader"
 display_name = "路过的商队"
 description = "商队带来了少量工业物资和药品。可以交易，也可以让他们继续赶路。"
 skippable = true
+min_day = 3
+min_explored = 8
+required_discoveries = PackedInt32Array(4)
 options = Array[ExtResource("card")]([ExtResource("o0"), ExtResource("o1")])

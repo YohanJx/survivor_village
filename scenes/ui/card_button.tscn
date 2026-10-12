@@ -20,17 +20,18 @@ compact = true
 unique_name_in_owner = true
 layout_mode = 0
 anchor_right = 1.0
-offset_bottom = 272.0
+anchor_bottom = 1.0
 
-[node name="Keywords" type="RichTextLabel" parent="."]
+[node name="Keywords" type="RichTextLabel" parent="CardFace/Content/KeywordSlot"]
 unique_name_in_owner = true
 layout_mode = 0
 anchor_right = 1.0
-offset_left = 8.0
-offset_top = 274.0
-offset_right = -8.0
-offset_bottom = 298.0
+anchor_bottom = 1.0
 mouse_filter = 1
-theme_override_font_sizes/normal_font_size = 12
+theme_override_font_sizes/normal_font_size = 13
+theme_override_constants/outline_size = 0
+clip_contents = true
 bbcode_enabled = true
 scroll_active = false
+
+[editable path="CardFace"]

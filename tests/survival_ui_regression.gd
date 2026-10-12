@@ -6,6 +6,7 @@ extends RefCounted
 static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Callable) -> void:
 	var dashboard: VillageDashboard = game.get_node("Dashboard") as VillageDashboard
 	game.state.new_run(65012, GameTypes.Region.MOUNTAIN)
+	(dashboard.get_node("%CardCategoryBar/All/Button") as Button).pressed.emit()
 	await tree.process_frame
 	var row: HBoxContainer = dashboard.hand_panel.get_node("%HandContainer") as HBoxContainer
 	check.call(row.get_child_count() == 1, "Opening shows only one exploration card")
@@ -18,6 +19,7 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 		(dashboard.detail.get_node("%ExecuteButton") as Button).disabled,
 		"Exploration requires an explicit map target"
 	)
+	await CardUiRegression.click(tree, dashboard.get_node("%CloseCards") as Button)
 	var map_view: VillageMap = dashboard.get_node("%VillageMap") as VillageMap
 	var cell: Vector2i = TerrainGrid.CAMP + Vector2i.UP
 	var local_point: Vector2 = (
@@ -44,6 +46,7 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 		not (dashboard.detail.get_node("%ExecuteButton") as Button).disabled,
 		"Target selection enables confirmation"
 	)
+	check.call((dashboard.get_node("%ActionSplit") as ActionDock).is_expanded(), "Map target reopens the selected survey automatically")
 	await capture.call("ui_survival_opening")
 	await CardUiRegression.click(tree, dashboard.detail.get_node("%ExecuteButton") as Control)
 	await capture.call("ui_terrain_report")
@@ -237,19 +240,19 @@ static func _check_resource_and_filter(
 	check.call(
 		(
 			(dashboard.get_node("%Stock1") as Label).text
-			== "100(-%d)/40" % stats.upkeep[GameTypes.Stock.FOOD]
+			== "100(-%d)/70" % stats.upkeep[GameTypes.Stock.FOOD]
 		),
 		"Food shows gross daily consumption and its own storage capacity"
 	)
 	check.call(
 		(
 			(dashboard.get_node("%Stock2") as Label).text
-			== "100(-%d)/40" % stats.upkeep[GameTypes.Stock.WATER]
+			== "100(-%d)/70" % stats.upkeep[GameTypes.Stock.WATER]
 		),
 		"Water uses the unified daily upkeep calculation"
 	)
 	check.call((dashboard.get_node("%Stock3") as Label).text == "10/0", "Power shows zero capacity")
-	var filter: OptionButton = dashboard.hand_panel.get_node("%KeywordFilter") as OptionButton
+	var filter: OptionButton = dashboard.get_node("%KeywordFilter") as OptionButton
 	var index: int = -1
 	for item: int in filter.item_count:
 		if filter.get_item_text(item) == "人物：工程师":

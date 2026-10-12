@@ -21,8 +21,8 @@ amount = 4.0
 [sub_resource type="Resource" id="effect2"]
 script = ExtResource("effect")
 type = 0
-key = 5
-amount = 3.0
+key = 6
+amount = 1.0
 
 [sub_resource type="Resource" id="cost0"]
 script = ExtResource("cost")
@@ -38,9 +38,9 @@ amount = 2
 script = ExtResource("card")
 id = "day_end_trader_0"
 display_name = "交换工业物资"
-description = "零件 +8、燃料 +4；食物消耗 4、水消耗 2、噪音 +3。确认后直接结算，不占用白天行动。"
+description = "零件 +8、燃料 +4；食物消耗 4、水消耗 2、污染 +1。确认后直接结算，不占用白天行动。"
 positive = "零件 +8、燃料 +4"
-negative = "食物消耗 4、水消耗 2、噪音 +3"
+negative = "食物消耗 4、水消耗 2、污染 +1"
 kind = 3
 icon = 11
 color = 2

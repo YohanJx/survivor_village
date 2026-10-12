@@ -85,7 +85,7 @@ static func storage_capacity(state: VillageState, stock: GameTypes.Stock) -> int
 	var index: int = stock - GameTypes.Stock.FOOD
 	if index < 0 or index > 2:
 		return GameTypes.STOCK_LIMITS[stock]
-	var capacity: int = 0
+	var capacity: int = state.catalog.library.progression_rules.portable_storage[index]
 	for building: BuildingDefinition in state.catalog.library.buildings:
 		capacity += building.storage[index] * state.buildings[building.id]
 	return mini(capacity, GameTypes.STOCK_LIMITS[stock])
@@ -112,6 +112,7 @@ static func summary(state: VillageState) -> String:
 		else "、".join(names) if not names.is_empty() else "暂无可利用资源"
 	)
 	var result: String = "地形：%s\n按已发现地形与人物解锁对应行动。" % terrain
+	result += "\n" + OpeningRules.next_step(state)
 	var well: CardDefinition = state.catalog.get_card("well")
 	if well == null:
 		return result
@@ -136,6 +137,7 @@ static func is_survey(card: CardDefinition) -> bool:
 
 static func exploration_summary(state: VillageState) -> String:
 	var lines: PackedStringArray = [
+		OpeningRules.next_step(state),
 		(
 			"已探索 %d / %d 区域；亮边未知格可选。"
 			% [state.progress.explored_cells.size(), TerrainGrid.SIZE.x * TerrainGrid.SIZE.y]
@@ -156,6 +158,8 @@ static func exploration_summary(state: VillageState) -> String:
 		)
 	else:
 		lines.append("先选格，再确认勘探；每远一格额外消耗 2 体力。")
+	if state.progress.explored_cells.size() == 1:
+		lines.append(state.terrain_grid.report(TerrainGrid.CAMP, state.progress.explored_cells))
 	if state.progress.explored_cells.size() > 1:
 		lines.append(
 			state.terrain_grid.report(

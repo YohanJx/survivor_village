@@ -15,6 +15,10 @@ var values: PackedFloat64Array = [9.0, 100.0, 1.15, 66.0, 65.0, 1.0, 0.0, 55.0, 
 @export_storage var torch: bool = false
 @export_storage var piercing: bool = false
 @export_storage var supplies: PackedInt32Array = []
+@export_storage var threat_budget: int = 0
+@export_storage var threat_level: float = 0.0
+@export_storage var boss_possible: bool = false
+@export_storage var concealed: bool = false
 
 var attack: float:
 	get:
@@ -50,6 +54,10 @@ func copy_snapshot() -> VillageStats:
 	snapshot.modern_combat = modern_combat
 	snapshot.torch = torch
 	snapshot.piercing = piercing
+	snapshot.threat_budget = threat_budget
+	snapshot.threat_level = threat_level
+	snapshot.boss_possible = boss_possible
+	snapshot.concealed = concealed
 	for person: SurvivorRecord in roster:
 		snapshot.roster.append(person.copy_record())
 	snapshot.supplies = supplies.duplicate()

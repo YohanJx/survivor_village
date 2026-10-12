@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=11 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
@@ -7,6 +7,8 @@
 
 [ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
 [ext_resource type="Resource" path="res://data/keywords/engineer.tres" id="kw_engineer"]
+
+[ext_resource type="Texture2D" path="res://assets/cards/individual/exchange.png" id="illustration"]
 
 [sub_resource type="Resource" id="cost0"]
 script = ExtResource("cost")
@@ -33,6 +35,7 @@ amount = 2.0
 
 [resource]
 script = ExtResource("card")
+illustration = ExtResource("illustration")
 id = "exchange"
 display_name = "拆分旧材料"
 description = "将旧材料换为木材 5、石料 3、零件 2。旧材料 -10，占用一次行动"

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=14 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
@@ -10,6 +10,8 @@
 [ext_resource type="Resource" path="res://data/keywords/water_source.tres" id="kw_water_source"]
 [ext_resource type="Resource" path="res://data/keywords/builder.tres" id="kw_builder"]
 [ext_resource type="Resource" path="res://data/keywords/groundwater_site.tres" id="kw_groundwater_site"]
+
+[ext_resource type="Texture2D" path="res://assets/cards/individual/well.png" id="illustration"]
 
 [sub_resource type="Resource" id="cost_0"]
 script = ExtResource("s_resource_cost")
@@ -35,6 +37,7 @@ amount = 2.0
 
 [resource]
 script = ExtResource("s_card_definition")
+illustration = ExtResource("illustration")
 profession = 2
 id = "well"
 display_name = "打井"

@@ -10,5 +10,6 @@ script = ExtResource("event")
 id = "day_end_repair"
 display_name = "破损的防线"
 description = "夜战留下了破口。集中修补或先照料伤者，都需要付出代价。"
-skippable = false
+skippable = true
+requires_damage = true
 options = Array[ExtResource("card")]([ExtResource("o0"), ExtResource("o1")])

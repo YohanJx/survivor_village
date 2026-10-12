@@ -1,5 +1,11 @@
 # 开发指南
 
+夜战环境当前配置、存档 10 与 9 版迁移见 [夜战与环境平衡](night_threat_balance.md)。普通事件使用原生 skippable，隐藏使用 CardDefinition.conceals 与独立运行时状态，不从卡牌文本匹配。
+
+macOS 默认入口为仓库根目录的 `余烬村庄.app`，是依赖完整项目与本机 Godot 的薄启动器，不是独立导出包。Contents/MacOS/launch 调用原 `run_macos.command`，输出写系统临时日志，标准输入关闭；成功退出、游戏继续运行，失败以原生对话框提供日志。保留可执行权限，分发时保持 app 与项目相邻。`.command` 仍用于排查，自动关闭仅针对 TTY 匹配的单标签空闲窗口，失败日志保留，不修改用户 Terminal 配置或关闭其他会话。
+
+2026-10-12：卡牌库的关键词、发展及行动规则在 `data/card_library.tres` 显式引用，`CardLibrary` 不再在导出字段默认值中预加载资源，避免脚本类型解析期间经效果/设施/联动返回 `VillageState` 的加载循环。空构造库必须显式注入全部规则；校验夹具同步复制引用。存档字段及版本不变。村内驻守和连续前三夜验证见 [生存发展](survival_progression.md)，地图文字绘制变换见 [视觉说明](map_visual_design.md)。
+
 开发规范、项目结构、测试与存档实现集中在此；玩家介绍和运行指引见 [README](../README.md)。
 
 ## 开发规范
@@ -83,17 +89,17 @@ run_windows.bat "D:\Applications\Godot\Godot_v4.5-stable_win64.exe"
 
 ## 日终事件
 
-夜战成功进入 `GameTypes.Phase.DAY_END`，数值仍为 2，保持旧阶段索引。黎明不再抽取或要求选择事件；日终遭遇沿用 `DailyEvent` 与 `CardDefinition`，在 `ProgressionRules.day_end_events` 注册，定义位于 `data/events/day_end/`。不再随机发奖励卡。
+夜战成功进入 `GameTypes.Phase.DAY_END`，数值仍为 2，保持旧阶段索引。普通遭遇在战后筛选；真实口粮短缺在次日行动前产生清晨后果。沿用 `DailyEvent` 与 `CardDefinition`，在 `ProgressionRules.day_end_events` 注册，定义位于 `data/events/day_end/`。不再随机发奖励卡。
 
-`DayEndEvents.for_day()` 使用独立种子/日期序列，避开最近两次日终事件，不消耗打井等玩法随机数。`VillageState.day_end_event_id` 保存尚未处理的稳定 ID；`current_day_end_event()` 与 `DayEndEvents.option_error()` 无副作用。UI 仅发选择索引或跳过信号；`choose_day_end_event()` 汇总验证费用与净资源变化，失败不扣费、不推进日期、不发状态信号。`skip_day_end_event()` 仅接受定义中 `skippable` 的特殊事件。
+`EventEligibility` 读取原生日期、探索、真实发现、设施、库存、情绪与损伤条件。`DayEndEvents.queue_for_day()` 使用独立种子/日期序列无放回抽取，避开最近两次普通遭遇，不消耗打井随机数；没有匹配事件允许直接结算。早期最多一项，七日起且探索至少 12 格最多两项；饥渴后果按严重度同时进入独立队列。`VillageState.day_end_event_id` 与 `pending_day_end_events` 保存当前和剩余稳定 ID；`current_day_end_event()` 与 `DayEndEvents.option_error()` 无副作用。UI 仅发选择索引或跳过信号；费用与净资源变化汇总验证，失败不扣费、不推进日期、不发信号。跳过仅接受 `skippable` 的特殊事件。
 
-成功先结束上一夜临时效果，再通过 `EffectResolver.apply()` 同时执行收益与代价；之后结算黄昏生产、存活及新增人口口粮、容量与次日行动额度。新事件临时修正不在这个黎明扣期限，从下一夜起计时；原黄昏快照不改写。每种事件两项方案均需有实际正面和负面效果；普通事件必须提供补给耗尽仍可执行的方案，特殊事件可用跳过作为退路。至少为每张地图注册三种事件，避免两次冷却后抽取为空。
+旧临时效果每夜只到期一次，`EffectResolver.apply()` 执行真实选项效果。先处理普通遭遇队列，再单次结算生产、存活及新增人口口粮、容量，随后处理清晨饥渴后果，最后更新日期与行动额度。`day_end_effects_expired` 和 `day_end_settled` 阻止中途读档或切换事件重复到期、扣口粮。新修正从下一夜计时，原黄昏快照不改写。选项必须有实际效果，允许纯负面后果，不强制虚构好处；不可跳过事件须提供补给耗尽仍可执行的方案。每张地图至少注册三种普通遭遇，但当前条件池允许为空；饥渴严重度覆盖从首日至长期短缺，无重叠且不可被发展条件屏蔽。触发条件与后果见 [生存逻辑顺序](survival_progression.md)。
 
 ## 存档与词条实现
 
 每次决策与战后自动保存；顶部可手动保存和继续。启动时展示新村庄，点击“继续”恢复原有存档。未开始新决策前不会覆盖旧存档。
 
-存档版本为 8，保存待处理的日终事件 ID、最近两次日终事件、种子、已探索路线、待勘探目标和卡牌完成记录；地图在内存中重新生成，先验证连续路线及发现一致性再提交。版本 6 没有坐标，按已有发现迁移成连续区域；2–5 版继续既有库存、岗位、工具和建筑迁移，详见 [生存逻辑顺序](survival_progression.md)。版本 7 及以前的战后奖励存档验证后转换成当日日终事件，旧奖励候选不加入手牌；已有手牌保留。旧版未选择的黎明事件按原计划继续，已选择的当天影响保留到下一黎明。旧事件资源仅用于存档兼容。读档不改写旧文件；1 版仍拒绝。夜间继续从原黄昏预算重演，不复扣电力；写入使用临时文件后替换，恢复失败不改变原局。
+存档版本为 9，保存当前和剩余事件队列、口粮和到期标记、连续缺粮缺水天数、最近两次普通遭遇、种子、已探索路线、待勘探目标和完成记录；地图在内存重新生成，先验证再提交。版本 8 保留原待处理事件与库存，不重抽或提前结算。版本 6 没有坐标，按已有发现迁移；2–5 版继续既有库存、岗位、工具和建筑迁移，详见 [生存逻辑顺序](survival_progression.md)。版本 7 及以前的战后奖励存档验证后转换成当日日终事件，不赠送旧奖励；已有手牌保留。旧版未选择的黎明事件按原计划继续，已选择的当日影响保留到下一黎明。旧事件资源仅用于兼容。读档不改写旧文件，1 版仍拒绝；夜间从原黄昏预算重演，不复扣电力。临时写入后替换，恢复失败不改变原局。
 
 分工界面由原生 `workforce_row.tscn` 与 `VillageInfoPanel` 展示草案；增减通过 `WorkforceRules.adjusted_allocation()` 在通用村民与专业间调配，确认后才提交，不能自由输入任意人数。人口职业配置在 [workforce_rules.tres](../data/workforce_rules.tres)，卡牌通过 `profession` 指定职业，通过 `labor` 指定劳动类别。新人补齐岗位，实际战损按身份删除。现代地图的稳定身份、装备与夜间作用见 [发展系统](progression_system.md)。
 
@@ -140,3 +146,24 @@ run_windows.bat "D:\Applications\Godot\Godot_v4.5-stable_win64.exe"
 卡牌专项验证：`godot --headless --path . --script tests/run_card_presentation_ui_tests.gd`。实际像素默认运行 `python3 tools/capture_ui.py`：复制独立临时项目、后台导入，以 macOS 仅后台应用封装启动 Godot，在 SubViewport 渲染游戏纹理并保存到 test-results；连续记录前台进程，确保截图进程从未进入前台，不移动光标、不读取桌面画面、不操作玩家存档。当前静默启动器仅支持 macOS，其他平台不自动弹出窗口。包含正常费用、资源缺口、卡面风险、获取通知、村庄信息、三种视口和输入确认检查。普通 --headless 使用无渲染后端，不能单独替代像素截图。
 
 后台截图的 macOS 守卫位于 `tools/background_capture.m`，由系统 clang 编译，只注入复制到临时目录的 Godot 截图进程，限制原生窗口排序与应用激活。临时应用本地签名，原 Godot 安装不变；日志必须包含守卫加载标记与未进入前台的进程记录。需要 macOS 命令行开发工具；缺少工具时失败，不回退可见窗口。
+
+
+## 地图与卡牌分隔线
+
+`dashboard.tscn`使用原生VSplitContainer（ActionSplit）组合上方地图与下方ActionTray。中央横线始终可见，鼠标进入显示上下调整光标，拖动原生分隔条同步改变两区高度；双击恢复默认split_offset=0。分隔区厚度10、最小抓取厚度14；上下区域分别保留180和260的最小高度，约束由原生容器执行。
+
+ActionDock脚本仅为该固定分区添加光标、提示和双击复位，没有浮动窗口、自由移动、缩放角、遮挡矩形或镜头避让。地图相机恢复完整地图控件的统一绘制/输入坐标；工作台布局不进入玩家存档。
+
+卡牌区缩小时支持滚动，详情先隐藏插画和类型副标题；风险、全部资源费用与确认留在说明滚动区外。确认按钮沿用明亮旧铜边框与深阴影，悬停加强、按下减弱、禁用取消阴影。后台回归使用原生分隔条的真实Viewport鼠标输入检查两区联动，不以直接修改尺寸代替拖动验证。
+
+
+### 新局生存缓冲与目标
+
+新局地图各配置粮水 35 份，`ProgressionRules.portable_storage` 配置随身容量 `[30, 30, 0]`；统一存储查询将其与设施容量相加。旧档不补发库存，之后结算采用现行容量。`OpeningRules.viable_seed()` 只在创建新局筛选营地两格内的食物、木材和地下水候选地，保存最终实际种子；恢复与存档校验继续直接调用原地图生成器。筛选失败保持原局。`OpeningRules.next_step()` 根据真实发现与统一前置返回无副作用目标，HUD、勘探详情和村庄概况共用；地图下方与详情报告从第一天起显示营地四邻线索。细节见 [生存发展](survival_progression.md)。
+
+
+### 独立卡牌图片与阅读布局
+
+47 张发展卡通过 `CardDefinition.illustration: Texture2D` 与各自 `.tres` 绑定独立图片，位于 `assets/cards/individual/`，原生导入边长限制 512。`ResourceValidation.library_error()` 拒绝缺图的注册定义；临时事件定义允许分类图回退。卡面、选中方案、右键详解共用一个查询，刷新不加载图片。图像与提示集见 [卡牌视觉设计](card_visual_design.md)；字段是只读显示配置，存档结构仍为版本 9。
+
+手牌使用原生深色平面底板和细边框，突出名称与主体，保留收益、风险、所有统一费用和词条。文字不叠加复杂材质。选中方案同样使用安静背景，确认按钮仍固定在费用后。`tests/card_gallery_capture.gd` 将全部真实卡面分三页离屏检查，覆盖独立图片与费用/词条的框内布局；由 `tools/capture_ui.py` 隐藏副本入口调用，不操作玩家存档。
