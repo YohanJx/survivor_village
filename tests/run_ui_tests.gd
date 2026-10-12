@@ -22,6 +22,7 @@ func _run() -> void:
 	_game.state.save_path = UI_SAVE_PATH
 	root.add_child(_game)
 	_dashboard = _game.get_node("Dashboard") as VillageDashboard
+	await PlayerFeedbackUiRegression.run(self, root, _game, _check)
 	_test_font_settings()
 	await SurvivalUiRegression.run(self, _game, _check, _capture)
 	await ProgressionUiRegression.run(self, _game, _check, _capture)
@@ -40,6 +41,7 @@ func _run() -> void:
 	await _capture("ui_day")
 	var map_tests: MapInteractionTests = MapInteractionTests.new()
 	await map_tests.run(self, _dashboard, _check, _capture)
+	await CompactHudUiRegression.run(self, root, _game, _check)
 	await CardCategoryUiRegression.run(self, root, _game, _check)
 	await CardUiRegression.run(self, _dashboard, _check, _capture)
 	await CardInspectionUiRegression.run(self, _game, _check, _capture)
@@ -111,10 +113,13 @@ func _run() -> void:
 		_game.state.phase == GameTypes.Phase.NIGHT and _game.battle.active,
 		"Third decision starts automatic battle"
 	)
+	(_dashboard.get_node("%SpeedButton") as Button).grab_focus()
 	await _key(KEY_SPACE)
 	var paused_at: float = _game.battle.elapsed
 	await create_timer(0.1).timeout
 	_check(is_equal_approx(_game.battle.elapsed, paused_at), "Space pauses the simulation")
+	await _key(KEY_SPACE, true)
+	_check(is_equal_approx(_game.battle.elapsed, paused_at), "Repeated Space cannot resume focused-button playback")
 	_dashboard.speed_requested.emit()
 	_check(
 		(_dashboard.get_node("%SpeedButton") as Button).text == "2×", "Speed control cycles to 2x"
@@ -170,7 +175,12 @@ func _run() -> void:
 		_game.state.day == 3 and _game.state.hand.size() == hand_size,
 		"Event click settles dawn without adding a card"
 	)
-	_check(not _dashboard.overlay.visible, "Day-end modal closes at dawn")
+	_check(
+		_dashboard.overlay.visible and _game.state.day_report_pending,
+		"Dawn shows the completed day report after the event closes"
+	)
+	(_dashboard.overlay.get_node("%DayReportPanel/ContinueButton") as Button).pressed.emit()
+	_check(not _dashboard.overlay.visible, "Day report confirmation returns to the map")
 	_dashboard.new_run_requested.emit()
 	_check(_dashboard.overlay.visible, "New village asks through its modal")
 	(_dashboard.overlay.get_node("%NewRunCancel") as Button).pressed.emit()

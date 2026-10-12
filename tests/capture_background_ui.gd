@@ -19,6 +19,7 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	print("BACKGROUND UI: initializing viewport")
 	_viewport = SubViewport.new()
 	_set_capture_size(Vector2i(1440, 960))
 	_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
@@ -29,7 +30,22 @@ func _run() -> void:
 	_game.state.save_path = "res://test-results/background_roundtrip.tres"
 	_viewport.add_child(_game)
 	_dashboard = _game.get_node("Dashboard") as VillageDashboard
+	print("BACKGROUND UI: checking player feedback")
+	await PlayerFeedbackUiRegression.run(self, _viewport, _game, _check)
+	print("BACKGROUND UI: checking HUD and card layouts")
+	_dashboard.overlay.show_inventory(GameTypes.Stock.WATER)
+	await _capture("player_full_inventory")
+	_dashboard.overlay.close_modal()
 	_game.state.new_run(65012, GameTypes.Region.RURAL)
+	var focus_button: Button = _dashboard.get_node("%MapFocusButton") as Button
+	var hover: InputEventMouseMotion = InputEventMouseMotion.new()
+	hover.position = focus_button.get_global_rect().get_center()
+	hover.global_position = hover.position
+	_viewport.push_input(hover, true)
+	await process_frame
+	await _capture("header_button_hover")
+	await CompactHudUiRegression.run(self, _viewport, _game, _check)
+	(_dashboard.get_node("%ActionSplit") as ActionDock).set_expanded(false)
 	await _capture("categories_collapsed_opening")
 	await CardCategoryUiRegression.run(self, _viewport, _game, _check)
 	_select("explore")
@@ -46,17 +62,16 @@ func _run() -> void:
 	map.view_camera.focus_village()
 	map.queue_redraw()
 	var clues: Label = _dashboard.get_node("%ExplorationClues") as Label
+	(_dashboard.get_node("%ActionSplit") as ActionDock).set_expanded(false)
+	var disclosure: Button = _dashboard.get_node("%MapDetailsButton") as Button
+	disclosure.button_pressed = true
+	await _capture("compact_hud_map_details")
 	_check(
-		(
-			clues.is_visible_in_tree()
-			and clues.text.contains("北：")
-			and (
-				clues.get_global_rect().end.y
-				< (_dashboard.get_node("%StatusLabel") as Label).get_global_rect().position.y
-			)
-		),
-		"Directional opening clues are visible beside the map without scrolling"
+		clues.is_visible_in_tree() and clues.text.contains("北："),
+		"Opening directional clues remain accessible through the map disclosure"
 	)
+	disclosure.button_pressed = false
+	_select("explore")
 	var opening_report: Label = _dashboard.detail.get_node("%SurveyReport") as Label
 	_check(
 		opening_report.text.contains("北：") and opening_report.text.contains("南："),
@@ -477,6 +492,13 @@ func _test_event_flow() -> void:
 		"Both offscreen crisis decisions retain next-night penalties"
 	)
 	_set_capture_size(Vector2i(1440, 960))
+	_check(
+		_game.state.day_report_pending and _dashboard.overlay.get_node("%DayReportPanel").is_visible_in_tree(),
+		"Completed supplies and crisis choices open the daily report"
+	)
+	await _capture("survived_day_report")
+	(_dashboard.overlay.get_node("%DayReportPanel/ContinueButton") as Button).pressed.emit()
+	_check(not _game.state.day_report_pending, "Report continue dismisses the saved report")
 
 
 func _click_event_fallback() -> void:

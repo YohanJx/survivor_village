@@ -52,3 +52,5 @@ building = ExtResource("b_clinic")
 labor = 4
 
 keywords = Array[ExtResource("keyword")]([ExtResource("kw_recovery"), ExtResource("kw_building"), ExtResource("kw_medic")])
+
+required_cards = PackedStringArray("workshop")

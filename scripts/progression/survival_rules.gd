@@ -13,6 +13,13 @@ static func unlock_error(state: VillageState, card: CardDefinition, target_day: 
 		return "当前地图无法解锁这张卡"
 	if state.progress.terrain_surveys == 0:
 		return "需要先勘探地形"
+	if card.id in ["well", "well_survey"] and state.buildings[GameTypes.Building.WELL] >= 1:
+		return "当前井位已建成水井，不能重复打井；失败后仍可继续勘探和重试"
+	if card.id == "survivors":
+		if state.progress.last_recruited_day == current_day:
+			return "今日已接纳幸存者，请明日再搜寻"
+		if state.population + 2 > state.catalog.library.workforce_rules.max_recruited_population:
+			return "营地人口即将超过接纳上限"
 	for keyword: KeywordDefinition in card.keywords:
 		var error: String = KeywordRules.requirement_error(state, keyword)
 		if not error.is_empty():
@@ -30,12 +37,21 @@ static func unlock_error(state: VillageState, card: CardDefinition, target_day: 
 				return "需要先制作挖井工具"
 		if effect.type == CardEffect.Type.DRILL and state.progress.well_surveys == 0:
 			return "需要先勘探井位"
+		if effect.type == CardEffect.Type.DRILL and state.progress.well_drill_attempts >= state.progress.well_surveys:
+			return "每次井位勘探只能尝试打井一次，请重新勘探"
 	return ""
 
 
 static func grant_available(state: VillageState) -> void:
 	for card: CardDefinition in state.catalog.library.starting_cards:
-		if state.progress.granted_cards.has(card.id) or not unlock_error(state, card).is_empty():
+		if not unlock_error(state, card).is_empty():
+			continue
+		if state.progress.granted_cards.has(card.id):
+			# 旧档中已使用的一次性招募卡现在可再次出现；保留原 UID 与完成记录。
+			if card.id == "survivors" and not state.hand.any(
+				func(entry: CardInstance) -> bool: return entry.definition.id == card.id
+			):
+				state.add_card(card)
 			continue
 		state.progress.granted_cards.append(card.id)
 		state.add_card(card)
@@ -61,6 +77,7 @@ static func commit(state: VillageState, effect: CardEffect, preview: bool = fals
 			state.progress.discoveries = TerrainGrid.discoveries_for(
 				state.terrain_grid, state.progress.explored_cells
 			)
+			state.last_card_result = "勘探完成。" + state.terrain_grid.report_short(cell, state.progress.explored_cells)
 			state.log_event(state.terrain_grid.report(cell, state.progress.explored_cells))
 		CardEffect.Type.WELL_TOOLS:
 			state.progress.well_tools = true
@@ -74,11 +91,15 @@ static func commit(state: VillageState, effect: CardEffect, preview: bool = fals
 				)
 			)
 		CardEffect.Type.DRILL:
+			if not preview:
+				state.progress.well_drill_attempts += 1
 			if preview or state.rng.randf() < well_chance(state):
 				state.buildings[effect.building.id] += int(effect.amount)
-				state.log_event("打井成功，已建立地下水源。")
+				state.last_card_result = "打井成功，已建立地下水源。"
+				state.log_event(state.last_card_result)
 			else:
-				state.log_event("打井失败，材料与行动已消耗；可继续勘探后再试。")
+				state.last_card_result = "打井失败，材料与行动已消耗；请重新勘探井位后再试。"
+				state.log_event(state.last_card_result)
 
 
 static func storage_capacity(state: VillageState, stock: GameTypes.Stock) -> int:

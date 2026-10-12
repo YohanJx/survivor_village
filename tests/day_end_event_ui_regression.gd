@@ -89,7 +89,12 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 		),
 		"Actual mouse choice immediately resolves effects without a hand reward"
 	)
-	check.call(not dashboard.overlay.visible, "Closing choice ends the modal")
+	check.call(
+		game.state.day_report_pending and dashboard.overlay.get_node("%DayReportPanel").is_visible_in_tree(),
+		"Closing choice shows the settled day report"
+	)
+	(dashboard.overlay.get_node("%DayReportPanel/ContinueButton") as Button).pressed.emit()
+	check.call(not dashboard.overlay.visible, "Confirming the report ends the modal")
 	_present(game, "day_end_trader")
 	game.state.resources[GameTypes.Stock.FOOD] = 0
 	game.state.resources[GameTypes.Stock.WATER] = 0

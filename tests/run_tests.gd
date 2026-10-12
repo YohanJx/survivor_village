@@ -12,6 +12,7 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	PlayerFeedbackRegression.run(_check)
 	_test_catalog()
 	VillagePresentationRegression.run(_check)
 	KeywordRegression.run(_check)

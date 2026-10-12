@@ -41,6 +41,18 @@ static func run(
 	check.call(received.size() == count, "Refreshing state does not repeat acquisition signals")
 	dashboard.notify("已执行决策")
 	check.call(notice.visible, "Ordinary status message cannot overwrite acquired-card notice")
+	var pointer: InputEventMouseMotion = InputEventMouseMotion.new()
+	pointer.position = notice.get_global_rect().get_center()
+	pointer.global_position = pointer.position
+	tree.root.push_input(pointer, true)
+	await tree.process_frame
+	check.call((notice.get_node("Timer") as Timer).is_stopped(), "Hovering the click-through notice keeps it visible")
+	pointer = InputEventMouseMotion.new()
+	pointer.position = Vector2(2.0, 2.0)
+	pointer.global_position = pointer.position
+	tree.root.push_input(pointer, true)
+	await tree.process_frame
+	check.call(not (notice.get_node("Timer") as Timer).is_stopped(), "Leaving the notice resumes its expiry")
 	await tree.process_frame
 	await tree.process_frame
 	if capture.is_valid():
@@ -87,7 +99,11 @@ static func run(
 	game.state.new_run(12345)
 	SurvivalTestSetup.developed(game.state)
 	game.state.changed.emit()
-	var uid: int = game.state.hand[0].uid
+	var uid: int = -1
+	for entry: CardInstance in game.state.hand:
+		if entry.definition.id == "forage":
+			uid = entry.uid
+			break
 	dashboard.card_selected.emit(uid)
 	var advanced: Control = dashboard.detail.get_node("%AdvancedDetails") as Control
 	check.call(not advanced.visible, "Selected card starts with a concise effect face")

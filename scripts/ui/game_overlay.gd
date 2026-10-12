@@ -4,6 +4,7 @@ extends ColorRect
 
 signal day_end_requested(index: int)
 signal day_end_skip_requested
+signal day_report_continue_requested
 signal restart_requested
 signal modal_changed
 
@@ -13,6 +14,7 @@ enum Mode {
 	NEW_RUN,
 	VILLAGE,
 	CARD,
+	INVENTORY,
 }
 
 const DAY_END_OPTION_SCENE: PackedScene = preload("res://scenes/ui/day_end_option.tscn")
@@ -25,6 +27,9 @@ var _mode: Mode = Mode.NONE
 var _day_end_id: String = ""
 var _inspection_uid: int = -1
 var _inspection_progress: VillageProgress
+
+@onready var _inventory: InventoryPanel = %InventoryPanel
+@onready var _day_report: DayReportPanel = %DayReportPanel
 
 @onready var _panel: PanelContainer = $Center/Panel
 @onready var _inspection: CardInspectionPanel = %CardInspection
@@ -41,6 +46,8 @@ var _inspection_progress: VillageProgress
 
 
 func _ready() -> void:
+	_inventory.close_requested.connect(close_modal)
+	_day_report.continue_requested.connect(day_report_continue_requested.emit)
 	_normal_panel_style = _panel.get_theme_stylebox("panel")
 	(_village_info.get_node("%VillageClose") as Button).pressed.connect(close_modal)
 	(%HelpClose as Button).pressed.connect(close_modal)
@@ -84,6 +91,13 @@ func show_card(uid: int) -> void:
 	modal_changed.emit()
 
 
+func show_inventory(stock: GameTypes.Stock = GameTypes.Stock.FOOD) -> void:
+	_inventory.select_stock(stock)
+	_mode = Mode.INVENTORY
+	_refresh_overlay()
+	modal_changed.emit()
+
+
 func show_help() -> void:
 	_mode = Mode.HELP
 	_refresh_overlay()
@@ -103,6 +117,9 @@ func request_new_run() -> void:
 
 
 func close_modal() -> void:
+	if _day_report.visible and _mode == Mode.NONE:
+		day_report_continue_requested.emit()
+		return
 	_mode = Mode.NONE
 	_inspection_uid = -1
 	_inspection_progress = null
@@ -140,6 +157,12 @@ func _refresh_overlay() -> void:
 	_village_info.visible = _mode == Mode.VILLAGE
 	if _village_info.visible:
 		_village_info.update_view(_state)
+	_inventory.visible = _mode == Mode.INVENTORY
+	if _inventory.visible:
+		_inventory.update_view(_state)
+	_day_report.visible = _mode == Mode.NONE and _state.day_report_pending
+	if _day_report.visible:
+		_day_report.update_view(_state.last_day_report)
 	_help.visible = _mode == Mode.HELP
 	_new_run.visible = _mode == Mode.NEW_RUN
 	_day_end.visible = _mode == Mode.NONE and _state.phase == GameTypes.Phase.DAY_END
@@ -147,6 +170,8 @@ func _refresh_overlay() -> void:
 	visible = (
 		_inspection.visible
 		or _village_info.visible
+		or _inventory.visible
+		or _day_report.visible
 		or _help.visible
 		or _new_run.visible
 		or _day_end.visible

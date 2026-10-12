@@ -49,7 +49,7 @@ func _refresh_detail() -> void:
 		return
 	var card: CardDefinition = _state.find_card(_selected_uid)
 	_empty_hint.visible = card == null
-	visible = card != null
+	visible = card != null and not SurvivalRules.is_survey(card)
 	_card_detail.visible = card != null
 	_positive.visible = card != null
 	(%CardHeader as Control).visible = card != null

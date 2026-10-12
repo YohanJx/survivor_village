@@ -6,6 +6,7 @@
 script = ExtResource("script")
 people_per_action = 5
 max_actions_per_slot = 4
+max_recruited_population = 12
 reduction_per_extra_worker = 0.1
 minimum_multiplier = 0.6
 initial_roster = PackedInt32Array(0, 1, 1, 1, 1, 1)

@@ -1,0 +1,52 @@
+[gd_scene load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/ui/day_report_panel.gd" id="script"]
+
+[node name="DayReportPanel" type="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("script")
+theme_override_constants/separation = 14
+
+[node name="Heading" type="Label" parent="."]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "我们活下来了……"
+
+[node name="Summary" type="Label" parent="."]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 3
+
+[node name="Divider" type="HSeparator" parent="."]
+layout_mode = 2
+
+[node name="ResourceHeading" type="Label" parent="."]
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "这一天的变化"
+
+[node name="Scroll" type="ScrollContainer" parent="."]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 230)
+horizontal_scroll_mode = 0
+
+[node name="Resources" type="Label" parent="Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 17
+theme_override_constants/line_spacing = 9
+
+[node name="Notes" type="Label" parent="."]
+layout_mode = 2
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 14
+
+[node name="Hint" type="Label" parent="."]
+layout_mode = 2
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 13
+text = "库存变化已包含白天行动、夜战消耗、生产、口粮与跨日容量结算。"
+
+[node name="ContinueButton" type="Button" parent="."]
+layout_mode = 2
+text = "迎接新的一天"

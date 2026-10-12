@@ -76,9 +76,10 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 	check.call(game.state.progress.frustration == 2, "Real confirmation commits frustration")
 	check.call(
 		(dashboard.get_node("%ProgressLine") as Button).text.contains("烦躁 2/5"),
-		"Mood remains visible in day HUD"
+		"Detailed village summary retains mood"
 	)
 	await capture.call("ui_progression_mood")
+	await CardUiRegression.click(tree, dashboard.get_node("%MenuButton") as Control)
 	await CardUiRegression.click(tree, dashboard.get_node("%NewRunButton") as Control)
 	var map: OptionButton = overlay.get_node("%MapChoice") as OptionButton
 	map.select(2)

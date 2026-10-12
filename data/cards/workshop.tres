@@ -20,7 +20,7 @@ amount = 16
 [sub_resource type="Resource" id="cost_1"]
 script = ExtResource("s_resource_cost")
 key = 4
-amount = 9
+amount = 4
 
 [sub_resource type="Resource" id="effect_0"]
 script = ExtResource("s_card_effect")
@@ -37,7 +37,7 @@ display_name = "修造工坊图纸"
 kind = 1
 icon = 3
 color = 2
-description = "设立工作台，拆解行动和夜间回收都更有效率。"
+description = "用随身工具和零件搭起工作台，解锁弓箭与箭矢制作；不必先找到废墟。"
 positive = "每天材料 +3；拆解额外 +4"
 negative = "每天噪音 +2，食物 -1"
 reusable = false
@@ -48,6 +48,6 @@ labor = 4
 
 guaranteed_unlock = true
 
-required_cards = PackedStringArray("salvage")
+required_cards = PackedStringArray("explore")
 
 keywords = Array[ExtResource("keyword")]([ExtResource("kw_production"), ExtResource("kw_materials"), ExtResource("kw_engineer")])

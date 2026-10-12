@@ -4,13 +4,14 @@ extends Resource
 
 @export_range(1, 100) var people_per_action: int = 5
 @export_range(1, 10) var max_actions_per_slot: int = 4
+@export_range(2, 50) var max_recruited_population: int = 12
 @export_range(0.0, 0.5) var reduction_per_extra_worker: float = 0.1
 @export_range(0.1, 1.0) var minimum_multiplier: float = 0.6
 @export var initial_roster: PackedInt32Array = [0, 1, 1, 1, 1, 1]
 
 
 func validation_error() -> String:
-	if people_per_action < 1 or max_actions_per_slot < 1 or max_actions_per_slot > 10:
+	if people_per_action < 1 or max_actions_per_slot < 1 or max_actions_per_slot > 10 or max_recruited_population < 5:
 		return "人口行动配置非法"
 	if not is_finite(reduction_per_extra_worker) or reduction_per_extra_worker < 0.0:
 		return "职业减耗配置非法"

@@ -358,6 +358,9 @@ static func valid_survival(
 		or progress.terrain_surveys > 999
 		or progress.well_surveys < 0
 		or progress.well_surveys > 999
+		or progress.well_drill_attempts < 0
+		or progress.well_drill_attempts > progress.well_surveys
+		or progress.last_recruited_day < 0
 	):
 		return false
 	if progress.well_surveys > 0 and not progress.well_tools:

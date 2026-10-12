@@ -19,12 +19,19 @@ var _category_index: int = 0
 var _resource_labels: Array[Label] = []
 var _notification_progress: VillageProgress
 
-@onready var _categories: CardCategoryBar = %CardCategoryBar
-@onready var _action_dock: ActionDock = %ActionSplit
-
 @onready var detail: VillageDetailPanel = %DetailPanel
 @onready var hand_panel: VillageHandPanel = %HandPanel
 @onready var overlay: VillageGameOverlay = %GameOverlay
+
+@onready var _survey_action: SurveyActionPanel = %SurveyActionPanel
+@onready var _result_notice: ActionResultNotice = %ActionResultNotice
+
+@onready var _header_menu: HudMenu = %HeaderMenu
+@onready var _map_hud: MapHudLayout = $Margin/Layout/ActionSplit/CenterRow/MapColumn
+
+@onready var _categories: CardCategoryBar = %CardCategoryBar
+@onready var _action_dock: ActionDock = %ActionSplit
+
 @onready var _card_acquisition: CardAcquisitionNotice = %CardAcquisition
 @onready var _village_map: VillageMap = %VillageMap
 @onready var _day_label: Label = %DayLabel
@@ -46,6 +53,14 @@ var _notification_progress: VillageProgress
 
 
 func _ready() -> void:
+	_survey_action.execute_requested.connect(execute_requested.emit)
+	_survey_action.closed.connect(_on_survey_closed)
+	(%InventoryButton as Button).pressed.connect(overlay.show_inventory)
+	var stock_buttons: Array[Button] = [%Stock0Button, %Stock1Button, %Stock2Button, %Stock3Button, %Stock4Button]
+	for key: int in stock_buttons.size():
+		stock_buttons[key].pressed.connect(_on_inventory_pressed.bind(key))
+	_header_menu.bind_button(%MenuButton)
+	_map_hud.bind_toggle(%MapDetailsButton)
 	hand_panel.bind_controls(%HandTitle, %KeywordFilter, %SkipButton)
 	_action_dock.bind_navigation(_categories)
 	_action_dock.set_category(0)
@@ -79,6 +94,9 @@ func bind(state: VillageState, battle: BattleSimulation) -> void:
 func update_view(state: VillageState, battle: BattleSimulation, selected_uid: int) -> void:
 	if _notification_progress != state.progress:
 		_card_acquisition.clear()
+		_result_notice.hide()
+		_notification.text = "选择一张卡牌，决定村庄的明天。"
+		_survey_action.close_panel()
 		_category_index = 0
 		_action_dock.set_category(0)
 		hand_panel.set_category(0)
@@ -96,8 +114,8 @@ func update_view(state: VillageState, battle: BattleSimulation, selected_uid: in
 	_exploration_clues.visible = _village_map.exploration_mode
 	if _exploration_clues.visible:
 		_exploration_clues.text = (
-			"周边线索 · "
-			+ " · ".join(
+			"周边线索\n"
+			+ "\n".join(
 				state.terrain_grid.direction_clues(
 					TerrainGrid.position(state.progress.explored_cells[-1]),
 					state.progress.explored_cells
@@ -146,11 +164,12 @@ func update_view(state: VillageState, battle: BattleSimulation, selected_uid: in
 			else "今晚压力：%d · 探索 / 发展 / 声光" % state.wave_count()
 		)
 	)
+	_day_label.tooltip_text = _phase_label.text
 	_map_title.text = (
 		"月下守望  /  自动防守"
 		if state.phase == GameTypes.Phase.NIGHT
 		else (
-			"逐格勘探 / 选择亮边未知区域"
+			"勘探地图"
 			if _village_map.exploration_mode
 			else "营地 / " + GameTypes.REGION_NAMES[state.progress.region]
 		)
@@ -190,6 +209,8 @@ func update_view(state: VillageState, battle: BattleSimulation, selected_uid: in
 	_categories.update_view(state, overlay.blocks_simulation())
 	hand_panel.update_view(state, selected_uid, overlay.blocks_simulation())
 	detail.update_view(state, selected_uid)
+	_survey_action.update_view(state, selected_uid)
+	_categories.set_selection(_category_index, _action_dock.is_expanded() or _survey_action.visible)
 	overlay.update_view(state)
 
 
@@ -205,15 +226,15 @@ func update_resources(state: VillageState, battle: BattleSimulation) -> void:
 		_resource_labels[GameTypes.Stock.MATERIALS].text = str(
 			state.resources[GameTypes.Stock.WOOD]
 		)
-	var upkeep: PackedInt32Array = EffectResolver.daily_upkeep(state)
+	var balances: Array[ResourceBalance] = EffectResolver.resource_balances(state)
 	for stock: int in [GameTypes.Stock.FOOD, GameTypes.Stock.WATER, GameTypes.Stock.POWER]:
 		var label: Label = _resource_labels[stock]
 		var capacity: int = SurvivalRules.storage_capacity(state, stock as GameTypes.Stock)
 		if stock == GameTypes.Stock.POWER:
 			label.text = "%d/%d" % [state.resources[stock], capacity]
 		else:
-			label.text = "%d(-%d)/%d" % [state.resources[stock], upkeep[stock], capacity]
-		label.tooltip_text = "当前库存 / 跨日容量；括号为每日总消耗。含随身背包与设施容量，只限制结算后的保留量。"
+			label.text = "%d(%+d)/%d" % [state.resources[stock], balances[stock].net, capacity]
+		label.tooltip_text = "当前库存（当日固定生产−消耗）/跨日容量；点击查看生产、消耗和全部材料。"
 	_resource_labels[GameTypes.Stock.STAMINA].text += " / 100"
 	_population_label.text = str(battle.guards.size() if battle.active else state.population)
 	_core_label.text = (
@@ -287,18 +308,62 @@ func update_playback(
 
 
 func notify(message: String) -> void:
-	_notification.text = message
+	_notification.text = message.get_slice("\n", 0)
+	_result_notice.show_message(message)
+
+
+## 由入口统一处理 Esc；一次只关闭最上层 UI，保持游戏和卡牌选择不变。
+func dismiss_top_layer() -> bool:
+	if overlay.visible:
+		overlay.close_modal()
+		return true
+	if _header_menu.close_panel():
+		return true
+	if _survey_action.close_panel():
+		return true
+	if _map_hud.close_details():
+		return true
+	if _action_dock.is_expanded():
+		_action_dock.set_expanded(false)
+		return true
+	return false
+
+
+## 卡牌选择只改变展示。勘探使用地图角落的确认框，其他卡使用分类浮层。
+func prepare_card_selection(state: VillageState, uid: int) -> void:
+	if SurvivalRules.is_survey(state.find_card(uid)):
+		_survey_action.open_selection(uid)
+		_action_dock.set_expanded(false)
+	else:
+		_survey_action.close_panel()
+		_action_dock.set_expanded(true)
+	_categories.set_selection(_category_index, true)
+
+
+func has_visible_confirmation() -> bool:
+	return _survey_action.is_visible_in_tree() or detail.is_visible_in_tree()
+
+
+func _on_inventory_pressed(key: int) -> void:
+	overlay.show_inventory(key as GameTypes.Stock)
+
+
+func _on_survey_closed() -> void:
+	_categories.set_selection(_category_index, _action_dock.is_expanded())
 
 
 func _on_category_requested(index: int) -> void:
-	var collapse: bool = index == _category_index and _action_dock.is_expanded()
+	var same_category: bool = index == _category_index
+	var collapse: bool = same_category and (_action_dock.is_expanded() or _survey_action.visible)
 	_category_index = index
+	_survey_action.close_panel()
 	_action_dock.set_category(index)
 	hand_panel.set_category(index)
-	card_selected.emit(-1)
+	if not same_category:
+		card_selected.emit(-1)
 	_action_dock.set_expanded(not collapse)
 	_categories.set_selection(index, not collapse)
 
 
 func _on_cards_expanded_changed(expanded: bool) -> void:
-	_categories.set_selection(_category_index, expanded)
+	_categories.set_selection(_category_index, expanded or _survey_action.visible)

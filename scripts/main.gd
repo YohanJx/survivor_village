@@ -34,6 +34,7 @@ func _ready() -> void:
 	_dashboard.help_requested.connect(_dashboard.overlay.show_help)
 	_dashboard.overlay.day_end_requested.connect(_on_day_end_selected)
 	_dashboard.overlay.day_end_skip_requested.connect(_on_day_end_skip_requested)
+	_dashboard.overlay.day_report_continue_requested.connect(state.acknowledge_day_report)
 	_dashboard.overlay.restart_requested.connect(_on_restart_pressed)
 	_dashboard.overlay.modal_changed.connect(_on_modal_changed)
 	(_dashboard.overlay.get_node("%VillageInfo") as VillageInfoPanel).jobs_requested.connect(
@@ -72,25 +73,28 @@ func _process(delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if not event is InputEventKey or _dashboard.overlay.visible:
+	if not event is InputEventKey or not state.catalog.is_valid:
 		return
 	var focused: Control = get_viewport().gui_get_focus_owner()
-	if focused is OptionButton:
+	if event.is_action(&"ui_cancel"):
+		# 原生筛选菜单优先消费 Esc，不同时关闭背后的面板。
+		if focused is OptionButton and (focused as OptionButton).get_popup().visible:
+			return
+		if event.is_echo():
+			get_viewport().set_input_as_handled()
+		elif event.is_pressed() and _dashboard.dismiss_top_layer():
+			get_viewport().set_input_as_handled()
+		return
+	if _dashboard.overlay.visible or focused is OptionButton:
 		return
 	if event.is_action(&"execute_card"):
-		# 确认快捷键不再同时触发有焦点的手牌 Button；松键与重复事件也消费。
 		get_viewport().set_input_as_handled()
 		if event.is_action_pressed(&"execute_card") and not event.is_echo():
 			_on_execute_pressed()
-
-
-func _unhandled_key_input(event: InputEvent) -> void:
-	if event.is_echo() or not state.catalog.is_valid:
-		return
-	if event.is_action_pressed(&"ui_cancel"):
-		_dashboard.overlay.close_modal()
-	elif event.is_action_pressed(&"pause_battle"):
-		_on_pause_pressed()
+	elif event.is_action(&"pause_battle"):
+		get_viewport().set_input_as_handled()
+		if event.is_action_pressed(&"pause_battle") and not event.is_echo():
+			_on_pause_pressed()
 
 
 func _on_state_changed() -> void:
@@ -114,19 +118,19 @@ func _on_card_selected(uid: int) -> void:
 		return
 	_selected_uid = uid
 	if uid >= 0:
-		(_dashboard.get_node("%ActionSplit") as ActionDock).set_expanded(true)
+		_dashboard.prepare_card_selection(state, uid)
 	_dashboard.hand_panel.update_view(state, uid, false)
 	_dashboard.update_view(state, battle, uid)
 	_dashboard.detail.update_view(state, uid, true)
 
 
 func _on_execute_pressed() -> void:
-	if not _dashboard.detail.is_visible_in_tree():
+	if not _dashboard.has_visible_confirmation():
 		return
 	if _dashboard.overlay.visible or state.phase != GameTypes.Phase.DAY or _selected_uid < 0:
 		return
 	if state.play_card(_selected_uid):
-		_notify_result("已执行决策，村庄的发展已更新。")
+		_notify_result(state.last_card_result)
 	else:
 		_dashboard.notify(state.can_play(_selected_uid))
 
@@ -201,7 +205,10 @@ func _on_persistence_failed(message: String) -> void:
 
 
 func _notify_result(message: String) -> void:
-	_dashboard.notify(message if state.last_error.is_empty() else "自动保存失败：" + state.last_error)
+	var result: String = message
+	if not state.last_error.is_empty():
+		result += "\n自动保存失败：" + state.last_error
+	_dashboard.notify(result)
 
 
 func _on_jobs_requested(counts: PackedInt32Array, archers: bool) -> void:
@@ -220,7 +227,8 @@ func _on_exploration_requested(cell: Vector2i) -> void:
 		return
 	for entry: CardInstance in state.hand:
 		if SurvivalRules.is_survey(entry.definition):
-			_on_card_selected(entry.uid)
+			_selected_uid = entry.uid
+			_on_state_changed()
 			break
 
 

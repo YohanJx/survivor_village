@@ -79,13 +79,11 @@ static func camp_areas(structures: Array[StructurePlacement]) -> Array[Rect2]:
 static func wall_cells() -> Array[Vector2i]:
 	var result: Array[Vector2i] = []
 	for x: int in range(14, 27):
-		if x not in [20, 21]:
-			result.append(Vector2i(x, 6))
-			result.append(Vector2i(x, 18))
+		result.append(Vector2i(x, 6))
+		result.append(Vector2i(x, 18))
 	for y: int in range(7, 18):
-		if y not in [11, 12]:
-			result.append(Vector2i(14, y))
-			result.append(Vector2i(26, y))
+		result.append(Vector2i(14, y))
+		result.append(Vector2i(26, y))
 	return result
 
 

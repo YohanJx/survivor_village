@@ -278,7 +278,7 @@ func _update_enemies(delta: float) -> void:
 		if stats.trap_damage > 0 and _in_trap_ring(enemy.pos):
 			enemy.hp -= stats.trap_damage * delta
 			move_speed *= 0.52
-		if enemy.pos.distance_to(target_pos) <= attack_range and _clear_shot(enemy.pos, target_pos):
+		if enemy.pos.distance_to(target_pos) <= attack_range and _clear_shot(enemy.pos, target_pos, true):
 			if enemy.cooldown <= 0:
 				if target == null:
 					core_health -= enemy.damage
@@ -382,10 +382,12 @@ func _nearest_open(point: Vector2, grid: AStarGrid2D) -> Vector2:
 	return WorldLayout.CENTER + Vector2(0, 60)
 
 
-func _clear_shot(from: Vector2, to: Vector2) -> bool:
+func _clear_shot(from: Vector2, to: Vector2, block_walls: bool = false) -> bool:
 	var steps: int = maxi(1, int(from.distance_to(to) / 12))
 	for i: int in range(1, steps):
 		var cell: Vector2i = WorldLayout.to_cell(from.lerp(to, float(i) / steps))
+		if block_walls and walls.has(cell) and walls[cell].hp > 0:
+			return false
 		if stats.modern_combat and _terrain.has(cell):
 			return false
 		for building: StructurePlacement in _buildings:

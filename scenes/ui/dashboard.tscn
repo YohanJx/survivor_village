@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3]
+[gd_scene load_steps=33 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/ui/worn_iron_panel.png" id="worn_texture"]
 [ext_resource type="Script" path="res://scripts/ui/dashboard.gd" id="ui_script"]
@@ -19,8 +19,37 @@
 
 [ext_resource type="Script" path="res://scripts/ui/action_dock.gd" id="action_dock"]
 [ext_resource type="Script" path="res://scripts/ui/map_hud_layout.gd" id="map_hud"]
+[ext_resource type="Script" path="res://scripts/ui/hud_menu.gd" id="hud_menu"]
 
 [ext_resource type="PackedScene" path="res://scenes/ui/card_category_bar.tscn" id="categories"]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/survey_action_panel.tscn" id="survey_action"]
+[ext_resource type="PackedScene" path="res://scenes/ui/action_result_notice.tscn" id="action_result"]
+[sub_resource type="StyleBoxEmpty" id="resource_click"]
+
+[sub_resource type="StyleBoxFlat" id="hud_chip"]
+content_margin_left = 7.0
+content_margin_top = 4.0
+content_margin_right = 7.0
+content_margin_bottom = 4.0
+bg_color = Color(0.11, 0.12, 0.11, 0.95)
+border_width_bottom = 1
+border_color = Color(0.32, 0.3, 0.25, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+
+[sub_resource type="StyleBoxFlat" id="hud_button"]
+content_margin_left = 9.0
+content_margin_top = 5.0
+content_margin_right = 9.0
+content_margin_bottom = 5.0
+bg_color = Color(0.16, 0.17, 0.15, 0.96)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
 
 [sub_resource type="StyleBoxFlat" id="popup_panel"]
 content_margin_left = 16.0
@@ -201,9 +230,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 26
-theme_override_constants/margin_top = 14
-theme_override_constants/margin_right = 26
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 14
 theme_override_constants/margin_bottom = 16
 
 [node name="Layout" type="VBoxContainer" parent="Margin"]
@@ -211,11 +240,11 @@ layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="Header" type="HBoxContainer" parent="Margin/Layout"]
-custom_minimum_size = Vector2(0, 46)
+custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 
 [node name="Logo" type="TextureRect" parent="Margin/Layout/Header"]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
 texture = ExtResource("2_30qwi")
 expand_mode = 1
@@ -227,7 +256,7 @@ theme_override_constants/separation = 2
 
 [node name="TitleLabel" type="Label" parent="Margin/Layout/Header/Title"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 23
+theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(0.94, 0.91, 0.83, 1)
 text = "余烬村庄"
 
@@ -242,6 +271,113 @@ text = "E M B E R H A V E N    /    活下去，再建一个家"
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="MapHeading" type="HBoxContainer" parent="Margin/Layout/Header"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="MapTitle" type="Label" parent="Margin/Layout/Header/MapHeading"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+clip_text = true
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.94, 0.91, 0.83, 1)
+text = "村庄与周围林地"
+
+[node name="MapDetailsButton" type="Button" parent="Margin/Layout/Header/MapHeading"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("hud_button")
+theme_override_styles/hover = SubResource("hud_button")
+theme_override_styles/pressed = SubResource("hud_button")
+theme_override_styles/disabled = SubResource("hud_button")
+toggle_mode = true
+text = "目标·线索 ▾"
+
+[node name="MapZoomOut" type="Button" parent="Margin/Layout/Header/MapHeading"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("hud_button")
+theme_override_styles/hover = SubResource("hud_button")
+theme_override_styles/pressed = SubResource("hud_button")
+theme_override_styles/disabled = SubResource("hud_button")
+tooltip_text = "缩小地图（也可使用滚轮）"
+mouse_default_cursor_shape = 2
+text = "−"
+
+[node name="MapZoomIn" type="Button" parent="Margin/Layout/Header/MapHeading"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("hud_button")
+theme_override_styles/hover = SubResource("hud_button")
+theme_override_styles/pressed = SubResource("hud_button")
+theme_override_styles/disabled = SubResource("hud_button")
+tooltip_text = "放大地图（也可使用滚轮）"
+mouse_default_cursor_shape = 2
+text = "+"
+
+[node name="MapFocusButton" type="Button" parent="Margin/Layout/Header/MapHeading"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("hud_button")
+theme_override_styles/hover = SubResource("hud_button")
+theme_override_styles/pressed = SubResource("hud_button")
+theme_override_styles/disabled = SubResource("hud_button")
+tooltip_text = "回到村庄（也可双击地图）"
+mouse_default_cursor_shape = 2
+text = "营地"
+
+[node name="MapFitButton" type="Button" parent="Margin/Layout/Header/MapHeading"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("hud_button")
+theme_override_styles/hover = SubResource("hud_button")
+theme_override_styles/pressed = SubResource("hud_button")
+theme_override_styles/disabled = SubResource("hud_button")
+mouse_default_cursor_shape = 2
+text = "全图"
+
+[node name="ToggleCards" type="Button" parent="Margin/Layout/Header/MapHeading"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("hud_button")
+theme_override_styles/hover = SubResource("hud_button")
+theme_override_styles/pressed = SubResource("hud_button")
+theme_override_styles/disabled = SubResource("hud_button")
+focus_mode = 0
+mouse_default_cursor_shape = 2
+tooltip_text = "隐藏下方卡牌与确认区，扩大地图"
+text = "收起卡牌 ▾"
+
+[node name="PauseButton" type="Button" parent="Margin/Layout/Header/MapHeading"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("hud_button")
+theme_override_styles/hover = SubResource("hud_button")
+theme_override_styles/pressed = SubResource("hud_button")
+theme_override_styles/disabled = SubResource("hud_button")
+mouse_default_cursor_shape = 2
+text = "暂停"
+
+[node name="SpeedButton" type="Button" parent="Margin/Layout/Header/MapHeading"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("hud_button")
+theme_override_styles/hover = SubResource("hud_button")
+theme_override_styles/pressed = SubResource("hud_button")
+theme_override_styles/disabled = SubResource("hud_button")
+mouse_default_cursor_shape = 2
+text = "1×"
+
+
 [node name="Date" type="VBoxContainer" parent="Margin/Layout/Header"]
 layout_mode = 2
 theme_override_constants/separation = 2
@@ -249,17 +385,35 @@ theme_override_constants/separation = 2
 [node name="DayLabel" type="Label" parent="Margin/Layout/Header/Date"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 21
+theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(0.94, 0.91, 0.83, 1)
 text = "第 01 日"
 horizontal_alignment = 2
 
 [node name="PhaseLabel" type="Label" parent="Margin/Layout/Header/Date"]
+visible = false
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
 theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
 text = "距离大尸潮还有 6 天"
+
+[node name="MapHint" type="Label" parent="Margin/Layout/Header/Date"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
+text = "清晨  /  第一个决策时段"
+horizontal_alignment = 2
+
+[node name="WeatherLabel" type="Label" parent="Margin/Layout/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
+text = "天气：晴朗"
+mouse_filter = 1
 
 [node name="HeaderSpacer" type="Control" parent="Margin/Layout/Header"]
 custom_minimum_size = Vector2(18, 0)
@@ -268,32 +422,32 @@ layout_mode = 2
 [node name="VillageInfoButton" type="Button" parent="Margin/Layout/Header"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("hud_button")
+theme_override_styles/hover = SubResource("hud_button")
+theme_override_styles/pressed = SubResource("hud_button")
+theme_override_styles/disabled = SubResource("hud_button")
 mouse_default_cursor_shape = 2
 text = "村庄信息"
 
-[node name="HelpButton" type="Button" parent="Margin/Layout/Header"]
+[node name="InventoryButton" type="Button" parent="Margin/Layout/Header"]
 unique_name_in_owner = true
 layout_mode = 2
-mouse_default_cursor_shape = 2
-text = "玩法"
+text = "库存"
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("hud_button")
+theme_override_styles/hover = SubResource("hud_button")
+theme_override_styles/pressed = SubResource("hud_button")
 
-[node name="SaveButton" type="Button" parent="Margin/Layout/Header"]
+[node name="MenuButton" type="Button" parent="Margin/Layout/Header"]
 unique_name_in_owner = true
 layout_mode = 2
-mouse_default_cursor_shape = 2
-text = "保存"
-
-[node name="LoadButton" type="Button" parent="Margin/Layout/Header"]
-unique_name_in_owner = true
-layout_mode = 2
-mouse_default_cursor_shape = 2
-text = "继续"
-
-[node name="NewRunButton" type="Button" parent="Margin/Layout/Header"]
-unique_name_in_owner = true
-layout_mode = 2
-mouse_default_cursor_shape = 2
-text = "新村庄"
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("hud_button")
+theme_override_styles/hover = SubResource("hud_button")
+theme_override_styles/pressed = SubResource("hud_button")
+theme_override_styles/disabled = SubResource("hud_button")
+text = "菜单 ▾"
 
 [node name="ProgressLine" type="Button" parent="Margin/Layout"]
 visible = false
@@ -311,21 +465,34 @@ theme_override_constants/separation = 8
 [node name="StaminaPanel" type="PanelContainer" parent="Margin/Layout/Resources"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_ocrk6")
+theme_override_styles/panel = SubResource("hud_chip")
+
+[node name="Stock0Button" type="Button" parent="Margin/Layout/Resources/StaminaPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_default_cursor_shape = 2
+tooltip_text = "查看全部库存与当日生产、消耗、净变化"
+theme_override_styles/normal = SubResource("resource_click")
+theme_override_styles/hover = SubResource("resource_click")
+theme_override_styles/pressed = SubResource("resource_click")
+theme_override_styles/focus = SubResource("resource_click")
 
 [node name="StaminaRow" type="HBoxContainer" parent="Margin/Layout/Resources/StaminaPanel"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 8
 
 [node name="StaminaAccent" type="ColorRect" parent="Margin/Layout/Resources/StaminaPanel/StaminaRow"]
 custom_minimum_size = Vector2(3, 28)
+visible = false
 layout_mode = 2
 size_flags_vertical = 4
 color = Color(0.721569, 0.678431, 0.509804, 1)
 
-[node name="StaminaColumn" type="VBoxContainer" parent="Margin/Layout/Resources/StaminaPanel/StaminaRow"]
+[node name="StaminaColumn" type="HBoxContainer" parent="Margin/Layout/Resources/StaminaPanel/StaminaRow"]
 layout_mode = 2
-theme_override_constants/separation = 1
+mouse_filter = 2
+theme_override_constants/separation = 6
 
 [node name="StaminaCaption" type="Label" parent="Margin/Layout/Resources/StaminaPanel/StaminaRow/StaminaColumn"]
 layout_mode = 2
@@ -336,28 +503,41 @@ text = "体力"
 [node name="Stock0" type="Label" parent="Margin/Layout/Resources/StaminaPanel/StaminaRow/StaminaColumn"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 15
 theme_override_colors/font_color = Color(0.721569, 0.678431, 0.509804, 1)
 text = "0"
 
 [node name="FoodPanel" type="PanelContainer" parent="Margin/Layout/Resources"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_ln0ri")
+theme_override_styles/panel = SubResource("hud_chip")
+
+[node name="Stock1Button" type="Button" parent="Margin/Layout/Resources/FoodPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_default_cursor_shape = 2
+tooltip_text = "查看全部库存与当日生产、消耗、净变化"
+theme_override_styles/normal = SubResource("resource_click")
+theme_override_styles/hover = SubResource("resource_click")
+theme_override_styles/pressed = SubResource("resource_click")
+theme_override_styles/focus = SubResource("resource_click")
 
 [node name="FoodRow" type="HBoxContainer" parent="Margin/Layout/Resources/FoodPanel"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 8
 
 [node name="FoodAccent" type="ColorRect" parent="Margin/Layout/Resources/FoodPanel/FoodRow"]
 custom_minimum_size = Vector2(3, 28)
+visible = false
 layout_mode = 2
 size_flags_vertical = 4
 color = Color(0.80, 0.76, 0.65, 1)
 
-[node name="FoodColumn" type="VBoxContainer" parent="Margin/Layout/Resources/FoodPanel/FoodRow"]
+[node name="FoodColumn" type="HBoxContainer" parent="Margin/Layout/Resources/FoodPanel/FoodRow"]
 layout_mode = 2
-theme_override_constants/separation = 1
+mouse_filter = 2
+theme_override_constants/separation = 6
 
 [node name="FoodCaption" type="Label" parent="Margin/Layout/Resources/FoodPanel/FoodRow/FoodColumn"]
 layout_mode = 2
@@ -368,28 +548,41 @@ text = "食物"
 [node name="Stock1" type="Label" parent="Margin/Layout/Resources/FoodPanel/FoodRow/FoodColumn"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 15
 theme_override_colors/font_color = Color(0.88, 0.84, 0.72, 1)
 text = "0"
 
 [node name="WaterPanel" type="PanelContainer" parent="Margin/Layout/Resources"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_1qoam")
+theme_override_styles/panel = SubResource("hud_chip")
+
+[node name="Stock2Button" type="Button" parent="Margin/Layout/Resources/WaterPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_default_cursor_shape = 2
+tooltip_text = "查看全部库存与当日生产、消耗、净变化"
+theme_override_styles/normal = SubResource("resource_click")
+theme_override_styles/hover = SubResource("resource_click")
+theme_override_styles/pressed = SubResource("resource_click")
+theme_override_styles/focus = SubResource("resource_click")
 
 [node name="WaterRow" type="HBoxContainer" parent="Margin/Layout/Resources/WaterPanel"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 8
 
 [node name="WaterAccent" type="ColorRect" parent="Margin/Layout/Resources/WaterPanel/WaterRow"]
 custom_minimum_size = Vector2(3, 28)
+visible = false
 layout_mode = 2
 size_flags_vertical = 4
 color = Color(0.513725, 0.615686, 0.627451, 1)
 
-[node name="WaterColumn" type="VBoxContainer" parent="Margin/Layout/Resources/WaterPanel/WaterRow"]
+[node name="WaterColumn" type="HBoxContainer" parent="Margin/Layout/Resources/WaterPanel/WaterRow"]
 layout_mode = 2
-theme_override_constants/separation = 1
+mouse_filter = 2
+theme_override_constants/separation = 6
 
 [node name="WaterCaption" type="Label" parent="Margin/Layout/Resources/WaterPanel/WaterRow/WaterColumn"]
 layout_mode = 2
@@ -400,28 +593,41 @@ text = "水"
 [node name="Stock2" type="Label" parent="Margin/Layout/Resources/WaterPanel/WaterRow/WaterColumn"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 15
 theme_override_colors/font_color = Color(0.513725, 0.615686, 0.627451, 1)
 text = "0"
 
 [node name="PowerPanel" type="PanelContainer" parent="Margin/Layout/Resources"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_bwlxt")
+theme_override_styles/panel = SubResource("hud_chip")
+
+[node name="Stock3Button" type="Button" parent="Margin/Layout/Resources/PowerPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_default_cursor_shape = 2
+tooltip_text = "查看全部库存与当日生产、消耗、净变化"
+theme_override_styles/normal = SubResource("resource_click")
+theme_override_styles/hover = SubResource("resource_click")
+theme_override_styles/pressed = SubResource("resource_click")
+theme_override_styles/focus = SubResource("resource_click")
 
 [node name="PowerRow" type="HBoxContainer" parent="Margin/Layout/Resources/PowerPanel"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 8
 
 [node name="PowerAccent" type="ColorRect" parent="Margin/Layout/Resources/PowerPanel/PowerRow"]
 custom_minimum_size = Vector2(3, 28)
+visible = false
 layout_mode = 2
 size_flags_vertical = 4
 color = Color(0.721569, 0.678431, 0.509804, 1)
 
-[node name="PowerColumn" type="VBoxContainer" parent="Margin/Layout/Resources/PowerPanel/PowerRow"]
+[node name="PowerColumn" type="HBoxContainer" parent="Margin/Layout/Resources/PowerPanel/PowerRow"]
 layout_mode = 2
-theme_override_constants/separation = 1
+mouse_filter = 2
+theme_override_constants/separation = 6
 
 [node name="PowerCaption" type="Label" parent="Margin/Layout/Resources/PowerPanel/PowerRow/PowerColumn"]
 layout_mode = 2
@@ -432,28 +638,41 @@ text = "电力"
 [node name="Stock3" type="Label" parent="Margin/Layout/Resources/PowerPanel/PowerRow/PowerColumn"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 15
 theme_override_colors/font_color = Color(0.721569, 0.678431, 0.509804, 1)
 text = "0"
 
 [node name="MaterialsPanel" type="PanelContainer" parent="Margin/Layout/Resources"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_o7t5d")
+theme_override_styles/panel = SubResource("hud_chip")
+
+[node name="Stock4Button" type="Button" parent="Margin/Layout/Resources/MaterialsPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_default_cursor_shape = 2
+tooltip_text = "查看全部库存与当日生产、消耗、净变化"
+theme_override_styles/normal = SubResource("resource_click")
+theme_override_styles/hover = SubResource("resource_click")
+theme_override_styles/pressed = SubResource("resource_click")
+theme_override_styles/focus = SubResource("resource_click")
 
 [node name="MaterialsRow" type="HBoxContainer" parent="Margin/Layout/Resources/MaterialsPanel"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 8
 
 [node name="MaterialsAccent" type="ColorRect" parent="Margin/Layout/Resources/MaterialsPanel/MaterialsRow"]
 custom_minimum_size = Vector2(3, 28)
+visible = false
 layout_mode = 2
 size_flags_vertical = 4
 color = Color(0.721569, 0.678431, 0.509804, 1)
 
-[node name="MaterialsColumn" type="VBoxContainer" parent="Margin/Layout/Resources/MaterialsPanel/MaterialsRow"]
+[node name="MaterialsColumn" type="HBoxContainer" parent="Margin/Layout/Resources/MaterialsPanel/MaterialsRow"]
 layout_mode = 2
-theme_override_constants/separation = 1
+mouse_filter = 2
+theme_override_constants/separation = 6
 
 [node name="MaterialsCaption" type="Label" parent="Margin/Layout/Resources/MaterialsPanel/MaterialsRow/MaterialsColumn"]
 unique_name_in_owner = true
@@ -465,103 +684,112 @@ text = "材料"
 [node name="Stock4" type="Label" parent="Margin/Layout/Resources/MaterialsPanel/MaterialsRow/MaterialsColumn"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 15
 theme_override_colors/font_color = Color(0.721569, 0.678431, 0.509804, 1)
 text = "0"
 
 [node name="PopulationPanel" type="PanelContainer" parent="Margin/Layout/Resources"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_pnaqj")
+theme_override_styles/panel = SubResource("hud_chip")
 
 [node name="PopulationRow" type="HBoxContainer" parent="Margin/Layout/Resources/PopulationPanel"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 8
 
 [node name="PopulationAccent" type="ColorRect" parent="Margin/Layout/Resources/PopulationPanel/PopulationRow"]
 custom_minimum_size = Vector2(3, 28)
+visible = false
 layout_mode = 2
 size_flags_vertical = 4
 color = Color(0.513725, 0.615686, 0.627451, 1)
 
-[node name="PopulationColumn" type="VBoxContainer" parent="Margin/Layout/Resources/PopulationPanel/PopulationRow"]
+[node name="PopulationColumn" type="HBoxContainer" parent="Margin/Layout/Resources/PopulationPanel/PopulationRow"]
 layout_mode = 2
-theme_override_constants/separation = 1
+mouse_filter = 2
+theme_override_constants/separation = 6
 
 [node name="PopulationCaption" type="Label" parent="Margin/Layout/Resources/PopulationPanel/PopulationRow/PopulationColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
 theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
-text = "幸存者"
+text = "人口"
 
 [node name="PopulationLabel" type="Label" parent="Margin/Layout/Resources/PopulationPanel/PopulationRow/PopulationColumn"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 15
 theme_override_colors/font_color = Color(0.513725, 0.615686, 0.627451, 1)
 text = "0"
 
 [node name="CorePanel" type="PanelContainer" parent="Margin/Layout/Resources"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_h5vli")
+theme_override_styles/panel = SubResource("hud_chip")
 
 [node name="CoreRow" type="HBoxContainer" parent="Margin/Layout/Resources/CorePanel"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 8
 
 [node name="CoreAccent" type="ColorRect" parent="Margin/Layout/Resources/CorePanel/CoreRow"]
 custom_minimum_size = Vector2(3, 28)
+visible = false
 layout_mode = 2
 size_flags_vertical = 4
 color = Color(0.80, 0.76, 0.65, 1)
 
-[node name="CoreColumn" type="VBoxContainer" parent="Margin/Layout/Resources/CorePanel/CoreRow"]
+[node name="CoreColumn" type="HBoxContainer" parent="Margin/Layout/Resources/CorePanel/CoreRow"]
 layout_mode = 2
-theme_override_constants/separation = 1
+mouse_filter = 2
+theme_override_constants/separation = 6
 
 [node name="CoreCaption" type="Label" parent="Margin/Layout/Resources/CorePanel/CoreRow/CoreColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
 theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
-text = "村庄耐久"
+text = "耐久"
 
 [node name="CoreLabel" type="Label" parent="Margin/Layout/Resources/CorePanel/CoreRow/CoreColumn"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 15
 theme_override_colors/font_color = Color(0.88, 0.84, 0.72, 1)
 text = "0"
 
 [node name="RiskPanel" type="PanelContainer" parent="Margin/Layout/Resources"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_uuwn2")
+theme_override_styles/panel = SubResource("hud_chip")
 
 [node name="RiskRow" type="HBoxContainer" parent="Margin/Layout/Resources/RiskPanel"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 8
 
 [node name="RiskAccent" type="ColorRect" parent="Margin/Layout/Resources/RiskPanel/RiskRow"]
 custom_minimum_size = Vector2(3, 28)
+visible = false
 layout_mode = 2
 size_flags_vertical = 4
 color = Color(0.733333, 0.513725, 0.439216, 1)
 
-[node name="RiskColumn" type="VBoxContainer" parent="Margin/Layout/Resources/RiskPanel/RiskRow"]
+[node name="RiskColumn" type="HBoxContainer" parent="Margin/Layout/Resources/RiskPanel/RiskRow"]
 layout_mode = 2
-theme_override_constants/separation = 1
+mouse_filter = 2
+theme_override_constants/separation = 6
 
 [node name="RiskCaption" type="Label" parent="Margin/Layout/Resources/RiskPanel/RiskRow/RiskColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
 theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
-text = "噪音 / 污染"
+text = "噪/污"
 
 [node name="RiskLabel" type="Label" parent="Margin/Layout/Resources/RiskPanel/RiskRow/RiskColumn"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 15
 theme_override_colors/font_color = Color(0.90, 0.66, 0.54, 1)
 text = "0"
 
@@ -617,122 +845,35 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("atmosphere")
 
-[node name="MapHudBackground" type="ColorRect" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn"]
+[node name="MapDetails" type="PanelContainer" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn"]
 layout_mode = 1
-anchor_right = 1.0
-offset_bottom = 120.0
-color = Color(0.08, 0.09, 0.08, 0.92)
-mouse_filter = 2
-
-[node name="MapHeading" type="HBoxContainer" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn"]
-layout_mode = 1
-anchor_right = 1.0
 offset_left = 14.0
-offset_top = 10.0
-offset_right = -14.0
-offset_bottom = 34.0
+offset_top = 12.0
+offset_right = 534.0
+offset_bottom = 172.0
+theme_override_styles/panel = SubResource("popup_panel")
 
-[node name="MapTitle" type="Label" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/MapHeading"]
-unique_name_in_owner = true
+[node name="Content" type="VBoxContainer" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/MapDetails"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 17
-theme_override_colors/font_color = Color(0.94, 0.91, 0.83, 1)
-text = "村庄与周围林地"
+theme_override_constants/separation = 8
 
-[node name="WeatherLabel" type="Label" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/MapHeading"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
-text = "天气：晴朗"
-mouse_filter = 1
-
-[node name="MapHint" type="Label" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/MapHeading"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
-text = "清晨  /  第一个决策时段"
-horizontal_alignment = 2
-
-[node name="ExplorationClues" type="Label" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn"]
-unique_name_in_owner = true
-visible = false
-layout_mode = 1
-anchor_right = 1.0
-offset_left = 14.0
-offset_top = 43.0
-offset_right = -14.0
-offset_bottom = 67.0
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(0.75, 0.82, 0.77, 1)
-autowrap_mode = 3
-
-[node name="BattleControls" type="HBoxContainer" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn"]
-layout_mode = 1
-anchor_right = 1.0
-offset_left = 14.0
-offset_top = 75.0
-offset_right = -14.0
-offset_bottom = 112.0
-
-[node name="StatusLabel" type="Label" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/BattleControls"]
+[node name="StatusLabel" type="Label" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/MapDetails/Content"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
 theme_override_colors/font_color = Color(0.94, 0.91, 0.83, 1)
 text = "●  防线平静  ·  守卫会自行寻路与攻击"
-clip_text = true
+autowrap_mode = 3
 
-[node name="MapZoomOut" type="Button" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/BattleControls"]
+[node name="ExplorationClues" type="Label" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/MapDetails/Content"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
-tooltip_text = "缩小地图（也可使用滚轮）"
-mouse_default_cursor_shape = 2
-text = "−"
-
-[node name="MapZoomIn" type="Button" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/BattleControls"]
-unique_name_in_owner = true
-layout_mode = 2
-tooltip_text = "放大地图（也可使用滚轮）"
-mouse_default_cursor_shape = 2
-text = "+"
-
-[node name="MapFocusButton" type="Button" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/BattleControls"]
-unique_name_in_owner = true
-layout_mode = 2
-tooltip_text = "回到村庄（也可双击地图）"
-mouse_default_cursor_shape = 2
-text = "营地"
-
-[node name="MapFitButton" type="Button" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/BattleControls"]
-unique_name_in_owner = true
-layout_mode = 2
-mouse_default_cursor_shape = 2
-text = "全图"
-
-[node name="ToggleCards" type="Button" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/BattleControls"]
-unique_name_in_owner = true
-layout_mode = 2
-focus_mode = 0
-mouse_default_cursor_shape = 2
-tooltip_text = "隐藏下方卡牌与确认区，扩大地图"
-text = "收起卡牌 ▾"
-
-[node name="PauseButton" type="Button" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/BattleControls"]
-unique_name_in_owner = true
-layout_mode = 2
-mouse_default_cursor_shape = 2
-text = "暂停"
-
-[node name="SpeedButton" type="Button" parent="Margin/Layout/ActionSplit/CenterRow/MapColumn/BattleControls"]
-unique_name_in_owner = true
-layout_mode = 2
-mouse_default_cursor_shape = 2
-text = "1×"
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.75, 0.82, 0.77, 1)
+autowrap_mode = 3
 
 [node name="ActionTray" type="PanelContainer" parent="Margin/Layout/ActionSplit"]
 layout_mode = 0
@@ -831,6 +972,68 @@ offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 0
 
+[node name="SurveyActionPanel" parent="." instance=ExtResource("survey_action")]
+layout_mode = 1
+
+[node name="HeaderMenu" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -180.0
+offset_top = 52.0
+offset_right = -14.0
+offset_bottom = 220.0
+script = ExtResource("hud_menu")
+theme_override_styles/panel = SubResource("popup_panel")
+
+[node name="Actions" type="VBoxContainer" parent="HeaderMenu"]
+layout_mode = 2
+
+[node name="HelpButton" type="Button" parent="HeaderMenu/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("hud_button")
+theme_override_styles/hover = SubResource("hud_button")
+theme_override_styles/pressed = SubResource("hud_button")
+theme_override_styles/disabled = SubResource("hud_button")
+mouse_default_cursor_shape = 2
+text = "玩法"
+
+[node name="SaveButton" type="Button" parent="HeaderMenu/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("hud_button")
+theme_override_styles/hover = SubResource("hud_button")
+theme_override_styles/pressed = SubResource("hud_button")
+theme_override_styles/disabled = SubResource("hud_button")
+mouse_default_cursor_shape = 2
+text = "保存"
+
+[node name="LoadButton" type="Button" parent="HeaderMenu/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("hud_button")
+theme_override_styles/hover = SubResource("hud_button")
+theme_override_styles/pressed = SubResource("hud_button")
+theme_override_styles/disabled = SubResource("hud_button")
+mouse_default_cursor_shape = 2
+text = "继续"
+
+[node name="NewRunButton" type="Button" parent="HeaderMenu/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("hud_button")
+theme_override_styles/hover = SubResource("hud_button")
+theme_override_styles/pressed = SubResource("hud_button")
+theme_override_styles/disabled = SubResource("hud_button")
+mouse_default_cursor_shape = 2
+text = "新村庄"
+
 [node name="CardAcquisition" parent="." instance=ExtResource("acquisition")]
 unique_name_in_owner = true
 layout_mode = 1
@@ -845,3 +1048,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.015, 0.04, 0.03, 0.88)
+
+[node name="ActionResultNotice" parent="." instance=ExtResource("action_result")]
+layout_mode = 1

@@ -66,6 +66,30 @@ static func daily_upkeep(state: VillageState) -> PackedInt32Array:
 	return upkeep
 
 
+## 库存与当日固定收支查询，返回独立记录；夜间读取冻结快照，不改变状态。
+static func resource_balances(state: VillageState) -> Array[ResourceBalance]:
+	var stats: VillageStats = (
+		state.night_stats
+		if state.night_stats != null and state.phase != GameTypes.Phase.DAY
+		else derive(state)
+	)
+	var upkeep: PackedInt32Array = daily_upkeep(state)
+	var balances: Array[ResourceBalance] = []
+	for key: int in GameTypes.Stock.COUNT:
+		var balance: ResourceBalance = ResourceBalance.new()
+		balance.key = key as GameTypes.Stock
+		balance.current = state.resources[key]
+		balance.income = stats.income[key]
+		balance.upkeep = upkeep[key]
+		if key in [GameTypes.Stock.FOOD, GameTypes.Stock.WATER, GameTypes.Stock.POWER]:
+			balance.capacity = SurvivalRules.storage_capacity(state, key as GameTypes.Stock)
+		if key == GameTypes.Stock.STAMINA:
+			balance.income = stats.stamina_recovery
+			balance.capacity = 100
+		balances.append(balance)
+	return balances
+
+
 static func apply(
 	state: VillageState, card: CardDefinition, pay_costs: bool = false, preview: bool = false
 ) -> void:

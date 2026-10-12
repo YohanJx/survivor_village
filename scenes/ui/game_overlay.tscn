@@ -1,10 +1,13 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/ui/worn_iron_panel.png" id="worn_texture"]
 [ext_resource type="Script" path="res://scripts/ui/game_overlay.gd" id="ui_script"]
 
 [ext_resource type="PackedScene" path="res://scenes/ui/village_info_panel.tscn" id="village_info"]
 [ext_resource type="PackedScene" path="res://scenes/ui/card_inspection_panel.tscn" id="inspection"]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/inventory_panel.tscn" id="inventory"]
+[ext_resource type="PackedScene" path="res://scenes/ui/day_report_panel.tscn" id="day_report"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxFlat_lgeg4"]
 content_margin_left = 28.0
@@ -53,6 +56,12 @@ theme_override_constants/separation = 16
 unique_name_in_owner = true
 layout_mode = 2
 
+[node name="InventoryPanel" parent="Center/Panel/OverlayContent" instance=ExtResource("inventory")]
+layout_mode = 2
+
+[node name="DayReportPanel" parent="Center/Panel/OverlayContent" instance=ExtResource("day_report")]
+layout_mode = 2
+
 [node name="HelpContent" type="VBoxContainer" parent="Center/Panel/OverlayContent"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -89,7 +98,7 @@ size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
 autowrap_mode = 3
 theme_override_colors/font_color = Color(0.78, 0.74, 0.65, 1)
-text = "你决定村庄如何发展，幸存者固定岗位守村。\n\n01  第一天只勘探地形；发现河流才开放河畔取水。无河流时先备工具，再勘探井位、打井，勘探越多成功率越高。食物、水、电力需建粮仓、储水罐、蓄电池才能跨日保留。\n每日先选择黎明事件，不占行动；地图与选择会保存。每天三个时段，每 5 人增加一次时段行动，最低 1 次、最多 4 次。\n02  连续同类劳动产生烦躁，每层让下一张劳动体力 +15%，最多 5 层。轮换防止积累；休整减 2，待命恢复 8 体力并减 1。宣泄演练把烦躁转为今晚攻击。\n03  村庄信息中可在每日第一次行动前调整一次分工，并设置守卫使用弓箭或长矛。没有对应职业就无法解锁或执行专业卡牌。可选较小劳动队伍，实际费用与收益见详情。\n04  木材用于围墙与箭，石料用于水井，零件用于工业；柴油机每级每天耗 2 燃料。弓箭不耗电，逐次消耗箭矢，用完改投石。\n05  采集者发现潜伏者；建造者耗木修墙；工程师耗零件维修村庄；医护耗药救治；守卫使用长矛或弓箭。\n06  披甲者减伤，酸液影响站位，尖啸者有限召援，潜伏者需侦察或照明，爆燃者留下火焰。火把与探照灯发现潜伏者，电灯不增强物理攻击。\n07  黄昏行动用完后自动守夜。守夜结束处理日终事件，收益与代价一起结算；普通遭遇可以忽略，饥渴后果不可忽略。随后结算生产和口粮。缺粮缺水伤害村庄；噪声计入当晚，黎明清零；污染按地形消退且有上限。尸潮综合探索、发展、当日噪声与污染；高发展且高压力才可能遇到 Boss。\n08  村庄耐久归零或全部幸存者死亡，本局结束。\n\nEnter 确认卡牌；Space 暂停；Esc 关闭窗口。\n每次决策与战后自动保存。夜间继续从同一黄昏重新模拟，电力不重复扣除。"
+text = "你决定村庄如何发展，幸存者固定岗位守村。\n\n01  第一天只勘探地形；发现河流才开放河畔取水。无河流时先备工具，再勘探井位、打井，勘探越多成功率越高。食物、水、电力需建粮仓、储水罐、蓄电池才能跨日保留。\n每日先选择黎明事件，不占行动；地图与选择会保存。每天三个时段，每 5 人增加一次时段行动，最低 1 次、最多 4 次。\n02  连续同类劳动产生烦躁，每层让下一张劳动体力 +15%，最多 5 层。轮换防止积累；休整减 2，待命恢复 8 体力并减 1。宣泄演练把烦躁转为今晚攻击。\n03  村庄信息中可在每日第一次行动前调整一次分工，并设置守卫使用弓箭或长矛。没有对应职业就无法解锁或执行专业卡牌。可选较小劳动队伍，实际费用与收益见详情。\n04  木材用于围墙与箭，石料用于水井，零件用于工业；柴油机每级每天耗 2 燃料。弓箭不耗电，逐次消耗箭矢，用完改投石。\n05  采集者发现潜伏者；建造者耗木修墙；工程师耗零件维修村庄；医护耗药救治；守卫使用长矛或弓箭。\n06  披甲者减伤，酸液影响站位，尖啸者有限召援，潜伏者需侦察或照明，爆燃者留下火焰。火把与探照灯发现潜伏者，电灯不增强物理攻击。\n07  黄昏行动用完后自动守夜。守夜结束处理日终事件，收益与代价一起结算；普通遭遇可以忽略，饥渴后果不可忽略。随后结算生产和口粮。缺粮缺水伤害村庄；噪声计入当晚，黎明清零；污染按地形消退且有上限。尸潮综合探索、发展、当日噪声与污染；高发展且高压力才可能遇到 Boss。\n08  村庄耐久归零或全部幸存者死亡，本局结束。\n\nEnter 执行当前可见的选中卡牌；Space 暂停或继续夜战。\nEsc 依次关闭详解/弹窗、顶部菜单、目标线索，再收起卡牌面板；筛选下拉展开时先关闭下拉。\n顶部菜单提供保存、继续、新局和帮助；目标与方向线索由地图工具条展开。\n每次决策与战后自动保存。夜间继续从同一黄昏重新模拟，电力不重复扣除。"
 
 [node name="HelpClose" type="Button" parent="Center/Panel/OverlayContent/HelpContent"]
 unique_name_in_owner = true

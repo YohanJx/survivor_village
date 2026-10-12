@@ -1,7 +1,8 @@
 class_name VillageSaveData
 extends Resource
 
-const CURRENT_VERSION: int = 10
+const CURRENT_VERSION: int = 11
+const DAY_REPORT_VERSION: int = 11
 const THREAT_VERSION: int = 10
 const EVENT_QUEUE_VERSION: int = 9
 const DAY_END_VERSION: int = 8
@@ -37,3 +38,9 @@ const LEGACY_VERSION: int = 2
 @export_storage var last_report: BattleReport
 @export_storage var next_uid: int = 1
 @export_storage var total_kills: int = 0
+@export_storage var day_start_resources: PackedInt32Array = []
+@export_storage var day_start_population: int = 0
+@export_storage var day_start_core: float = 0.0
+@export_storage var day_start_explored: int = 0
+@export_storage var last_day_report: DayReport
+@export_storage var day_report_pending: bool = false

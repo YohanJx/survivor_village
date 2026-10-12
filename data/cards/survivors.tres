@@ -40,10 +40,10 @@ display_name = "敲门的幸存者"
 kind = 3
 icon = 12
 color = 0
-description = "围墙外传来求救声。更多双手，也意味着更多张嘴。"
+description = "搜寻并接纳两名幸存者。每日最多接纳一次，营地最多容纳 12 人；更多双手，也意味着更多张嘴。"
 positive = "人口 +2，立即加入自动防守"
 negative = "每天额外消耗食物 2、水 2，噪音 +4"
-reusable = false
+reusable = true
 costs = Array[ExtResource("s_resource_cost")]([SubResource("cost_0"), SubResource("cost_1")])
 effects = Array[ExtResource("s_card_effect")]([SubResource("effect_0"), SubResource("effect_1")])
 

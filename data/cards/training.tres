@@ -82,3 +82,5 @@ effects = Array[ExtResource("s_card_effect")]([SubResource("effect_0"), SubResou
 labor = 6
 
 keywords = Array[ExtResource("keyword")]([ExtResource("kw_temporary"), ExtResource("kw_defense"), ExtResource("kw_guard")])
+
+required_cards = PackedStringArray("bows")

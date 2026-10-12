@@ -10,6 +10,7 @@ static func is_valid(data: VillageSaveData, catalog: CardCatalog, max_health: fl
 		data.version
 		not in [
 			VillageSaveData.CURRENT_VERSION,
+			10,
 			9,
 			8,
 			7,
@@ -46,6 +47,8 @@ static func is_valid(data: VillageSaveData, catalog: CardCatalog, max_health: fl
 	if not is_finite(data.core_health) or data.core_health < 0 or data.core_health > max_health:
 		return false
 	if data.next_uid < 1 or data.total_kills < 0:
+		return false
+	if data.version >= VillageSaveData.DAY_REPORT_VERSION and not _valid_day_report(data, max_health):
 		return false
 	if data.phase == GameTypes.Phase.DAY and data.slot == 3:
 		return false
@@ -90,6 +93,45 @@ static func is_valid(data: VillageSaveData, catalog: CardCatalog, max_health: fl
 	if data.version >= VillageSaveData.DAY_END_VERSION and not _valid_day_end_event(data, catalog):
 		return false
 	return true
+
+
+static func _valid_day_report(data: VillageSaveData, max_health: float) -> bool:
+	if data.day_start_resources.size() != GameTypes.Stock.COUNT:
+		return false
+	for value: int in data.day_start_resources:
+		if value < 0:
+			return false
+	if data.day_start_population < 0 or data.day_start_explored < 1:
+		return false
+	if not is_finite(data.day_start_core) or data.day_start_core < 0.0 or data.day_start_core > max_health:
+		return false
+	if data.progress.last_recruited_day > data.day:
+		return false
+	var report: DayReport = data.last_day_report
+	if report == null:
+		return not data.day_report_pending
+	if report.day < 1 or report.day >= data.day or report.notes.size() > 40:
+		return false
+	if report.resources_before.size() != GameTypes.Stock.COUNT or report.resources_after.size() != GameTypes.Stock.COUNT:
+		return false
+	for value: int in report.resources_before:
+		if value < 0:
+			return false
+	for value: int in report.resources_after:
+		if value < 0:
+			return false
+	if report.population_before < 0 or report.population_after < 0 or report.kills < 0:
+		return false
+	if report.explored_before < 1 or report.explored_after < report.explored_before:
+		return false
+	if not is_finite(report.core_before) or not is_finite(report.core_after):
+		return false
+	if report.core_before < 0.0 or report.core_after < 0.0 or report.core_before > max_health or report.core_after > max_health:
+		return false
+	for note: String in report.notes:
+		if note.is_empty():
+			return false
+	return not data.day_report_pending or data.phase == GameTypes.Phase.DAY
 
 
 static func _valid_day_end_event(data: VillageSaveData, catalog: CardCatalog) -> bool:

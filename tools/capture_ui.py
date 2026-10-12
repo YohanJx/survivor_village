@@ -86,7 +86,7 @@ def main() -> int:
                 "--audio-driver", "Dummy"
             ], env=environment, stdout=stream, stderr=subprocess.STDOUT)
         completed = results / "capture_complete.txt"
-        deadline = time.monotonic() + 45
+        deadline = time.monotonic() + 90
         while not completed.exists() and process.poll() is None and time.monotonic() < deadline:
             foreground_states.append(foreground())
             time.sleep(0.1)

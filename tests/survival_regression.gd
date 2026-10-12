@@ -213,6 +213,7 @@ static func _test_wells(check: Callable) -> void:
 	before = state.snapshot()
 	var costs: PackedInt32Array = EffectResolver.cost_totals(card, state)
 	check.call(state.play_card(_uid(state, "well")), "Failed drilling is a committed paid attempt")
+	check.call(state.last_card_result.contains("打井失败"), "Failed drilling preserves the actual outcome for UI feedback")
 	check.call(
 		(
 			state.buildings[GameTypes.Building.WELL] == 0
@@ -235,6 +236,10 @@ static func _test_wells(check: Callable) -> void:
 		not state.progress.completed_cards.has("well"),
 		"Failed drilling does not record completed construction"
 	)
+	check.call(
+		state.progress.well_drill_attempts == 1 and not state.can_play(_uid(state, "well")).is_empty(),
+		"One site survey funds only one drill attempt"
+	)
 	_win(state)
 	state.resources[GameTypes.Stock.STAMINA] = 100
 	state.resources[GameTypes.Stock.STONE] = 100
@@ -250,6 +255,7 @@ static func _test_wells(check: Callable) -> void:
 		state.play_card(_uid(state, "well")) and state.buildings[GameTypes.Building.WELL] == 1,
 		"Fully surveyed site builds a well"
 	)
+	check.call(state.last_card_result.contains("打井成功"), "Successful drilling preserves the actual outcome for UI feedback")
 	check.call(
 		_uid(state, "well_water") > 0 and _uid(state, "water") == -1,
 		"A dry map opens well collection after successful drilling"
@@ -315,6 +321,7 @@ static func _test_save_validation(check: Callable) -> void:
 	check.call(
 		(
 			restored.progress.well_surveys == 5
+			and restored.progress.well_drill_attempts == state.progress.well_drill_attempts
 			and restored.progress.discoveries == state.progress.discoveries
 		),
 		"Saved discoveries and chance survive restore"
@@ -329,6 +336,9 @@ static func _test_save_validation(check: Callable) -> void:
 		),
 		"Fabricated dry-map river is rejected without changing live state"
 	)
+	snapshot = state.snapshot()
+	snapshot.progress.well_drill_attempts = snapshot.progress.well_surveys + 1
+	check.call(not restored.restore(snapshot), "A save cannot contain more drill attempts than site surveys")
 	snapshot = state.snapshot()
 	snapshot.progress.well_tools = false
 	check.call(not restored.restore(snapshot), "Well-site knowledge without tools is rejected")

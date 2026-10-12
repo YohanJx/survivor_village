@@ -18,7 +18,7 @@ var _category_index: int = 0
 @onready var _hand: VillageHandPanel = %HandPanel
 @onready var _detail: VillageDetailPanel = %DetailPanel
 @onready var _title: Label = %CategoryTitle
-@onready var _toggle: Button = $CenterRow/MapColumn/BattleControls/ToggleCards
+@onready var _toggle: Button = %ToggleCards
 
 
 func _ready() -> void:

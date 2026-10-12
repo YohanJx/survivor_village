@@ -57,7 +57,7 @@ static func next_step(state: VillageState) -> String:
 		return _action_step(state, "water_tank", "扩充储水，减少每日取水压力")
 	if state.buildings[GameTypes.Building.FOOD_STORE] == 0:
 		return _action_step(state, "food_store", "建粮仓，保存更多食物")
-	return "目标：发展食物生产、工坊与防线，准备第七夜尸潮"
+	return "目标：发展食物生产、工坊与防线，维持补给并加强防线"
 
 
 static func _action_step(state: VillageState, id: String, goal: String) -> String:

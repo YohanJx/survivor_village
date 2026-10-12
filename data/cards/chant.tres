@@ -33,3 +33,5 @@ reusable = false
 strategy = 2
 costs = Array[ExtResource("cost")]([SubResource("cost0")])
 effects = Array[ExtResource("effect")]([SubResource("effect0")])
+
+required_cards = PackedStringArray("training")

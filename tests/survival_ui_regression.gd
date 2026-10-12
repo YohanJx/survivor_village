@@ -6,6 +6,7 @@ extends RefCounted
 static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Callable) -> void:
 	var dashboard: VillageDashboard = game.get_node("Dashboard") as VillageDashboard
 	game.state.new_run(65012, GameTypes.Region.MOUNTAIN)
+	(dashboard.get_node("%ActionSplit") as ActionDock).set_expanded(false)
 	(dashboard.get_node("%CardCategoryBar/All/Button") as Button).pressed.emit()
 	await tree.process_frame
 	var row: HBoxContainer = dashboard.hand_panel.get_node("%HandContainer") as HBoxContainer
@@ -16,10 +17,10 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 		"Opening card selects terrain survey"
 	)
 	check.call(
-		(dashboard.detail.get_node("%ExecuteButton") as Button).disabled,
+		(dashboard.get_node("%SurveyActionPanel/Content/ExecuteButton") as Button).disabled,
 		"Exploration requires an explicit map target"
 	)
-	await CardUiRegression.click(tree, dashboard.get_node("%CloseCards") as Button)
+	await CardUiRegression.click(tree, dashboard.get_node("%SurveyActionPanel/Content/Heading/CloseButton") as Button)
 	var map_view: VillageMap = dashboard.get_node("%VillageMap") as VillageMap
 	var cell: Vector2i = TerrainGrid.CAMP + Vector2i.UP
 	var local_point: Vector2 = (
@@ -43,12 +44,14 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 		"Real map click selects an adjacent unknown cell"
 	)
 	check.call(
-		not (dashboard.detail.get_node("%ExecuteButton") as Button).disabled,
+		not (dashboard.get_node("%SurveyActionPanel/Content/ExecuteButton") as Button).disabled,
 		"Target selection enables confirmation"
 	)
-	check.call((dashboard.get_node("%ActionSplit") as ActionDock).is_expanded(), "Map target reopens the selected survey automatically")
+	check.call(not (dashboard.get_node("%SurveyActionPanel") as SurveyActionPanel).visible, "Map target does not reopen a closed survey frame")
+	await CardUiRegression.click(tree, dashboard.get_node("%CardCategoryBar/All/Button") as Button)
+	await CardUiRegression.click(tree, row.get_child(0) as Control)
 	await capture.call("ui_survival_opening")
-	await CardUiRegression.click(tree, dashboard.detail.get_node("%ExecuteButton") as Control)
+	await CardUiRegression.click(tree, dashboard.get_node("%SurveyActionPanel/Content/ExecuteButton") as Control)
 	await capture.call("ui_terrain_report")
 	await _check_report_layout(tree, game, dashboard, check, capture)
 	check.call(
@@ -76,6 +79,7 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 	game.state.new_run(65012, GameTypes.Region.RURAL)
 	SurvivalTestSetup.developed(game.state)
 	game.state.changed.emit()
+	(dashboard.get_node("%ActionSplit") as ActionDock).set_expanded(true)
 	game.state.assign_jobs(PackedInt32Array([5, 0, 0, 0, 0, 0]))
 	var forage: VillageCardButton
 	for child: Node in row.get_children():
@@ -195,22 +199,13 @@ static func _check_report_layout(
 	await tree.process_frame
 	await tree.process_frame
 	await tree.process_frame
-	var report: Label = dashboard.detail.get_node("%SurveyReport") as Label
+	var report: Label = dashboard.get_node("%ActionResultNotice/Message") as Label
 	var footer: Control = dashboard.get_node("Margin/Layout/Footer") as Control
+	check.call(report.is_visible_in_tree() and report.text.contains("北："), "Actual exploration result displays directional clues")
+	check.call(footer.get_global_rect().end.y <= game.size.y + 1.0, "Survey result does not push footer outside the window")
 	check.call(
-		report.visible and report.text.contains("勘探报告") and report.text.contains("北："),
-		"Fixed report displays practical directional clues"
-	)
-	check.call(
-		footer.get_global_rect().end.y <= game.size.y + 1.0,
-		"Report does not push footer outside the small window"
-	)
-	check.call(
-		(
-			(dashboard.detail.get_node("%ExecuteButton") as Control).get_global_rect().end.y
-			<= (dashboard.detail.get_node("%DetailScroll") as Control).get_global_rect().position.y
-		),
-		"Scrollable report stays below the compact fixed action and confirmation"
+		Rect2(Vector2.ZERO, game.size).encloses((dashboard.get_node("%SurveyActionPanel/Content/ExecuteButton") as Button).get_global_rect()),
+		"Compact survey confirmation fits the small viewport"
 	)
 	await capture.call("ui_terrain_report_small")
 	tree.root.size = Vector2i(1440, 960)
@@ -226,6 +221,7 @@ static func _check_resource_and_filter(
 	check: Callable,
 	capture: Callable
 ) -> void:
+	(dashboard.get_node("%ActionSplit") as ActionDock).set_expanded(true)
 	game.state.resources[GameTypes.Stock.FOOD] = 100
 	game.state.resources[GameTypes.Stock.WATER] = 100
 	game.state.resources[GameTypes.Stock.POWER] = 10
@@ -240,14 +236,14 @@ static func _check_resource_and_filter(
 	check.call(
 		(
 			(dashboard.get_node("%Stock1") as Label).text
-			== "100(-%d)/70" % stats.upkeep[GameTypes.Stock.FOOD]
+			== "100(%+d)/70" % (stats.income[GameTypes.Stock.FOOD] - stats.upkeep[GameTypes.Stock.FOOD])
 		),
 		"Food shows gross daily consumption and its own storage capacity"
 	)
 	check.call(
 		(
 			(dashboard.get_node("%Stock2") as Label).text
-			== "100(-%d)/70" % stats.upkeep[GameTypes.Stock.WATER]
+			== "100(%+d)/70" % (stats.income[GameTypes.Stock.WATER] - stats.upkeep[GameTypes.Stock.WATER])
 		),
 		"Water uses the unified daily upkeep calculation"
 	)

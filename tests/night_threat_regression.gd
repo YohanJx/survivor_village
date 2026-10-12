@@ -154,7 +154,7 @@ static func _test_snapshot(check: Callable) -> void:
 		restored.restore(save) and restored.wave_count() == 11,
 		"Version 9 night retains its legacy wave on migration"
 	)
-	check.call(restored.snapshot().version == 10, "Legacy snapshot upgrades when saved")
+	check.call(restored.snapshot().version == VillageSaveData.CURRENT_VERSION, "Legacy snapshot upgrades when saved")
 
 
 static func _test_bosses(check: Callable) -> void:

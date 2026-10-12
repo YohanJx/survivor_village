@@ -10,20 +10,35 @@ const LINE_HEIGHT: float = 28.0
 
 var _uids: PackedInt32Array = []
 var _fade: Tween
+var _hovered: bool = false
 
 @onready var _names: RichTextLabel = %AcquiredNames
 @onready var _timer: Timer = $Timer
 
 
 func _ready() -> void:
+	set_process_input(false)
 	_names.meta_clicked.connect(_on_card_link_clicked)
 	(%DismissNotice as Button).pressed.connect(clear)
 	_timer.timeout.connect(_on_timeout)
-	mouse_entered.connect(_on_mouse_entered)
-	mouse_exited.connect(_on_mouse_exited)
+
+
+func _input(event: InputEvent) -> void:
+	if not event is InputEventMouse:
+		return
+	var inside: bool = get_global_rect().has_point((event as InputEventMouse).position)
+	if inside == _hovered:
+		return
+	_hovered = inside
+	if inside:
+		_on_mouse_entered()
+	else:
+		_on_mouse_exited()
 
 
 func clear() -> void:
+	set_process_input(false)
+	_hovered = false
 	_timer.stop()
 	if _fade != null:
 		_fade.kill()
@@ -55,6 +70,7 @@ func show_cards(state: VillageState, uids: PackedInt32Array) -> void:
 		_fade.kill()
 	modulate.a = 0.0
 	show()
+	set_process_input(true)
 	_fade = create_tween()
 	_fade.tween_property(self, "modulate:a", 1.0, 0.2)
 	_timer.start(DISPLAY_SECONDS)

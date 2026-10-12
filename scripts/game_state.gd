@@ -25,6 +25,8 @@ var actions_used: int = 0
 var actions_per_slot: int = 1
 var phase: GameTypes.Phase = GameTypes.Phase.DAY
 var resources: PackedInt32Array = []
+var last_card_result: String = ""
+
 var profession_counts: PackedInt32Array = []
 var population: int = 5:
 	set(value):
@@ -46,6 +48,12 @@ var history: Array[VillageLogEntry] = []
 var wall_damage: Dictionary[Vector2i, float] = {}
 var night_stats: VillageStats
 var last_report: BattleReport
+var day_start_resources: PackedInt32Array = []
+var day_start_population: int = 0
+var day_start_core: float = 0.0
+var day_start_explored: int = 0
+var last_day_report: DayReport
+var day_report_pending: bool = false
 var next_uid: int = 1
 var total_kills: int = 0
 var persistence_enabled: bool = true
@@ -85,6 +93,7 @@ func new_run(seed_value: int = 0, region: GameTypes.Region = GameTypes.Region.LE
 	slot = 0
 	actions_used = 0
 	actions_per_slot = catalog.library.workforce_rules.action_capacity(5)
+	last_card_result = ""
 	profession_counts = catalog.library.workforce_rules.initial_roster.duplicate()
 	phase = GameTypes.Phase.DAY
 	population = 5
@@ -103,11 +112,14 @@ func new_run(seed_value: int = 0, region: GameTypes.Region = GameTypes.Region.LE
 	wall_damage.clear()
 	night_stats = null
 	last_report = null
+	last_day_report = null
+	day_report_pending = false
 	next_uid = 1
 	total_kills = 0
 	SurvivalRules.grant_available(self)
 	PopulationRules.reconcile(self)
 	ProgressionEconomy.start_day(self)
+	_record_day_start()
 	_pending_card_uids.clear()
 	log_event(
 		(
@@ -181,10 +193,13 @@ func play_card(uid: int) -> bool:
 		return false
 	var card: CardDefinition = find_card(uid)
 	var previous_level: int = buildings[card.building.id] if card.building != null else -1
+	last_card_result = "%s已完成。%s" % [card.display_name, card.positive]
 	EffectResolver.apply(self, card, true)
 	var completed: bool = card.building == null or buildings[card.building.id] > previous_level
 	if completed and not progress.completed_cards.has(card.id):
 		progress.completed_cards.append(card.id)
+	if card.id == "survivors":
+		progress.last_recruited_day = day
 	log_event("%s · %s：%s；%s" % [SLOT_NAMES[slot], card.display_name, card.positive, card.negative])
 	if not card.reusable:
 		for i: int in hand.size():
@@ -283,6 +298,15 @@ func current_day_end_event() -> DailyEvent:
 	return catalog.library.progression_rules.day_end_event_for(day_end_event_id)
 
 
+## 仅结束报告展示；不推进日期或重复结算。
+func acknowledge_day_report() -> void:
+	if _publishing_changes or not day_report_pending:
+		return
+	day_report_pending = false
+	_publish_changes(false)
+	autosave()
+
+
 ## 仅在日终阶段处理一次；准入失败不扣费、不推进日期或发信号。
 ## 成功提交当前选项后展示下一事件，队列结束才推进黎明；发 changed/phase_changed 并自动保存。
 func choose_day_end_event(index: int) -> bool:
@@ -339,6 +363,8 @@ func advance_dawn() -> void:
 	phase = GameTypes.Phase.DAY if core_health > 0 else GameTypes.Phase.GAME_OVER
 	ProgressionEconomy.start_day(self)
 	SurvivalRules.grant_available(self)
+	_finish_day_report(day - 1)
+	_record_day_start()
 	log_event("第 %d 日清晨：结算生产与消耗，体力恢复。" % day)
 	log_event("今日天气：%s。%s" % [weather.display_name, weather.description])
 	_publish_changes(true)
@@ -413,6 +439,12 @@ func snapshot() -> VillageSaveData:
 	data.last_report = last_report.copy_snapshot() if last_report != null else null
 	data.next_uid = next_uid
 	data.total_kills = total_kills
+	data.day_start_resources = day_start_resources.duplicate()
+	data.day_start_population = day_start_population
+	data.day_start_core = day_start_core
+	data.day_start_explored = day_start_explored
+	data.last_day_report = last_day_report.copy_snapshot() if last_day_report != null else null
+	data.day_report_pending = day_report_pending
 	return data
 
 
@@ -494,6 +526,17 @@ func restore(data: VillageSaveData) -> bool:
 	last_report = data.last_report.copy_snapshot() if data.last_report != null else null
 	next_uid = data.next_uid
 	total_kills = data.total_kills
+	if data.version >= VillageSaveData.DAY_REPORT_VERSION:
+		day_start_resources = data.day_start_resources.duplicate()
+		day_start_population = data.day_start_population
+		day_start_core = data.day_start_core
+		day_start_explored = data.day_start_explored
+		last_day_report = data.last_day_report.copy_snapshot() if data.last_day_report != null else null
+		day_report_pending = data.day_report_pending
+	else:
+		# 旧档没有日初基线；首次恢复当日只统计恢复后的变化。
+		last_day_report = null
+		day_report_pending = false
 	# 旧版尚未选择的黎明事件按原计划继续；已选择的当天效果保持。
 	if progress.event_choice < 0:
 		progress.event_id = ""
@@ -515,7 +558,10 @@ func restore(data: VillageSaveData) -> bool:
 	if data.version < 7:
 		TerrainGrid.migrate_progress(progress, terrain_grid)
 		SurvivalRules.migrate_completions(self)
+	if data.version < VillageSaveData.DAY_REPORT_VERSION:
+		_record_day_start()
 	ProgressionEconomy.expand_snapshot(night_stats)
+	SurvivalRules.grant_available(self)
 	if data.version < VillageSaveData.DAY_END_VERSION and phase == GameTypes.Phase.DAY_END:
 		pending_day_end_events = DayEndEvents.queue_for_day(self)
 		_take_next_day_end_event()
@@ -651,6 +697,35 @@ func _settle_daily_supplies() -> void:
 	progress.hungry_days = progress.hungry_days + 1 if food_shortage else 0
 	progress.thirsty_days = progress.thirsty_days + 1 if water_shortage else 0
 	day_end_settled = true
+
+
+func _record_day_start() -> void:
+	day_start_resources = resources.duplicate()
+	day_start_population = population
+	day_start_core = core_health
+	day_start_explored = progress.explored_cells.size()
+
+
+func _finish_day_report(completed_day: int) -> void:
+	var report: DayReport = DayReport.new()
+	report.day = completed_day
+	report.resources_before = day_start_resources.duplicate()
+	report.resources_after = resources.duplicate()
+	report.population_before = day_start_population
+	report.population_after = population
+	report.core_before = day_start_core
+	report.core_after = core_health
+	report.explored_before = day_start_explored
+	report.explored_after = progress.explored_cells.size()
+	report.kills = last_report.kills if last_report != null else 0
+	for index: int in range(history.size() - 1, -1, -1):
+		var entry: VillageLogEntry = history[index]
+		if entry.day != completed_day:
+			continue
+		if entry.text.begins_with("日终事件：") or entry.text.begins_with("跳过日终事件："):
+			report.notes.append(entry.text)
+	last_day_report = report
+	day_report_pending = true
 
 
 func _settle_day_end(option: CardDefinition) -> void:
