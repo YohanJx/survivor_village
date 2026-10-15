@@ -4,6 +4,12 @@
 
 [resource]
 script = ExtResource("script")
-base_budget = 4
-exploration_weight = 10
-noise_weight = 12
+base_budget = 3
+exploration_weight = 8
+exploration_half = 16
+development_weight = 10
+development_half = 12
+noise_weight = 9
+noise_half = 32
+pollution_weight = 6
+boss_budget = 24

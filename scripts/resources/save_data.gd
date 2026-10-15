@@ -1,7 +1,10 @@
 class_name VillageSaveData
 extends Resource
 
-const CURRENT_VERSION: int = 11
+const CURRENT_VERSION: int = 13
+const SUSTAINABLE_VERSION: int = 13
+const PREVIOUS_BUILDING_COUNT: int = 16
+const WELL_SITE_VERSION: int = 12
 const DAY_REPORT_VERSION: int = 11
 const THREAT_VERSION: int = 10
 const EVENT_QUEUE_VERSION: int = 9

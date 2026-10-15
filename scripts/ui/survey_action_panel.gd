@@ -34,15 +34,23 @@ func close_panel() -> bool:
 
 func update_view(state: VillageState, uid: int) -> void:
 	var card: CardDefinition = state.find_card(uid)
-	if not SurvivalRules.is_survey(card) or state.phase != GameTypes.Phase.DAY:
+	if not SurvivalRules.is_map_survey(card) or state.phase != GameTypes.Phase.DAY:
 		hide()
 		return
 	_selected_uid = uid
+	var well_survey: bool = WellRules.is_survey(card)
+	($Content/Heading/Title as Label).text = (
+		"井位勘探 · 选择已探索草甸" if well_survey else "勘探 · 在地图选择目标"
+	)
+	_execute.text = "确认井位勘探" if well_survey else "确认勘探"
 	var error: String = state.can_play(uid)
 	_execute.disabled = not error.is_empty()
 	if not error.is_empty():
 		_hint.text = error
 	else:
-		var cell: Vector2i = TerrainGrid.position(state.progress.exploration_target)
+		var target: int = state.progress.well_target if well_survey else state.progress.exploration_target
+		var cell: Vector2i = TerrainGrid.position(target)
 		_hint.text = "目标 (%d, %d) · 离营地 %d 格" % [cell.x, cell.y, TerrainGrid.distance(cell)]
+	if well_survey and error.is_empty():
+		_hint.text += "\n尚未确认有水；此位置仅可打井一次。"
 	_costs.update_view(card, state)

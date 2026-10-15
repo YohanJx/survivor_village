@@ -43,7 +43,11 @@ static func derive(state: VillageState, stats: VillageStats) -> void:
 	)
 	stats.upkeep[GameTypes.Stock.MATERIALS] = 0
 	if state.progress.strategies[GameTypes.Strategy.CANAL] > 0:
-		stats.income[GameTypes.Stock.FOOD] = floori(stats.income[GameTypes.Stock.FOOD] * 1.25)
+		var farm_output: int = (
+			state.catalog.buildings[GameTypes.Building.FARM].production.food
+			* state.buildings[GameTypes.Building.FARM]
+		)
+		stats.income[GameTypes.Stock.FOOD] += floori(farm_output * 0.25)
 		stats.synergies.append("清理沟渠：今日农田产出 +25%，无需电力")
 	var fuel: int = state.buildings[GameTypes.Building.GENERATOR] * 2
 	if state.resources[GameTypes.Stock.FUEL] < fuel:

@@ -31,10 +31,16 @@ func _run() -> void:
 	_viewport.add_child(_game)
 	_dashboard = _game.get_node("Dashboard") as VillageDashboard
 	print("BACKGROUND UI: checking player feedback")
+	await SustainableUiRegression.run(self, _viewport, _game, _check, _capture)
+	await WellSiteUiRegression.run(self, _viewport, _game, _check, _capture)
 	await PlayerFeedbackUiRegression.run(self, _viewport, _game, _check)
 	print("BACKGROUND UI: checking HUD and card layouts")
 	_dashboard.overlay.show_inventory(GameTypes.Stock.WATER)
 	await _capture("player_full_inventory")
+	var inventory_scroll: ScrollContainer = _dashboard.overlay.get_node("%InventoryPanel/Scroll") as ScrollContainer
+	inventory_scroll.scroll_vertical = 180
+	await _capture("inventory_fixed_header_scrolled")
+	inventory_scroll.scroll_vertical = 0
 	_dashboard.overlay.close_modal()
 	_game.state.new_run(65012, GameTypes.Region.RURAL)
 	var focus_button: Button = _dashboard.get_node("%MapFocusButton") as Button

@@ -14,7 +14,7 @@ static func unlock_error(state: VillageState, card: CardDefinition, target_day: 
 	if state.progress.terrain_surveys == 0:
 		return "需要先勘探地形"
 	if card.id in ["well", "well_survey"] and state.buildings[GameTypes.Building.WELL] >= 1:
-		return "当前井位已建成水井，不能重复打井；失败后仍可继续勘探和重试"
+		return "已建成水井，不能继续勘探井位或重复打井"
 	if card.id == "survivors":
 		if state.progress.last_recruited_day == current_day:
 			return "今日已接纳幸存者，请明日再搜寻"
@@ -31,14 +31,26 @@ static func unlock_error(state: VillageState, card: CardDefinition, target_day: 
 	for requirement: BuildingRequirement in card.prerequisites:
 		if state.buildings[requirement.building.id] < requirement.level:
 			return "需要 %s Lv.%d" % [requirement.building.display_name, requirement.level]
+	if not card.any_prerequisites.is_empty():
+		var available: bool = false
+		var alternatives: PackedStringArray = []
+		for requirement: BuildingRequirement in card.any_prerequisites:
+			available = available or state.buildings[requirement.building.id] >= requirement.level
+			alternatives.append(requirement.building.display_name)
+		if not available:
+			return "需要其中一种设施：" + " / ".join(alternatives)
 	for effect: CardEffect in card.effects:
 		if effect.type in [CardEffect.Type.WELL_SURVEY, CardEffect.Type.DRILL]:
 			if not state.progress.well_tools:
 				return "需要先制作挖井工具"
-		if effect.type == CardEffect.Type.DRILL and state.progress.well_surveys == 0:
-			return "需要先勘探井位"
-		if effect.type == CardEffect.Type.DRILL and state.progress.well_drill_attempts >= state.progress.well_surveys:
-			return "每次井位勘探只能尝试打井一次，请重新勘探"
+		if effect.type == CardEffect.Type.WELL_SURVEY:
+			var survey_error: String = WellRules.availability_error(state)
+			if not survey_error.is_empty():
+				return survey_error
+		if effect.type == CardEffect.Type.DRILL:
+			var drill_error: String = WellRules.drill_error(state)
+			if not drill_error.is_empty():
+				return drill_error
 	return ""
 
 
@@ -59,10 +71,7 @@ static func grant_available(state: VillageState) -> void:
 
 
 static func well_chance(state: VillageState) -> float:
-	var map: MapDefinition = state.catalog.library.progression_rules.map_for(state.progress.region)
-	return clampf(
-		map.well_base_chance + map.well_survey_gain * state.progress.well_surveys, 0.0, 1.0
-	)
+	return WellRules.chance(state)
 
 
 static func commit(state: VillageState, effect: CardEffect, preview: bool = false) -> void:
@@ -83,23 +92,9 @@ static func commit(state: VillageState, effect: CardEffect, preview: bool = fals
 			state.progress.well_tools = true
 			state.log_event("挖井工具已备齐，可以开始勘探井位。")
 		CardEffect.Type.WELL_SURVEY:
-			state.progress.well_surveys = mini(999, state.progress.well_surveys + 1)
-			state.log_event(
-				(
-					"井位勘探 %d 次，打井成功率 %d%%。"
-					% [state.progress.well_surveys, roundi(well_chance(state) * 100)]
-				)
-			)
+			WellRules.survey(state)
 		CardEffect.Type.DRILL:
-			if not preview:
-				state.progress.well_drill_attempts += 1
-			if preview or state.rng.randf() < well_chance(state):
-				state.buildings[effect.building.id] += int(effect.amount)
-				state.last_card_result = "打井成功，已建立地下水源。"
-				state.log_event(state.last_card_result)
-			else:
-				state.last_card_result = "打井失败，材料与行动已消耗；请重新勘探井位后再试。"
-				state.log_event(state.last_card_result)
+			WellRules.drill(state, effect, preview)
 
 
 static func storage_capacity(state: VillageState, stock: GameTypes.Stock) -> int:
@@ -141,19 +136,16 @@ static func summary(state: VillageState) -> String:
 		if keyword.category == KeywordDefinition.Category.TERRAIN:
 			if not KeywordRules.requirement_error(state, keyword).is_empty():
 				return result
-	result += (
-		"\n挖井工具：%s · 井位勘探 %d 次 · 成功率 %d%%"
-		% [
-			"已备齐" if state.progress.well_tools else "未制作",
-			state.progress.well_surveys,
-			roundi(well_chance(state) * 100)
-		]
-	)
+	result += "\n" + WellRules.summary(state)
 	return result
 
 
 static func is_survey(card: CardDefinition) -> bool:
 	return card != null and card.effects.any(_is_terrain_survey)
+
+
+static func is_map_survey(card: CardDefinition) -> bool:
+	return is_survey(card) or WellRules.is_survey(card)
 
 
 static func exploration_summary(state: VillageState) -> String:

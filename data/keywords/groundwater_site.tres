@@ -6,6 +6,6 @@
 script = ExtResource("definition")
 id = "groundwater_site"
 title = "地下水候选地"
-description = "已探索的草甸可作为地下水候选地；营地不计入。这里尚未确认有水，需备齐工具并由工程师参与井位勘探后才能尝试打井。"
+description = "已探索的草甸可作为地下水候选地；营地不计入。这里尚未确认有水，需备齐工具并由工程师参与具体位置的井位勘探后才能打井一次；无水位置永久排除，须勘探另一个位置。"
 category = 1
 biome = 0

@@ -49,14 +49,14 @@ func _refresh_detail() -> void:
 		return
 	var card: CardDefinition = _state.find_card(_selected_uid)
 	_empty_hint.visible = card == null
-	visible = card != null and not SurvivalRules.is_survey(card)
+	visible = card != null and not SurvivalRules.is_map_survey(card)
 	_card_detail.visible = card != null
 	_positive.visible = card != null
 	(%CardHeader as Control).visible = card != null
 	_execute.visible = card != null
 	_cost.visible = false
 	(%SelectedCosts as Control).visible = card != null
-	_negative.visible = card != null and not SurvivalRules.is_survey(card)
+	_negative.visible = card != null and not SurvivalRules.is_map_survey(card)
 	_survey_report.visible = SurvivalRules.is_survey(card)
 	_reason.visible = false
 	if card == null:
@@ -95,7 +95,7 @@ func _refresh_card(card: CardDefinition) -> void:
 		func(effect: CardEffect) -> bool: return effect.type == CardEffect.Type.DRILL
 	):
 		_negative.text += (
-			"\n打井成功率 %d%%；失败仍扣费并消耗行动" % roundi(SurvivalRules.well_chance(_state) * 100)
+			"\n有水概率 %d%%；此井位仅可打井一次，无水须换位置" % roundi(SurvivalRules.well_chance(_state) * 100)
 		)
 	_cost.text = "行动消耗"
 	(%SelectedCosts as CardCostStrip).update_view(card, _state)

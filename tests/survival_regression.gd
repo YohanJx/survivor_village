@@ -175,9 +175,19 @@ static func _test_professions(check: Callable) -> void:
 
 static func _test_wells(check: Callable) -> void:
 	var state: VillageState = _fresh(GameTypes.Region.MOUNTAIN)
-	_explore(state)
-	state.begin_night()
-	_win(state)
+	SurvivalTestSetup.developed(state)
+	state.progress.well_tools = false
+	state.progress.well_sites.clear()
+	state.progress.well_surveys = 0
+	state.progress.well_drill_attempts = 0
+	state.progress.completed_cards.erase("well_tools")
+	state.progress.completed_cards.erase("well_survey")
+	state.progress.completed_cards.erase("well")
+	for index: int in range(state.hand.size() - 1, -1, -1):
+		if state.hand[index].definition.id in ["well", "well_survey"]:
+			state.hand.remove_at(index)
+	state.progress.granted_cards.erase("well")
+	state.progress.granted_cards.erase("well_survey")
 	state.resources[GameTypes.Stock.STAMINA] = 100
 	check.call(
 		state.play_card(_uid(state, "well_tools")), "Builder makes tools before surveying a well"
@@ -187,7 +197,8 @@ static func _test_wells(check: Callable) -> void:
 		"Tool completion opens well-site surveying"
 	)
 	check.call(_uid(state, "well") == -1, "Tools alone do not open drilling")
-	check.call(state.play_card(_uid(state, "well_survey")), "Gatherer surveys a prepared well site")
+	var first_cell: Vector2i = SurvivalTestSetup.select_well_candidate(state)
+	check.call(state.play_card(_uid(state, "well_survey")), "Gatherer surveys a specific prepared well site")
 	check.call(
 		state.progress.well_surveys == 1 and _uid(state, "well") > 0,
 		"One site survey opens drilling"
@@ -204,12 +215,7 @@ static func _test_wells(check: Callable) -> void:
 		),
 		"Drill preview consumes neither RNG nor real progress"
 	)
-	var generator: RandomNumberGenerator = RandomNumberGenerator.new()
-	for seed_value: int in range(1, 100):
-		generator.seed = seed_value
-		if generator.randf() >= chance:
-			state.rng.seed = seed_value
-			break
+	SurvivalTestSetup.force_drill_result(state, false)
 	before = state.snapshot()
 	var costs: PackedInt32Array = EffectResolver.cost_totals(card, state)
 	check.call(state.play_card(_uid(state, "well")), "Failed drilling is a committed paid attempt")
@@ -243,17 +249,16 @@ static func _test_wells(check: Callable) -> void:
 	_win(state)
 	state.resources[GameTypes.Stock.STAMINA] = 100
 	state.resources[GameTypes.Stock.STONE] = 100
-	state.progress.well_surveys = 5
-	check.call(
-		(
-			SurvivalRules.well_chance(state) > chance
-			and is_equal_approx(SurvivalRules.well_chance(state), 1.0)
-		),
-		"More surveying raises chance to a bounded guarantee"
-	)
+	check.call(not state.select_well_site(first_cell), "A dry position cannot be selected or surveyed again")
+	var second_cell: Vector2i = SurvivalTestSetup.select_well_candidate(state)
+	check.call(second_cell != first_cell and second_cell.x >= 0, "Failure requires a different real map position")
+	check.call(state.play_card(_uid(state, "well_survey")), "Another position can be surveyed after a dry attempt")
+	check.call(is_equal_approx(SurvivalRules.well_chance(state), chance) and chance < 1.0,
+		"Surveying different positions does not accumulate a guaranteed water result")
+	SurvivalTestSetup.force_drill_result(state, true)
 	check.call(
 		state.play_card(_uid(state, "well")) and state.buildings[GameTypes.Building.WELL] == 1,
-		"Fully surveyed site builds a well"
+		"A different surveyed position can yield water"
 	)
 	check.call(state.last_card_result.contains("打井成功"), "Successful drilling preserves the actual outcome for UI feedback")
 	check.call(
@@ -320,11 +325,11 @@ static func _test_save_validation(check: Callable) -> void:
 	check.call(restored.restore(snapshot), "Discovery and well progress roundtrip")
 	check.call(
 		(
-			restored.progress.well_surveys == 5
+			restored.progress.well_surveys == 1
 			and restored.progress.well_drill_attempts == state.progress.well_drill_attempts
 			and restored.progress.discoveries == state.progress.discoveries
 		),
-		"Saved discoveries and chance survive restore"
+		"Saved discoveries and specific well position survive restore"
 	)
 	snapshot.progress.discoveries.append(GameTypes.Discovery.RIVER)
 	var before: VillageSaveData = restored.snapshot()
@@ -347,6 +352,7 @@ static func _test_save_validation(check: Callable) -> void:
 	check.call(not restored.restore(snapshot), "Unknown unlock identifiers are rejected")
 	snapshot = state.snapshot()
 	snapshot.version = 5
+	snapshot.buildings.resize(13)
 	# 旧版新局必有黎明事件 ID，构造符合旧版本格式的迁移样本。
 	snapshot.progress.event_id = "settle"
 	snapshot.progress.event_choice = 1
@@ -503,19 +509,16 @@ static func _test_water_development(check: Callable) -> void:
 		while state.phase == GameTypes.Phase.DAY:
 			state.skip_slot()
 		_win(state)
+		state.weather = state.catalog.library.weather_rules.for_kind(WeatherDefinition.Kind.CLEAR)
 		check.call(
-			OpeningRules.next_step(state).contains("制作挖井工具"),
-			"Advice starts with tools after real candidate discovery"
+			OpeningRules.next_step(state).contains("集雨棚"),
+			"Advice offers a non-well water route after real terrain discovery"
 		)
-		for id: String in [
-			"well_tools",
-			"well_survey",
-			"well_survey",
-			"well_survey",
-			"well_survey",
-			"well_survey",
-			"well"
-		]:
+		for id: String in ["well_tools", "well_survey", "well"]:
+			if id == "well_survey":
+				SurvivalTestSetup.select_well_candidate(state)
+			if id == "well":
+				SurvivalTestSetup.force_drill_result(state, true)
 			check.call(
 				state.play_card(_uid(state, id)),
 				"Dry-map water route can be paid from opening supplies: " + id
@@ -524,7 +527,7 @@ static func _test_water_development(check: Callable) -> void:
 				_win(state)
 		check.call(
 			state.buildings[GameTypes.Building.WELL] == 1 and state.day <= 4,
-			"Guaranteed well can be completed by day four without injected supplies"
+			"A water-bearing position can supply a well by day four without injected supplies"
 		)
 		check.call(
 			state.progress.hungry_days == 0 and state.progress.thirsty_days == 0,

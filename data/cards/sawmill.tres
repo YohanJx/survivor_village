@@ -1,0 +1,67 @@
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="card"]
+
+[ext_resource type="Script" path="res://scripts/resources/card_effect.gd" id="effect"]
+
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="cost"]
+
+[ext_resource type="Resource" path="res://data/buildings/sawmill.tres" id="building"]
+
+[ext_resource type="Script" path="res://scripts/resources/keyword_definition.gd" id="keyword"]
+
+[ext_resource type="Resource" path="res://data/keywords/gatherer.tres" id="worker"]
+
+[ext_resource type="Resource" path="res://data/keywords/production.tres" id="topic"]
+
+[ext_resource type="Texture2D" path="res://assets/cards/individual/sawmill.png" id="illustration"]
+
+[ext_resource type="Resource" path="res://data/keywords/woodland.tres" id="terrain"]
+
+[sub_resource type="Resource" id="cost_0"]
+script = ExtResource("cost")
+key = 0
+amount = 10
+
+[sub_resource type="Resource" id="cost_7"]
+script = ExtResource("cost")
+key = 7
+amount = 8
+
+[sub_resource type="Resource" id="cost_8"]
+script = ExtResource("cost")
+key = 8
+amount = 2
+
+[sub_resource type="Resource" id="cost_9"]
+script = ExtResource("cost")
+key = 9
+amount = 2
+
+[sub_resource type="Resource" id="result"]
+script = ExtResource("effect")
+type = 1
+amount = 1.0
+building = ExtResource("building")
+
+[resource]
+script = ExtResource("card")
+id = "sawmill"
+display_name = "轮伐林场"
+profession = 1
+kind = 1
+icon = 13
+color = 2
+illustration = ExtResource("illustration")
+description = "每天木材 +4。建造消耗材料和一次行动；运转噪声 +2；缺少岗位或原料时整批停产。"
+positive = "每天木材 +4"
+negative = "建造消耗材料和一次行动；运转噪声 +2；缺少岗位或原料时整批停产"
+reusable = false
+guaranteed_unlock = true
+regions = PackedInt32Array(1, 2, 3)
+labor = 4
+costs = Array[ExtResource("cost")]([SubResource("cost_0"), SubResource("cost_7"), SubResource("cost_8"), SubResource("cost_9")])
+effects = Array[ExtResource("effect")]([SubResource("result")])
+building = ExtResource("building")
+keywords = Array[ExtResource("keyword")]([ExtResource("worker"), ExtResource("topic"), ExtResource("terrain")])
+required_cards = PackedStringArray("woodcut")

@@ -150,6 +150,7 @@ static func _test_snapshot(check: Callable) -> void:
 	)
 	save = state.snapshot()
 	save.version = 9
+	save.buildings.resize(VillageSaveData.PREVIOUS_BUILDING_COUNT)
 	check.call(
 		restored.restore(save) and restored.wave_count() == 11,
 		"Version 9 night retains its legacy wave on migration"

@@ -170,6 +170,10 @@ func can_play(uid: int) -> String:
 		var target_error: String = exploration_error()
 		if not target_error.is_empty():
 			return target_error
+	if WellRules.is_survey(card):
+		var well_error: String = WellRules.survey_error(self)
+		if not well_error.is_empty():
+			return well_error
 	var build_error: String = EffectResolver.construction_error(self, card)
 	if not build_error.is_empty():
 		return build_error
@@ -558,6 +562,8 @@ func restore(data: VillageSaveData) -> bool:
 	if data.version < 7:
 		TerrainGrid.migrate_progress(progress, terrain_grid)
 		SurvivalRules.migrate_completions(self)
+	if data.version < VillageSaveData.WELL_SITE_VERSION:
+		WellRules.migrate(self)
 	if data.version < VillageSaveData.DAY_REPORT_VERSION:
 		_record_day_start()
 	ProgressionEconomy.expand_snapshot(night_stats)
@@ -646,6 +652,17 @@ func select_exploration(cell: Vector2i) -> bool:
 	if not TerrainGrid.is_frontier(cell, progress.explored_cells):
 		return false
 	progress.exploration_target = TerrainGrid.index(cell)
+	_publish_changes(false)
+	return true
+
+
+## 白天选择已探索的未尝试井位；成功只更新选格并发 changed，失败无副作用。
+func select_well_site(cell: Vector2i) -> bool:
+	if _publishing_changes or phase != GameTypes.Phase.DAY or not progress.well_tools:
+		return false
+	if not WellRules.candidate_error(self, cell).is_empty():
+		return false
+	progress.well_target = TerrainGrid.index(cell)
 	_publish_changes(false)
 	return true
 

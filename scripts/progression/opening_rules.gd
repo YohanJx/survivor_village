@@ -35,24 +35,21 @@ static func has_opening_sources(grid: TerrainGrid) -> bool:
 static func next_step(state: VillageState) -> String:
 	if state.day == 1 or state.progress.terrain_surveys == 0:
 		return "目标：循线索寻找草甸与林地，先勘探营地周边"
-	var upkeep: PackedInt32Array = EffectResolver.daily_upkeep(state)
-	if state.resources[GameTypes.Stock.FOOD] < upkeep[GameTypes.Stock.FOOD]:
-		return _action_step(state, "forage", "先补足今日食物")
-	if state.buildings[GameTypes.Building.WELL] == 0:
+	var balances: Array[ResourceBalance] = EffectResolver.resource_balances(state)
+	if balances[GameTypes.Stock.FOOD].current + balances[GameTypes.Stock.FOOD].net < 0:
+		return _action_step(state, "forage", "先补足今日食物；采集营地、渔场与菜圃可持续供粮")
+	if balances[GameTypes.Stock.WATER].net < 0:
+		if state.buildings[GameTypes.Building.WELL] > 0:
+			return _action_step(state, "well_windpump", "井上风力提水，增加自动供水")
 		if state.progress.discoveries.has(GameTypes.Discovery.RIVER):
-			if state.resources[GameTypes.Stock.WATER] < upkeep[GameTypes.Stock.WATER]:
-				return _action_step(state, "water", "先补足今日饮水")
-		else:
-			if not state.progress.well_tools:
-				return _action_step(state, "well_tools", "建立水源：制作挖井工具")
-			if SurvivalRules.well_chance(state) < 1.0:
-				return _action_step(state, "well_survey", "建立水源：继续勘探井位，稳妥打井")
-			return _action_step(state, "well", "建立水源：井位已确认，可以打井")
-	if (
-		state.buildings[GameTypes.Building.WELL] > 0
-		and state.resources[GameTypes.Stock.WATER] < upkeep[GameTypes.Stock.WATER]
-	):
-		return _action_step(state, "well_water", "先补足今日饮水")
+			return _action_step(state, "river_windmill", "河岸风车引水；也可选择集雨或地下水路线")
+		if state.buildings[GameTypes.Building.RAIN_COLLECTOR] == 0:
+			return _action_step(state, "rain_collector", "先建集雨棚；也可选择河岸引水或勘探地下水")
+		if state.buildings[GameTypes.Building.SOLAR_STILL] == 0:
+			return _action_step(state, "solar_still", "集雨棚配集水器形成无井供水；也可寻找新水源")
+		if WellRules.pending_site(state.progress) != null:
+			return _action_step(state, "well", "当前井位可打井补足供水；无水需换位置")
+		return _action_step(state, "well_tools", "继续寻找河流或地下水，补足每日供水")
 	if state.buildings[GameTypes.Building.WATER_TANK] == 0:
 		return _action_step(state, "water_tank", "扩充储水，减少每日取水压力")
 	if state.buildings[GameTypes.Building.FOOD_STORE] == 0:

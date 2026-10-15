@@ -17,7 +17,7 @@ static func derive(state: VillageState) -> VillageStats:
 		for modifier: StatModifier in definition.modifiers:
 			_accumulate(stats, multipliers, modifier, level)
 		var flow: ProductionProfile = definition.production
-		if flow != null:
+		if flow != null and not definition.synergy is SustainableProductionSynergy:
 			stats.income[GameTypes.Stock.FOOD] += flow.food * level
 			stats.income[GameTypes.Stock.WATER] += flow.water * level
 			stats.income[GameTypes.Stock.POWER] += flow.power * level
@@ -42,6 +42,9 @@ static func derive(state: VillageState) -> VillageStats:
 	var power_budget: int = state.resources[GameTypes.Stock.POWER]
 	for definition: BuildingDefinition in synergy_definitions:
 		power_budget = definition.synergy.apply(state, stats, multipliers, power_budget)
+	# 生产原料先留给黎明结算，夜战维修/治疗只使用剩余耗材，避免双重消费。
+	for stock: int in range(GameTypes.Stock.WOOD, GameTypes.Stock.COUNT):
+		stats.supplies[stock] = maxi(0, state.resources[stock] - stats.upkeep[stock])
 	for key: int in GameTypes.Stat.COUNT:
 		stats.values[key] *= multipliers[key]
 	stats.values[GameTypes.Stat.ATTACK] = maxf(1.0, stats.attack)

@@ -6,6 +6,7 @@
 [sub_resource type="Resource" id="synergy"]
 script = ExtResource("s_synergies_irrigation_synergy")
 priority = 20
+water_sources = PackedInt32Array(5, 16, 18, 19)
 
 [resource]
 script = ExtResource("s_building_definition")

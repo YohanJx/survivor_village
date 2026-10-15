@@ -10,6 +10,8 @@ static func is_valid(data: VillageSaveData, catalog: CardCatalog, max_health: fl
 		data.version
 		not in [
 			VillageSaveData.CURRENT_VERSION,
+			12,
+			11,
 			10,
 			9,
 			8,
@@ -298,10 +300,10 @@ static func _valid_inventory(data: VillageSaveData, catalog: CardCatalog) -> boo
 		and (data.version >= 5 or data.resources.size() != 7)
 	):
 		return false
-	if (
-		data.buildings.size() != GameTypes.Building.COUNT
-		and (data.version >= 6 or data.buildings.size() != 13)
-	):
+	var building_count: int = GameTypes.Building.COUNT
+	if data.version < VillageSaveData.SUSTAINABLE_VERSION:
+		building_count = VillageSaveData.PREVIOUS_BUILDING_COUNT if data.version >= 6 else 13
+	if data.buildings.size() != building_count:
 		return false
 	for key: int in data.resources.size():
 		if data.resources[key] < 0 or data.resources[key] > GameTypes.STOCK_LIMITS[key]:

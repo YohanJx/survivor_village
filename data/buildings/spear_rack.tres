@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="BuildingDefinition" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/building_definition.gd" id="definition"]
+
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="modifier"]
+
+[ext_resource type="Texture2D" path="res://assets/map/facilities/spear_rack.png" id="map_art"]
+
+[sub_resource type="Resource" id="stat_0"]
+script = ExtResource("modifier")
+key = 0
+amount = 2.0
+
+[sub_resource type="Resource" id="stat_4"]
+script = ExtResource("modifier")
+key = 4
+amount = 12.0
+
+[resource]
+script = ExtResource("definition")
+id = 31
+display_name = "长矛架"
+max_level = 1
+footprint = Rect2i(22, 11, 1, 1)
+modifiers = Array[ExtResource("modifier")]([SubResource("stat_0"), SubResource("stat_4")])
+map_texture = ExtResource("map_art")
+map_label = "长矛架"

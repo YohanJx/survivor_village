@@ -105,10 +105,19 @@ func draw_structure(
 		and state.buildings[GameTypes.Building.GREENHOUSE] > 0
 	):
 		prop = Prop.GREENHOUSE
+	var texture: Texture2D = (
+		structure.definition.map_texture if structure.definition.map_texture != null else _props[prop]
+	)
 	var extent: Vector2 = Vector2(maxf(48, rect.size.x + 14), maxf(48, rect.size.y + 24))
+	var offset: Vector2 = Vector2(0, 8)
+	if structure.definition.map_texture != null:
+		var bounds: Vector2 = rect.size * Vector2(0.95, 1.5)
+		var source_size: Vector2 = texture.get_size()
+		extent = source_size * minf(bounds.x / source_size.x, bounds.y / source_size.y)
+		offset = Vector2(0, (extent.y - rect.size.y) * 0.5)
 	canvas.draw_texture_rect(
-		_props[prop],
-		Rect2(rect.get_center() - extent * 0.5 - Vector2(0, 8), extent),
+		texture,
+		Rect2(rect.get_center() - extent * 0.5 - offset, extent),
 		false,
 		_tint(night)
 	)

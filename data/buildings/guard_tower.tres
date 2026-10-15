@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="BuildingDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/building_definition.gd" id="definition"]
+
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="modifier"]
+
+[ext_resource type="Texture2D" path="res://assets/map/facilities/guard_tower.png" id="map_art"]
+
+[sub_resource type="Resource" id="stat_0"]
+script = ExtResource("modifier")
+key = 0
+amount = 1.0
+
+[sub_resource type="Resource" id="stat_1"]
+script = ExtResource("modifier")
+key = 1
+amount = 25.0
+
+[sub_resource type="Resource" id="stat_4"]
+script = ExtResource("modifier")
+key = 4
+amount = 10.0
+
+[resource]
+script = ExtResource("definition")
+id = 32
+display_name = "守望塔"
+max_level = 1
+footprint = Rect2i(24, 11, 1, 1)
+modifiers = Array[ExtResource("modifier")]([SubResource("stat_0"), SubResource("stat_1"), SubResource("stat_4")])
+map_texture = ExtResource("map_art")
+map_label = "守望塔"

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CardDefinition" load_steps=19 format=3]
+[gd_resource type="Resource" script_class="CardDefinition" load_steps=24 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
 [ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="s_resource_cost"]
@@ -11,6 +11,12 @@
 [ext_resource type="Resource" path="res://data/keywords/guard.tres" id="kw_guard"]
 
 [ext_resource type="Texture2D" path="res://assets/cards/individual/training.png" id="illustration"]
+
+[ext_resource type="Script" path="res://scripts/resources/building_requirement.gd" id="any_req"]
+
+[ext_resource type="Resource" path="res://data/buildings/bows.tres" id="source_bows"]
+
+[ext_resource type="Resource" path="res://data/buildings/spear_rack.tres" id="source_spear_rack"]
 
 [sub_resource type="Resource" id="cost_0"]
 script = ExtResource("s_resource_cost")
@@ -64,6 +70,16 @@ type = 0
 key = 5
 amount = 4.0
 
+[sub_resource type="Resource" id="source_bows"]
+script = ExtResource("any_req")
+building = ExtResource("source_bows")
+level = 1
+
+[sub_resource type="Resource" id="source_spear_rack"]
+script = ExtResource("any_req")
+building = ExtResource("source_spear_rack")
+level = 1
+
 [resource]
 script = ExtResource("s_card_definition")
 illustration = ExtResource("illustration")
@@ -83,4 +99,6 @@ labor = 6
 
 keywords = Array[ExtResource("keyword")]([ExtResource("kw_temporary"), ExtResource("kw_defense"), ExtResource("kw_guard")])
 
-required_cards = PackedStringArray("bows")
+
+
+any_prerequisites = Array[ExtResource("any_req")]([SubResource("source_bows"), SubResource("source_spear_rack")])

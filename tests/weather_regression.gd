@@ -33,7 +33,7 @@ static func _test_sequence(state: VillageState, check: Callable) -> void:
 
 static func _test_effects(state: VillageState, check: Callable) -> void:
 	var rules: WeatherRules = state.catalog.library.weather_rules
-	state.buildings[GameTypes.Building.WELL] = 1
+	SurvivalTestSetup.complete_well(state)
 	var base: VillageStats = EffectResolver.derive(state)
 	state.weather = rules.for_kind(WeatherDefinition.Kind.CLOUDY)
 	check.call(
@@ -110,6 +110,7 @@ static func _test_save_and_dawn(state: VillageState, check: Callable) -> void:
 		"Night restore preserves weather snapshot"
 	)
 	night_data.version = VillageSaveData.WORKFORCE_VERSION
+	night_data.buildings.resize(13)
 	check.call(
 		(
 			restored.restore(night_data)
@@ -140,6 +141,7 @@ static func _test_save_and_dawn(state: VillageState, check: Callable) -> void:
 	data.actions_per_slot = 2
 	data.actions_used = 1
 	data.version = VillageSaveData.WORKFORCE_VERSION
+	data.buildings.resize(13)
 	check.call(restored.restore(data), "Version 3 migrates successfully")
 	check.call(restored.weather.kind == WeatherDefinition.Kind.CLEAR, "Old day keeps clear weather")
 	check.call(

@@ -3,6 +3,7 @@ extends Control
 ## 固定 HUD 的展示与输入转发；状态与战斗由入口注入。
 
 signal exploration_requested(cell: Vector2i)
+signal well_site_requested(cell: Vector2i)
 
 signal card_selected(uid: int)
 signal execute_requested
@@ -89,6 +90,7 @@ func _ready() -> void:
 func bind(state: VillageState, battle: BattleSimulation) -> void:
 	_village_map.bind(state, battle)
 	_village_map.exploration_requested.connect(exploration_requested.emit)
+	_village_map.well_site_requested.connect(well_site_requested.emit)
 
 
 func update_view(state: VillageState, battle: BattleSimulation, selected_uid: int) -> void:
@@ -122,6 +124,9 @@ func update_view(state: VillageState, battle: BattleSimulation, selected_uid: in
 				)
 			)
 		)
+	_village_map.set_well_survey_mode(
+		state.phase == GameTypes.Phase.DAY and WellRules.is_survey(state.find_card(selected_uid))
+	)
 	var event: DailyEvent = LaborRules.event_for(state)
 	var event_name: String = (
 		event.display_name if event != null else (["自主行动", "营地驻守", "遭遇与结算", "本局结束"][state.phase])
@@ -166,7 +171,9 @@ func update_view(state: VillageState, battle: BattleSimulation, selected_uid: in
 	)
 	_day_label.tooltip_text = _phase_label.text
 	_map_title.text = (
-		"月下守望  /  自动防守"
+		"井位勘探 · 选择已探索的草甸"
+		if _village_map.well_survey_mode
+		else "月下守望  /  自动防守"
 		if state.phase == GameTypes.Phase.NIGHT
 		else (
 			"勘探地图"
@@ -203,6 +210,8 @@ func update_view(state: VillageState, battle: BattleSimulation, selected_uid: in
 		GameTypes.Phase.GAME_OVER:
 			_map_hint.text = "防线失守"
 	_save_button.disabled = state.phase == GameTypes.Phase.NIGHT
+	_pause_button.visible = state.phase == GameTypes.Phase.NIGHT
+	_speed_button.visible = state.phase == GameTypes.Phase.NIGHT
 	_pause_button.disabled = state.phase != GameTypes.Phase.NIGHT
 	_speed_button.disabled = state.phase != GameTypes.Phase.NIGHT
 	update_resources(state, battle)
@@ -221,11 +230,13 @@ func show_acquired_cards(state: VillageState, uids: PackedInt32Array) -> void:
 func update_resources(state: VillageState, battle: BattleSimulation) -> void:
 	for key: int in range(GameTypes.Stock.MATERIALS + 1):
 		_resource_labels[key].text = str(state.resources[key])
-	_material_caption.text = "材料" if state.progress.region == GameTypes.Region.LEGACY else "木材"
-	if state.progress.region != GameTypes.Region.LEGACY:
-		_resource_labels[GameTypes.Stock.MATERIALS].text = str(
-			state.resources[GameTypes.Stock.WOOD]
-		)
+	_material_caption.text = "材料与装备"
+	var materials: PackedStringArray = []
+	if state.progress.region == GameTypes.Region.LEGACY:
+		materials.append("材料 %d" % state.resources[GameTypes.Stock.MATERIALS])
+	for stock: int in range(GameTypes.Stock.WOOD, GameTypes.Stock.COUNT):
+		materials.append("%s %d" % [GameTypes.STOCK_NAMES[stock], state.resources[stock]])
+	_resource_labels[GameTypes.Stock.MATERIALS].text = "   ·   ".join(materials)
 	var balances: Array[ResourceBalance] = EffectResolver.resource_balances(state)
 	for stock: int in [GameTypes.Stock.FOOD, GameTypes.Stock.WATER, GameTypes.Stock.POWER]:
 		var label: Label = _resource_labels[stock]
@@ -331,7 +342,7 @@ func dismiss_top_layer() -> bool:
 
 ## 卡牌选择只改变展示。勘探使用地图角落的确认框，其他卡使用分类浮层。
 func prepare_card_selection(state: VillageState, uid: int) -> void:
-	if SurvivalRules.is_survey(state.find_card(uid)):
+	if SurvivalRules.is_map_survey(state.find_card(uid)):
 		_survey_action.open_selection(uid)
 		_action_dock.set_expanded(false)
 	else:

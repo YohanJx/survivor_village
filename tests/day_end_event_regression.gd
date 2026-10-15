@@ -226,6 +226,7 @@ static func _test_save_and_migration(check: Callable) -> void:
 	check.call(not restored.restore(data), "An already resolved event cannot be pending again")
 	data = state.snapshot()
 	data.version = 7
+	data.buildings.resize(VillageSaveData.PREVIOUS_BUILDING_COUNT)
 	data.day_end_event_id = ""
 	data.rewards = [state.catalog.get_card("forced_march")]
 	check.call(restored.restore(data), "Version seven reward save migrates to a closing event")
@@ -450,6 +451,7 @@ static func _test_queue_migrations(check: Callable) -> void:
 	_finish(state, "day_end_trader")
 	var old: VillageSaveData = state.snapshot()
 	old.version = 8
+	old.buildings.resize(VillageSaveData.PREVIOUS_BUILDING_COUNT)
 	var restored: VillageState = _fresh()
 	check.call(restored.restore(old), "Version eight single-event save migrates")
 	check.call(
@@ -462,6 +464,7 @@ static func _test_queue_migrations(check: Callable) -> void:
 	)
 	old = state.snapshot()
 	old.version = 7
+	old.buildings.resize(VillageSaveData.PREVIOUS_BUILDING_COUNT)
 	old.day = 30
 	old.core_health = 240.0
 	old.last_report.core_health = 240.0

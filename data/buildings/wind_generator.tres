@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="BuildingDefinition" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/building_definition.gd" id="definition"]
+
+[ext_resource type="Script" path="res://scripts/resources/production_profile.gd" id="production"]
+
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="flow"]
+
+[ext_resource type="Script" path="res://scripts/resources/synergies/sustainable_production_synergy.gd" id="synergy"]
+
+[ext_resource type="Texture2D" path="res://assets/map/facilities/wind_generator.png" id="map_art"]
+
+[sub_resource type="Resource" id="out_3"]
+script = ExtResource("flow")
+key = 3
+amount = 4
+
+[sub_resource type="Resource" id="production"]
+script = ExtResource("production")
+operator = 3
+noise = 1
+pollution = 0
+outputs = Array[ExtResource("flow")]([SubResource("out_3")])
+inputs = Array[ExtResource("flow")]([])
+
+[sub_resource type="Resource" id="synergy"]
+script = ExtResource("synergy")
+building = 30
+priority = 5
+
+[resource]
+script = ExtResource("definition")
+id = 30
+display_name = "风力发电机"
+max_level = 1
+footprint = Rect2i(15, 11, 1, 1)
+production = SubResource("production")
+synergy = SubResource("synergy")
+map_texture = ExtResource("map_art")
+map_label = "风力发电"

@@ -1,0 +1,138 @@
+{
+  "generator": "Built-in image_gen",
+  "date": "2026-10-15",
+  "assets": [
+    {
+      "id": "river_windmill",
+      "source": "/Users/lubenwei/.codex/generated_images/01a1303e-4d70-7901-90d0-8d609139c240/exec-78ec6c33-b66b-41f2-b546-498a22cb8e36.png",
+      "destination": "assets/cards/individual/river_windmill.png",
+      "prompt": "Use case: stylized-concept. Create ONE finished landscape 3:2 game card illustration, full bleed, no text or border. Subject: improvised riverbank wind-powered water pump in a modern post-apocalyptic survivor village, battered corrugated metal wind rotor clearly visible, rusty pump and wooden intake beside moving river, pipes carry clean water toward distant patched shelters. Match painterly realistic survival game art: charcoal, dusty brown, weathered olive, muted rust, overcast lighting, worn tactile wood and iron, restrained saturation, atmospheric rubble background. Strong central silhouette readable in small card crop, medium wide view, no fantasy, no blueprint, no diagrams, no logos, no lettering."
+    },
+    {
+      "id": "rain_collector",
+      "source": "/Users/lubenwei/.codex/generated_images/01a1303e-4d70-7901-90d0-8d609139c240/exec-d416d534-2ac1-416c-9f1e-2ce8f5c6889a.png",
+      "destination": "assets/cards/individual/rain_collector.png",
+      "prompt": "Use case: stylized-concept. ONE finished landscape 3:2 game card illustration, edge-to-edge, no lettering or border. Subject: An improvised rainwater and dew collection shelter, taut sloping patched canvas and corrugated sheet roof with visible gutters guiding rain into battered water drums; rain droplets, clear collected water, abandoned rural camp. Art direction: painterly realistic modern post-apocalyptic survival game, strong readable central subject, weathered tactile wood and rusty iron, charcoal and dusty brown, desaturated olive, restrained rust accents, soft overcast illumination, subdued atmosphere, detailed material painting matching existing wasteland workshop card art. Composed for small landscape card crop, no fantasy, no blueprint, no vector art, no logos, no UI."
+    },
+    {
+      "id": "well_windpump",
+      "source": "/Users/lubenwei/.codex/generated_images/01a1303e-4d70-7901-90d0-8d609139c240/exec-74da243c-dd5c-4a40-9e3e-56b0c64de9ef.png",
+      "destination": "assets/cards/individual/well_windpump.png",
+      "prompt": "Use case: stylized-concept. ONE finished landscape 3:2 game card illustration, edge-to-edge, no lettering or border. Subject: A small wind-driven lifting pump mounted above an already completed stone water well, battered metal vane and hand-built pipe filling a storage barrel, patched survivor shelters behind it. Art direction: painterly realistic modern post-apocalyptic survival game, strong readable central subject, weathered tactile wood and rusty iron, charcoal and dusty brown, desaturated olive, restrained rust accents, soft overcast illumination, subdued atmosphere, detailed material painting matching existing wasteland workshop card art. Composed for small landscape card crop, no fantasy, no blueprint, no vector art, no logos, no UI."
+    },
+    {
+      "id": "solar_still",
+      "source": "/Users/lubenwei/.codex/generated_images/01a1303e-4d70-7901-90d0-8d609139c240/exec-551267b1-a750-41fe-a4f3-67689c9ac33b.png",
+      "destination": "assets/cards/individual/solar_still.png",
+      "prompt": "Use case: stylized-concept. ONE finished landscape 3:2 game card illustration, edge-to-edge, no lettering or border. Subject: A handmade solar water still at a wasteland camp: broad tilted glass-covered wooden evaporation box, condensation droplets below glass, copper drain tube into a clean jar, cracked sunlit earth, weak overcast sunlight. Art direction: painterly realistic modern post-apocalyptic survival game, strong readable central subject, weathered tactile wood and rusty iron, charcoal and dusty brown, desaturated olive, restrained rust accents, soft overcast illumination, subdued atmosphere, detailed material painting matching existing wasteland workshop card art. Composed for small landscape card crop, no fantasy, no blueprint, no vector art, no logos, no UI."
+    },
+    {
+      "id": "foraging_camp",
+      "source": "/Users/lubenwei/.codex/generated_images/01a1303e-4d70-7901-90d0-8d609139c240/exec-4fb4edf6-a9e6-4d3f-9043-88391a0a7920.png",
+      "destination": "assets/cards/individual/foraging_camp.png",
+      "prompt": "Use case: stylized-concept. ONE finished landscape 3:2 game card illustration, edge-to-edge, no lettering or border. Subject: A sustainable forest foraging outpost: small patched canvas canopy among scrub trees, baskets of roots and edible berries, drying racks, worn gathering tools, one bundled survivor sorting food in the midground. Art direction: painterly realistic modern post-apocalyptic survival game, strong readable central subject, weathered tactile wood and rusty iron, charcoal and dusty brown, desaturated olive, restrained rust accents, soft overcast illumination, subdued atmosphere, detailed material painting matching existing wasteland workshop card art. Composed for small landscape card crop, no fantasy, no blueprint, no vector art, no logos, no UI."
+    },
+    {
+      "id": "fishery",
+      "source": "/Users/lubenwei/.codex/generated_images/01a1303e-4d70-7901-90d0-8d609139c240/exec-da84b641-b246-4fdd-8b12-28c9912a3e5a.png",
+      "destination": "assets/cards/individual/fishery.png",
+      "prompt": "Use case: stylized-concept. ONE finished landscape 3:2 game card illustration, edge-to-edge, no lettering or border. Subject: A survivor-built riverside fishery: rough wooden fishing platform and stakes, woven fish traps and hanging nets, modest fresh fish in a battered bucket, quiet grey river and damaged buildings in the distance. Art direction: painterly realistic modern post-apocalyptic survival game, strong readable central subject, weathered tactile wood and rusty iron, charcoal and dusty brown, desaturated olive, restrained rust accents, soft overcast illumination, subdued atmosphere, detailed material painting matching existing wasteland workshop card art. Composed for small landscape card crop, no fantasy, no blueprint, no vector art, no logos, no UI."
+    },
+    {
+      "id": "sawmill",
+      "source": "/Users/lubenwei/.codex/generated_images/01a1303e-4d70-7901-90d0-8d609139c240/exec-833ea3f5-4c1d-478a-a5aa-cacf33e84a84.png",
+      "destination": "assets/cards/individual/sawmill.png",
+      "prompt": "Use case: stylized-concept. ONE finished landscape 3:2 game card illustration, edge-to-edge, no lettering or border. Subject: A sustainable coppice logging camp: stacked freshly sawn timber and weathered hand saw in the foreground, rough logging workbench, cut trunks with healthy small regrowth protected by stakes, sparse wasteland woodland. Art direction: painterly realistic modern post-apocalyptic survival game, strong readable central subject, weathered tactile wood and rusty iron, charcoal and dusty brown, desaturated olive, restrained rust accents, soft overcast illumination, subdued atmosphere, detailed material painting matching existing wasteland workshop card art. Composed for small landscape card crop, no fantasy, no blueprint, no vector art, no logos, no UI."
+    },
+    {
+      "id": "quarry_camp",
+      "source": "/Users/lubenwei/.codex/generated_images/01a1303e-4d70-7901-90d0-8d609139c240/exec-21beec3e-0b4d-4e75-abd9-5aa01e19224c.png",
+      "destination": "assets/cards/individual/quarry_camp.png",
+      "prompt": "Use case: stylized-concept. ONE finished landscape 3:2 game card illustration, edge-to-edge, no lettering or border. Subject: A small survivor stone quarry, chipped stone blocks and a pickaxe in foreground, timber lifting frame with ropes over a shallow rocky excavation, rough worker shelter and desolate mountain background. Art direction: painterly realistic modern post-apocalyptic survival game, strong readable central subject, weathered tactile wood and rusty iron, charcoal and dusty brown, desaturated olive, restrained rust accents, soft overcast illumination, subdued atmosphere, detailed material painting matching existing wasteland workshop card art. Composed for small landscape card crop, no fantasy, no blueprint, no vector art, no logos, no UI."
+    },
+    {
+      "id": "salvage_yard",
+      "source": "/Users/lubenwei/.codex/generated_images/01a1303e-4d70-7901-90d0-8d609139c240/exec-6816f4d8-9427-4300-ad47-b0d01622c1e2.png",
+      "destination": "assets/cards/individual/salvage_yard.png",
+      "prompt": "Use case: stylized-concept. ONE finished landscape 3:2 game card illustration, edge-to-edge, no lettering or border. Subject: An organized wasteland recycling yard: disassembled rusted machinery with reusable gears, wood and metal separated in crates, battered worktable and scrap sorting bins, derelict factory ruins. Art direction: painterly realistic modern post-apocalyptic survival game, strong readable central subject, weathered tactile wood and rusty iron, charcoal and dusty brown, desaturated olive, restrained rust accents, soft overcast illumination, subdued atmosphere, detailed material painting matching existing wasteland workshop card art. Composed for small landscape card crop, no fantasy, no blueprint, no vector art, no logos, no UI."
+    },
+    {
+      "id": "biofuel_workshop",
+      "source": "/Users/lubenwei/.codex/generated_images/01a1303e-4d70-7901-90d0-8d609139c240/exec-682da185-28cc-45ed-9076-afe81313061d.png",
+      "destination": "assets/cards/individual/biofuel_workshop.png",
+      "prompt": "Use case: stylized-concept. ONE finished landscape 3:2 game card illustration, edge-to-edge, no lettering or border. Subject: A survivor biofuel workshop, improvised fermentation drums connected by copper tubing, organic food scraps and small sacks of plant matter, a modest bottle of amber fuel beside rusty equipment in a patched shed. Art direction: painterly realistic modern post-apocalyptic survival game, strong readable central subject, weathered tactile wood and rusty iron, charcoal and dusty brown, desaturated olive, restrained rust accents, soft overcast illumination, subdued atmosphere, detailed material painting matching existing wasteland workshop card art. Composed for small landscape card crop, no fantasy, no blueprint, no vector art, no logos, no UI."
+    },
+    {
+      "id": "fuel_refinery",
+      "source": "/Users/lubenwei/.codex/generated_images/01a1303e-4d70-7901-90d0-8d609139c240/exec-744dd205-b98d-4434-b698-f371492afae3.png",
+      "destination": "assets/cards/individual/fuel_refinery.png",
+      "prompt": "Use case: stylized-concept. ONE finished landscape 3:2 game card illustration, edge-to-edge, no lettering or border. Subject: A small improvised oil refinery assembled from rusty barrels and sealed metal tanks, copper pipe coils and valves, battered fuel cans, restrained fumes, abandoned industrial outskirts. Art direction: painterly realistic modern post-apocalyptic survival game, strong readable central subject, weathered tactile wood and rusty iron, charcoal and dusty brown, desaturated olive, restrained rust accents, soft overcast illumination, subdued atmosphere, detailed material painting matching existing wasteland workshop card art. Composed for small landscape card crop, no fantasy, no blueprint, no vector art, no logos, no UI."
+    },
+    {
+      "id": "fletcher",
+      "source": "/Users/lubenwei/.codex/generated_images/01a1303e-4d70-7901-90d0-8d609139c240/exec-974367d4-a7a6-4d9c-a7cf-b7c6b6de6e52.png",
+      "destination": "assets/cards/individual/fletcher.png",
+      "prompt": "Use case: stylized-concept. ONE finished landscape 3:2 game card illustration, edge-to-edge, no lettering or border. Subject: An arrow-making workbench under a patched canvas shelter, straight wooden shafts, scavenged metal arrowheads, feathers and a completed bundle of practical arrows, a knife and worn woodworking tools; no bow as main subject. Art direction: painterly realistic modern post-apocalyptic survival game, strong readable central subject, weathered tactile wood and rusty iron, charcoal and dusty brown, desaturated olive, restrained rust accents, soft overcast illumination, subdued atmosphere, detailed material painting matching existing wasteland workshop card art. Composed for small landscape card crop, no fantasy, no blueprint, no vector art, no logos, no UI."
+    },
+    {
+      "id": "herb_garden",
+      "source": "/Users/lubenwei/.codex/generated_images/01a1303e-4d70-7901-90d0-8d609139c240/exec-70da3336-177a-421c-816f-ed8779c7f1fd.png",
+      "destination": "assets/cards/individual/herb_garden.png",
+      "prompt": "Use case: stylized-concept. ONE finished landscape 3:2 game card illustration, edge-to-edge, no lettering or border. Subject: A sheltered medicinal herb garden at a survivor camp, small raised beds with modest hardy medicinal plants, cloth shade canopy, battered watering can and mortar with herbs, dry desolate surroundings. Art direction: painterly realistic modern post-apocalyptic survival game, strong readable central subject, weathered tactile wood and rusty iron, charcoal and dusty brown, desaturated olive, restrained rust accents, soft overcast illumination, subdued atmosphere, detailed material painting matching existing wasteland workshop card art. Composed for small landscape card crop, no fantasy, no blueprint, no vector art, no logos, no UI."
+    },
+    {
+      "id": "barter_post",
+      "source": "/Users/lubenwei/.codex/generated_images/01a1303e-4d70-7901-90d0-8d609139c240/exec-27ae77c8-1000-411a-ab26-dfdb64194287.png",
+      "destination": "assets/cards/individual/barter_post.png",
+      "prompt": "Use case: stylized-concept. ONE finished landscape 3:2 game card illustration, edge-to-edge, no lettering or border. Subject: A small survivor barter post, salvaged timber stall with practical supplies laid out in separate crates: spare gears, stone blocks, small fuel can; two bundled travelers exchanging goods, patched shelter and ruined road. Art direction: painterly realistic modern post-apocalyptic survival game, strong readable central subject, weathered tactile wood and rusty iron, charcoal and dusty brown, desaturated olive, restrained rust accents, soft overcast illumination, subdued atmosphere, detailed material painting matching existing wasteland workshop card art. Composed for small landscape card crop, no fantasy, no blueprint, no vector art, no logos, no UI."
+    },
+    {
+      "id": "wind_generator",
+      "source": "/Users/lubenwei/.codex/generated_images/01a1303e-4d70-7901-90d0-8d609139c240/exec-fc07807d-8db3-43c2-bb28-f1c5122fc3b1.png",
+      "destination": "assets/cards/individual/wind_generator.png",
+      "prompt": "Use case: stylized-concept. ONE finished landscape 3:2 game card illustration, edge-to-edge, no lettering or border. Subject: A compact homemade wind-powered electric generator on a braced timber tower, rusty salvaged sheet-metal blades, visible cables feeding a battered generator and battery near the base, desolate survivor camp, no river. Art direction: painterly realistic modern post-apocalyptic survival game, strong readable central subject, weathered tactile wood and rusty iron, charcoal and dusty brown, desaturated olive, restrained rust accents, soft overcast illumination, subdued atmosphere, detailed material painting matching existing wasteland workshop card art. Composed for small landscape card crop, no fantasy, no blueprint, no vector art, no logos, no UI."
+    },
+    {
+      "id": "spear_rack",
+      "source": "/Users/lubenwei/.codex/generated_images/01a1303e-4d70-7901-90d0-8d609139c240/exec-49b0c9a9-f804-41ab-861a-b50fd355ab0c.png",
+      "destination": "assets/cards/individual/spear_rack.png",
+      "prompt": "Use case: stylized-concept. ONE finished landscape 3:2 game card illustration, edge-to-edge, no lettering or border. Subject: A sturdy handmade rack of practical defensive spears, long wooden poles tipped with salvaged steel blades, worn shields and sharpening stone nearby, rough defensive camp wall, no medieval decoration. Art direction: painterly realistic modern post-apocalyptic survival game, strong readable central subject, weathered tactile wood and rusty iron, charcoal and dusty brown, desaturated olive, restrained rust accents, soft overcast illumination, subdued atmosphere, detailed material painting matching existing wasteland workshop card art. Composed for small landscape card crop, no fantasy, no blueprint, no vector art, no logos, no UI."
+    },
+    {
+      "id": "guard_tower",
+      "source": "/Users/lubenwei/.codex/generated_images/01a1303e-4d70-7901-90d0-8d609139c240/exec-4b104d43-096d-4ad1-9631-ed8e714d6afb.png",
+      "destination": "assets/cards/individual/guard_tower.png",
+      "prompt": "Use case: stylized-concept. ONE finished landscape 3:2 game card illustration, edge-to-edge, no lettering or border. Subject: A compact improvised survivor watchtower built of scavenged timber and corrugated metal, ladder and sheltered lookout platform with a vigilant survivor, reinforced fence and ruined landscape, practical modern survival construction. Art direction: painterly realistic modern post-apocalyptic survival game, strong readable central subject, weathered tactile wood and rusty iron, charcoal and dusty brown, desaturated olive, restrained rust accents, soft overcast illumination, subdued atmosphere, detailed material painting matching existing wasteland workshop card art. Composed for small landscape card crop, no fantasy, no blueprint, no vector art, no logos, no UI."
+    },
+    {
+      "id": "water_channel",
+      "source": "/Users/lubenwei/.codex/generated_images/01a1303e-4d70-7901-90d0-8d609139c240/exec-bf59705e-88af-4b2a-ab7d-cace6773cbe4.png",
+      "destination": "assets/cards/individual/water_channel.png",
+      "prompt": "Use case: stylized-concept. ONE finished landscape 3:2 game card illustration, edge-to-edge, no lettering or border. Subject: An upgraded water distribution channel from a riverbank wind pump: reinforced timber sluice, carefully fitted pipe joints, broad water trough leading toward survivor camp cisterns, wrench and valves visible, flowing water conveys improved intake. Art direction: painterly realistic modern post-apocalyptic survival game, strong readable central subject, weathered tactile wood and rusty iron, charcoal and dusty brown, desaturated olive, restrained rust accents, soft overcast illumination, subdued atmosphere, detailed material painting matching existing wasteland workshop card art. Composed for small landscape card crop, no fantasy, no blueprint, no vector art, no logos, no UI."
+    },
+    {
+      "id": "forest_rotation",
+      "source": "/Users/lubenwei/.codex/generated_images/01a1303e-4d70-7901-90d0-8d609139c240/exec-a936e021-436c-45da-ab39-77ae8c8a998d.png",
+      "destination": "assets/cards/individual/forest_rotation.png",
+      "prompt": "Use case: stylized-concept. ONE finished landscape 3:2 game card illustration, edge-to-edge, no lettering or border. Subject: Understory cultivation in a coppice forest: edible seedlings and berry shrubs protected beneath spaced trees, cut trunks with regrowth, woven baskets and a survivor planting between tree roots, sparse managed food plots. Art direction: painterly realistic modern post-apocalyptic survival game, strong readable central subject, weathered tactile wood and rusty iron, charcoal and dusty brown, desaturated olive, restrained rust accents, soft overcast illumination, subdued atmosphere, detailed material painting matching existing wasteland workshop card art. Composed for small landscape card crop, no fantasy, no blueprint, no vector art, no logos, no UI."
+    },
+    {
+      "id": "saw_upgrade",
+      "source": "/Users/lubenwei/.codex/generated_images/01a1303e-4d70-7901-90d0-8d609139c240/exec-ccd0fb99-793a-485f-b8fa-3ead1e9fd3f7.png",
+      "destination": "assets/cards/individual/saw_upgrade.png",
+      "prompt": "Use case: stylized-concept. ONE finished landscape 3:2 game card illustration, edge-to-edge, no lettering or border. Subject: A newly improved saw rig on a worn logging workbench: well-braced metal saw guide, large practical saw blade, straight-cut planks neatly stacked, salvaged bolts and old hand tools, small logging camp in background. Art direction: painterly realistic modern post-apocalyptic survival game, strong readable central subject, weathered tactile wood and rusty iron, charcoal and dusty brown, desaturated olive, restrained rust accents, soft overcast illumination, subdued atmosphere, detailed material painting matching existing wasteland workshop card art. Composed for small landscape card crop, no fantasy, no blueprint, no vector art, no logos, no UI."
+    },
+    {
+      "id": "quarry_upgrade",
+      "source": "/Users/lubenwei/.codex/generated_images/01a1303e-4d70-7901-90d0-8d609139c240/exec-c82deb44-2dba-40f0-9a76-47a23de0c792.png",
+      "destination": "assets/cards/individual/quarry_upgrade.png",
+      "prompt": "Use case: stylized-concept. ONE finished landscape 3:2 game card illustration, edge-to-edge, no lettering or border. Subject: An improved rope-and-pulley stone lifting rig in a survivor quarry: large wooden A-frame with stacked pulley blocks and taut ropes safely lifting a stone block, pickaxes and sorted cut stones in foreground. Art direction: painterly realistic modern post-apocalyptic survival game, strong readable central subject, weathered tactile wood and rusty iron, charcoal and dusty brown, desaturated olive, restrained rust accents, soft overcast illumination, subdued atmosphere, detailed material painting matching existing wasteland workshop card art. Composed for small landscape card crop, no fantasy, no blueprint, no vector art, no logos, no UI."
+    },
+    {
+      "id": "sorting_upgrade",
+      "source": "/Users/lubenwei/.codex/generated_images/01a1303e-4d70-7901-90d0-8d609139c240/exec-0785afcb-2644-4577-9471-2709e05d61fd.png",
+      "destination": "assets/cards/individual/sorting_upgrade.png",
+      "prompt": "Use case: stylized-concept. ONE finished landscape 3:2 game card illustration, edge-to-edge, no lettering or border. Subject: A precision sorting workbench in a recycling shed: organized trays of reusable gears, bolts, circuitry and cleaned mechanical parts, a salvaged magnifying lens and hand sorting tools, scrap machine casings in background. Art direction: painterly realistic modern post-apocalyptic survival game, strong readable central subject, weathered tactile wood and rusty iron, charcoal and dusty brown, desaturated olive, restrained rust accents, soft overcast illumination, subdued atmosphere, detailed material painting matching existing wasteland workshop card art. Composed for small landscape card crop, no fantasy, no blueprint, no vector art, no logos, no UI."
+    }
+  ]
+}

@@ -36,6 +36,8 @@ const KIND_NAMES: PackedStringArray = ["行动", "建造", "科技", "事件"]
 @export var guaranteed_unlock: bool = false
 @export var costs: Array[ResourceCost] = []
 @export var prerequisites: Array[BuildingRequirement] = []
+## 与共同前置同时满足；此集合中的任一设施达标即可。
+@export var any_prerequisites: Array[BuildingRequirement] = []
 @export var effects: Array[CardEffect] = []
 @export var building: BuildingDefinition
 

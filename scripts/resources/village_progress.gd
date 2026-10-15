@@ -10,6 +10,9 @@ extends Resource
 @export_storage var well_tools: bool = false
 @export_storage var well_surveys: int = 0
 @export_storage var well_drill_attempts: int = 0
+@export_storage var well_target: int = -1
+@export_storage var well_sites: Array[WellSiteRecord] = []
+@export_storage var legacy_well: bool = false
 @export_storage var last_recruited_day: int = 0
 @export_storage var granted_cards: PackedStringArray = []
 @export_storage var region: GameTypes.Region = GameTypes.Region.LEGACY
@@ -44,6 +47,9 @@ func copy_progress() -> VillageProgress:
 	result.deposits = deposits.duplicate()
 	result.recent_events = recent_events.duplicate()
 	result.recent_day_end_events = recent_day_end_events.duplicate()
+	result.well_sites = []
+	for site: WellSiteRecord in well_sites:
+		result.well_sites.append(site.copy_record())
 	result.survivors = []
 	for person: SurvivorRecord in survivors:
 		result.survivors.append(person.copy_record())

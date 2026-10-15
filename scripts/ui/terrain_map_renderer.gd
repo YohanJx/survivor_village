@@ -73,7 +73,12 @@ static func _draw_survey_cell(
 	var value: int = TerrainGrid.index(cell)
 	var area: Rect2 = Rect2(Vector2(cell) * TerrainGrid.CELL, Vector2.ONE * TerrainGrid.CELL)
 	var explored: bool = state.progress.explored_cells.has(value)
-	var frontier: bool = TerrainGrid.is_frontier(cell, state.progress.explored_cells)
+	var map: VillageMap = canvas as VillageMap
+	var well_mode: bool = map != null and map.well_survey_mode
+	var frontier: bool = (
+		WellRules.candidate_error(state, cell).is_empty() if well_mode
+		else TerrainGrid.is_frontier(cell, state.progress.explored_cells)
+	)
 	var kind: TerrainGrid.Biome = (
 		state.terrain_grid.biome(cell) if explored else TerrainGrid.Biome.PLAIN
 	)
@@ -81,10 +86,11 @@ static func _draw_survey_cell(
 	if not explored:
 		canvas.draw_rect(area, Color(0.075, 0.07, 0.06, 0.92))
 	canvas.draw_rect(area.grow(-1), Color(0.63, 0.57, 0.44, 0.22), false, 1)
-	if frontier or value == state.progress.exploration_target:
+	var target: int = state.progress.well_target if well_mode else state.progress.exploration_target
+	if frontier or value == target:
 		canvas.draw_rect(
 			area.grow(-3),
-			UiElements.EMPHASIS if value == state.progress.exploration_target else Color("918a75"),
+			UiElements.EMPHASIS if value == target else Color("918a75"),
 			false,
 			3
 		)
@@ -94,7 +100,12 @@ static func _draw_survey_label(
 	canvas: Control, state: VillageState, cell: Vector2i, transform: Transform2D
 ) -> void:
 	var explored: bool = state.progress.explored_cells.has(TerrainGrid.index(cell))
-	var frontier: bool = TerrainGrid.is_frontier(cell, state.progress.explored_cells)
+	var map: VillageMap = canvas as VillageMap
+	var well_mode: bool = map != null and map.well_survey_mode
+	var frontier: bool = (
+		WellRules.candidate_error(state, cell).is_empty() if well_mode
+		else TerrainGrid.is_frontier(cell, state.progress.explored_cells)
+	)
 	var center: Vector2 = Vector2(cell) * TerrainGrid.CELL + Vector2(48, 43)
 	var cell_width: float = transform.get_scale().x * TerrainGrid.CELL
 	if cell_width < 60 and not explored and not frontier:
@@ -105,9 +116,18 @@ static func _draw_survey_label(
 		else (
 			TerrainGrid.NAMES[state.terrain_grid.biome(cell)]
 			if explored
-			else "?" if frontier else "未知"
+			else "?" if frontier and not well_mode else "未知"
 		)
 	)
+	var site: WellSiteRecord = WellRules.site_at(state.progress, TerrainGrid.index(cell))
+	if site != null:
+		match site.outcome:
+			WellSiteRecord.Outcome.DRY:
+				title = "无水 · 已排除"
+			WellSiteRecord.Outcome.WATER:
+				title = "水井 · 有水"
+			WellSiteRecord.Outcome.UNTESTED:
+				title = "井位 · 待打井"
 	draw_label(
 		canvas, transform, center, title, 13 if cell_width < 60 else 16, UiElements.TEXT_PRIMARY
 	)
@@ -116,7 +136,7 @@ static func _draw_survey_label(
 			canvas,
 			transform,
 			center + Vector2(0, 22),
-			"距离 %d 格" % TerrainGrid.distance(cell),
+			"可勘探井位" if well_mode else "距离 %d 格" % TerrainGrid.distance(cell),
 			13,
 			UiElements.TEXT_SECONDARY
 		)

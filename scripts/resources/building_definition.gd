@@ -6,6 +6,8 @@ extends Resource
 @export_range(1, 10) var max_level: int = 1
 @export var footprint: Rect2i = Rect2i()
 @export var visible_on_map: bool = true
+@export var map_texture: Texture2D
+@export var map_label: String = ""
 @export var modifiers: Array[StatModifier] = []
 @export var storage: PackedInt32Array = [0, 0, 0]
 @export var production: ProductionProfile

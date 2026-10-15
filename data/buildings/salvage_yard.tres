@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="BuildingDefinition" load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/building_definition.gd" id="definition"]
+
+[ext_resource type="Script" path="res://scripts/resources/production_profile.gd" id="production"]
+
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="flow"]
+
+[ext_resource type="Script" path="res://scripts/resources/synergies/sustainable_production_synergy.gd" id="synergy"]
+
+[ext_resource type="Texture2D" path="res://assets/map/facilities/salvage_yard.png" id="map_art"]
+
+[sub_resource type="Resource" id="out_7"]
+script = ExtResource("flow")
+key = 7
+amount = 2
+
+[sub_resource type="Resource" id="out_8"]
+script = ExtResource("flow")
+key = 8
+amount = 1
+
+[sub_resource type="Resource" id="out_9"]
+script = ExtResource("flow")
+key = 9
+amount = 2
+
+[sub_resource type="Resource" id="production"]
+script = ExtResource("production")
+operator = 1
+noise = 3
+pollution = 0
+outputs = Array[ExtResource("flow")]([SubResource("out_7"), SubResource("out_8"), SubResource("out_9")])
+inputs = Array[ExtResource("flow")]([])
+
+[sub_resource type="Resource" id="synergy"]
+script = ExtResource("synergy")
+building = 24
+priority = 15
+
+[resource]
+script = ExtResource("definition")
+id = 24
+display_name = "废料回收站"
+max_level = 2
+footprint = Rect2i(21, 9, 1, 1)
+production = SubResource("production")
+synergy = SubResource("synergy")
+map_texture = ExtResource("map_art")
+map_label = "回收站"

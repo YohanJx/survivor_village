@@ -10,6 +10,8 @@ static func rules_error(
 		return "发展规则缺失或费用非法"
 	if rules.max_frustration != 5 or rules.max_crew != 4:
 		return "发展上限与规则不一致"
+	if rules.combat_balance == null or not rules.combat_balance.validation_error().is_empty():
+		return "战斗平衡配置非法"
 	if not NightThreat.valid_rules(rules.night_threat):
 		return "夜间威胁配置非法"
 	if rules.portable_storage.size() != 3:
@@ -131,8 +133,23 @@ static func valid_progress(data: VillageSaveData, catalog: CardCatalog) -> bool:
 			data.buildings.size() > GameTypes.Building.WELL
 			and data.buildings[GameTypes.Building.WELL] > 0
 		):
-			if not progress.well_tools or progress.well_surveys == 0:
+			if (
+				not progress.well_tools
+				or (
+					data.version < VillageSaveData.WELL_SITE_VERSION
+					and progress.well_surveys == 0
+				)
+			):
 				return false
+	# 旧版会忽略新增井位字段，但复制嵌套资源前也拒绝空对象。
+	for site: WellSiteRecord in progress.well_sites:
+		if site == null:
+			return false
+	if data.version >= VillageSaveData.WELL_SITE_VERSION:
+		var grid: TerrainGrid = TerrainGrid.new()
+		grid.generate(data.run_seed, catalog.library.progression_rules.map_for(progress.region))
+		if not WellRules.valid_progress(data, grid):
+			return false
 	if (
 		progress.frustration < 0
 		or progress.frustration > 5

@@ -23,6 +23,7 @@ func _ready() -> void:
 		return
 	_dashboard.bind(state, battle)
 	_dashboard.exploration_requested.connect(_on_exploration_requested)
+	_dashboard.well_site_requested.connect(_on_well_site_requested)
 	_dashboard.card_selected.connect(_on_card_selected)
 	_dashboard.execute_requested.connect(_on_execute_pressed)
 	_dashboard.skip_requested.connect(_on_skip_pressed)
@@ -230,6 +231,12 @@ func _on_exploration_requested(cell: Vector2i) -> void:
 			_selected_uid = entry.uid
 			_on_state_changed()
 			break
+
+
+func _on_well_site_requested(cell: Vector2i) -> void:
+	if _dashboard.overlay.visible:
+		return
+	state.select_well_site(cell)
 
 
 func _on_cards_acquired(uids: PackedInt32Array) -> void:

@@ -194,6 +194,7 @@ static func _test_restore(check: Callable) -> void:
 	check.call(not copy.restore(data), "Save cannot target an already explored cell")
 	data = state.snapshot()
 	data.version = 6
+	data.buildings.resize(VillageSaveData.PREVIOUS_BUILDING_COUNT)
 	# 旧版新局必有黎明事件 ID，构造符合旧版本格式的迁移样本。
 	data.progress.event_id = "settle"
 	data.progress.event_choice = 1

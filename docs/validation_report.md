@@ -1,5 +1,96 @@
 # D01–D07 整改验收记录
 
+## 2026-10-15 新设施地图建筑图补齐
+
+原因：前一轮只替换新卡的插画，地图上的引水风车、渔场、轮伐林场等 17 种设施仍是线框 SVG，和旧建筑不一致。本轮使用内置 image_gen 为全部 17 种新增设施分别制作透明 RGBA 建筑图，保存至 assets/map/facilities/<id>.png 并更新原生 BuildingDefinition.map_texture 引用。提示词、生成路径与项目路径见 [清单](map_facility_art_manifest.json)。卡牌插画和旧地图图集保持。
+
+绘制改为保持原图比例，限制独立贴图宽度不超过占地 0.95 倍、高度不超过 1.5 倍，底部对齐占地底边；消除原先方形拉伸。纹理由定义持有，绘制中只读取尺寸，不加载资源或读取像素；未改变玩法占地、碰撞、寻路、资源、费用或存档。
+
+- 基础规范 131 脚本、0 项问题；git diff --check 通过。
+- 17 张原图均为 RGBA，具有 alpha=0 的透明区域及 alpha≥240 的建筑主体；原图完整复制，未抠色或添加不透明底板。项目中各图绑定独立 PNG，导入长边限制 512。
+- [项目导入](../test-results/map_facility_art_import.log) 与 [隐藏副本导入](../test-results/survival_capture_import.log) 无资源/脚本错误或警告。
+- 最终隐藏实际渲染 1074 checks、0 failures，覆盖原有交互、全卡画廊及新增设施近景/日景/夜景。见 [启动结果](../test-results/map_facility_art_capture_launcher.log)、[运行日志](../test-results/survival_capture.log)、[焦点记录](../test-results/survival_capture_focus.log)；捕获进程从未进入前台。
+- 已逐张查看 [设施预览一](../test-results/map_facility_art_review_1.png)、[设施预览二](../test-results/map_facility_art_review_2.png)，并检查 [地图近景](../test-results/map_facilities_close.png)、[昼间全设施](../test-results/map_facilities_day.png)、[夜间全设施](../test-results/map_facilities_night.png)。
+
+职责审查：仅原有 ApocalypseMapArt 更新独立贴图的尺寸计算，专项 UI 场景复用原有测试入口补充地图镜头与截图，不创建新运行时模型。已有大型地图脚本未扩展新业务逻辑。本轮无规则变化，未重复运行战斗平衡样本；D11 原生前台范围仍保留，玩家存档未用于测试。
+
+
+## 2026-10-15 新卡正式插画补齐
+
+用户指出新增卡没有对应图片；检查确认 22 张新卡只绑定简易 SVG 蓝图占位稿，不能算正式插画完成。本轮使用内置 image_gen 为 22 张卡分别生成独立的 3:2 现代废土插画，文件存入 assets/cards/individual/<card_id>.png 并更新各自原生 illustration 引用。五张升级卡也各有独立主体；原有 47 张插画及地图设施图标不变，不改玩法与存档。完整提示词和原始生成来源见 [清单](new_card_art_manifest.json)。
+
+- 基础规范：131 脚本，0 项问题；git diff --check 通过。
+- 资源核对：69 张卡均绑定存在且路径互不重复的 PNG，22 张新图导入长边限制 512；源图保留原分辨率。
+- 项目和隐藏临时副本导入均无资源/脚本错误或警告，见 [项目导入](../test-results/card_art_import.log)、[隐藏导入](../test-results/survival_capture_import.log)。
+- 最终隐藏实际渲染 1068 checks、0 failures，见 [启动结果](../test-results/card_art_capture_launcher.log)、[交互与画廊](../test-results/survival_capture.log)。[焦点记录](../test-results/survival_capture_focus.log) 确认捕获进程从未进入前台。
+- 已逐张查看两页原图缩略总览，并查看游戏内第三、四页卡牌画廊、集雨棚/太阳能详情截图；验证手牌、详情、右键放大与原生插画引用继续共用。预览为 [新图第一页](../test-results/new_card_art_review_1.png)、[第二页](../test-results/new_card_art_review_2.png)、[游戏画廊](../test-results/individual_cards_gallery_4.png)。
+
+本轮仅修改美术资源、引用、导入设置和文档，复用既有完整隐藏交互与全卡画廊验收，不重跑无关战斗平衡样本。没有打开前台游戏或操作玩家存档；D11 原生前台范围保留。
+
+
+## 2026-10-15 多条生存路线、持续生产与夜战减压
+
+新增 22 张发展卡，现共 69 张；新增 17 种设施与科技建筑，原建筑索引保持，建筑数组追加至 33。供水可选河岸风车、真实水井加风力提水或集雨配太阳能；材料、燃料、箭矢与药品支持持续生产。原生设施 OR 前置用于净水、灌溉、训练与生物燃料，不把打井或柴油机设为所有路线的唯一入口。完整收支和实现边界见 [持续发展路线](sustainable_development.md)。
+
+ProductionProfile 保存类型化收支、操作职业和雨天条件，SustainableProductionSynergy 查询批次准入；缺人或缺任一原料整批停产，停止批次不收费、不排放。EffectResolver 统一分配原料预算，禁止提前花同夜产物，先预留给生产再提供夜战耗材，冻结至单次黎明。灌溉要求水源实际运行，沟渠与灌溉只增益农田。库存状态随数据行滚动，标题、列标题、说明与关闭按钮固定；夜间显示冻结生产状态。
+
+敌人基础与压力参数移入 CombatBalanceRules，降低早期伤害、血量、拆墙与入场密度，提高职业生命倍率。三地图共 24 固定种子的经济配置对比：无围栏从 83/120 人、2 局失败改善为 120/120 人、0 失败；有围栏从 119/120 人改善为 120/120 人。控制样本直接准备设施，不能替代完整发展验证，亦不证明所有配置无损。另有九局不注入库存、设施或人口的实际八日路线，三张地图各三组种子，均完成集雨、太阳能、采集、轮伐及升级，八夜后各五人且没有饥渴累积。
+
+存档升为 13，按历史版本实际建筑数组长度先校验后补零；不赠送设施/原料、不改写输入存档，具体井位迁移仍有效。新增 SVG 卡牌蓝图与独立设施地图图形及短标签由 Resource 绑定，小型设施按自身占地绘制避免挤占相邻格，绘制不加载资源，旧设施保留原有图集。
+
+| 门禁 | 本轮实际结果 | 证据 |
+| --- | --- | --- |
+| G1 基础规范 | 131 脚本，0 项问题；diff 无空白问题 | tools/check_conventions.py、git diff --check |
+| G2 导入 | 项目及隐藏临时副本导入无脚本/资源错误或警告 | [导入日志](../test-results/sustainable_import.log)、[隐藏导入](../test-results/survival_capture_import.log) |
+| G3 规则 | 3434 checks，0 failures；仅预期临时存档写入失败日志 | [规则日志](../test-results/sustainable_rules.log) |
+| G4 后台交互 | 1073 checks，0 failures | [交互日志](../test-results/sustainable_ui.log) |
+| G4 隐藏实际渲染 | 1068 checks，0 failures，捕获进程从未进入前台 | [渲染日志](../test-results/survival_capture.log)、[焦点记录](../test-results/survival_capture_focus.log) |
+
+新增回归覆盖河流实际建造/升级、未知河流准入、无井晴日供水、雨水与污染、停产水源不能灌溉、沟渠不增益捕鱼采集、原料竞争、停产不收费、库顺序无关、夜战原料预留、冻结快照与单次黎明、非法 Resource 和旧存档数组。实际视口点击建成集雨棚与太阳能集水器，确认库存水 +7 / 饮水 −5 / 净变化 +2；多设施状态可滚动，表头保持，关闭可达。测试曾发现新场景布局尚未稳定便点击的测试时序问题，增加等待布局帧后仍使用真实输入；河岸升级测试按真实地区木材费用补采集及过夜，不更改费用规则。
+
+已查看 [供水库存](../test-results/sustainable_water_inventory.png)、[生产与停产状态](../test-results/sustainable_production_status.png)、[集雨棚选择](../test-results/sustainable_rain_collector.png)；多尺寸回归沿用 1024×768 至 1920×820 的实际隐藏视口验证。对比数据见 [调整前](../test-results/development_balance_before.log) 与 [调整后](../test-results/development_balance_after.log)。
+
+职责审查：持续生产和战斗参数各归独立原生 Resource/联动；VillageState 仅扩展版本与数组迁移，UI 不计算产出或费用，无新 Autoload。既有大型 EffectResolver/ResourceValidation/地图脚本只接入各自职责，ProductionProfile 独立校验自身字段；专项测试按水源、材料、预算、恢复、校验与实际路线拆分。未为行数迁移无关模块。
+
+限制：河岸引水目前用真实河流发现门槛与固定设施产水抽象实现，未实现沿河任意选址、逐格管线或水流模拟；操作职业按人数存在性检查，未独立分配逐设施工人。新蓝图与原插画风格尚未完全统一。未穷举全种子、任意出牌和无限期经济；D11 原生前台交互仍按用户后台验证约定保留。玩家存档未用于测试。
+
+
+## 2026-10-12 具体井位仅可打井一次
+
+修复原因：此前只按总勘探/尝试次数限制打井，没有保存位置；累计五次勘探还会达到 100% 成功。用户明确要求每个位置只有一次有水/无水结果，无水后换另一个位置。
+
+- 新增原生运行时 WellSiteRecord，保存具体格子和 UNTESTED / DRY / WATER；VillageProgress 深复制记录。WellRules 负责统一位置准入、单次提交、概率、摘要和对象图校验；VillageState 接受选位并协调事务。已探索营地外草甸可选，营地/未知区/非草甸/已尝试格和已有待打井位置均拒绝。
+- 每处只勘探一次，完成后必须先打井；失败仍付费、消耗一次行动、记录坐标与无水结果，禁止原处重新勘探和再打井。新位置不会累加旧勘探次数，当前概率为原生地图配置 25% + 单次增益 15% = 40%。保留成功时预览，查询不抽随机、不改原局。
+- 勘探井位使用地图选格和可关闭小确认框。地图标识待打井、无水排除及已出水位置；关闭后选格不强制重开。隐藏截图发现新卡通知会挡右侧确认，确认框改为地图左下角，右侧通知保留。
+- 存档升为 12；校验井位集合的位置/类型/唯一性、待打井顺序、计数与设施结果。版本 11 及更早旧档保留已建井，未成井累计记录因缺少坐标要求重新选位，迁移不改写输入文件与 RNG。新档无水位置经实际磁盘往返仍不能重试。
+
+| 门禁 | 本轮实际结果 | 证据 |
+| --- | --- | --- |
+| G1 基础规范 | 125 脚本，0 项问题；diff 无空白问题 | `python3 tools/check_conventions.py` / `git diff --check` |
+| G2 导入 | 最终导入与隐藏临时副本导入，无脚本/资源错误或警告 | [最终导入](../test-results/well_site_import.log)、[隐藏导入](../test-results/survival_capture_import.log) |
+| G3 规则 | 3013 checks，0 failures；包含一次预期临时存档写入失败保护测试 | [规则日志](../test-results/well_site_rules.log) |
+| G4 后台交互 | 1010 checks，0 failures，headless | [界面日志](../test-results/well_site_ui.log) |
+| G4 隐藏实际渲染 | 820 checks，0 failures；进程从未进入前台 | [渲染日志](../test-results/survival_capture.log)、[前台记录](../test-results/survival_capture_focus.log) |
+
+已查看 [无水提示](../test-results/well_position_dry.png)、[换格勘探](../test-results/well_position_new_survey.png)、[新位置出水](../test-results/well_position_water.png)。新增规则回归覆盖无水格永久排除、拒绝不扣费/行动/RNG、不能叠加勘探、不同位置概率不累加、快照独立、待打井存档可复现、重复/营地/空/非法结果记录拒绝以及旧档升级。新增界面回归通过实际视口鼠标完成失败 → 换格 → 勘探 → 成井，并验证关闭确认框后的选格和禁用状态。原「五次必成」测试按用户新规则改为实际不同位置与不累加概率；早期供水费用测试固定成功随机样本以隔离资源路线，九组六日战斗路径保留真实随机结果，均保留 5 人，其中两局第六天仍无井，不以此声明成井保底或长期平衡。
+
+职责审查：WellRules 约 180 行，独立承担井位业务，未扩大入口为玩法管理者。VillageState/ProgressionValidation/地图与 Dashboard 的既有大文件只接入选位、恢复校验和展示；两段较长专项测试保持完整跨操作场景，按职责分出存档校验与迁移辅助；界面测试的五个参数分别为树、真实视口、游戏、断言和截图，供 headless 与隐藏视口共同运行，不用无类型参数包。未新增 Autoload、共享定义写入或 UI 费用计算。
+
+限制：未操作原生前台窗口，既有 D11 范围继续保留；未穷举所有种子或长期经济。本轮只保存实际发生的新井位结果，旧档没有坐标的历史失败不能还原成具体地图格。
+
+
+## 2026-10-12 功能分区与固定库存表头
+
+- 主界面按全局入口、生存状态、完整材料概览、地图工具和底部行动区分区。地图不延伸到类别按钮下方；展开卡牌仍覆盖地图且不改变地图尺寸。暂停/倍速仅夜间显示，卡牌开关移至底部。
+- 库存标题、列标题和说明留在滚动区外，全部资源行独立滚动，表头与数据共用等宽列和实际滚动条留白。勘探确认相对地图定位；通知位于模态窗口下方。没有改变规则、资源定义或存档格式。
+- `python3 tools/check_conventions.py`：121 脚本，0 项问题；`git diff --check` 通过。最终临时副本 Godot 导入无 ERROR / WARNING；最初沙箱内导入受到系统证书/编辑器目录权限限制，随后获执行授权运行既有隐藏验证器通过。
+- `tests/run_ui_tests.gd`：1003 checks，0 failures，headless。新增真实滚动、表头位置稳定、六列对齐和地图/导航不相交检查。
+- `python3 tools/capture_ui.py`：806 checks，0 failures；日志为 `test-results/survival_capture.log`，导入日志为 `test-results/survival_capture_import.log`。前台记录确认截图进程从未进入前台。
+- 已查看 `categories_collapsed_opening.png`、`survival_opening.png`、`player_full_inventory.png`、`inventory_fixed_header_scrolled.png`、`survival_layout_1024x768.png`；隐藏套件另覆盖 1920×820 与原有卡牌、Esc、费用、事件和夜战交互。
+- 职责审查：Dashboard 仍超过 300 行，本次只调整已有展示刷新与夜战按钮可见性；固定布局留在场景，费用/收支仍由 EffectResolver 查询，不新增状态或计算入口。InventoryPanel 专责展示和列布局。
+- 范围限制：未修改玩法，未重复规则套件；未操作原生前台窗口，既有 D11 系统菜单/桌面悬停验证范围继续保留。
+
+
 ## 2026-10-12 · 顶栏整合、日报与持续发展（当前）
 
 本轮按七项玩家反馈修复：顶栏按钮悬停样式与正常状态使用相同内边距，避免文字被挤裁；库存表右侧给滚动条留白；多行行动结果改由屏幕右上浮动提示展示，底栏只保留首句，新卡通知也锚定屏幕右侧并允许其非交互区域透传点击。勘探标题、目标入口、缩放、营地、全图及速度控制并入村庄顶栏，移除地图上方独立横条。日终在所有遭遇、生产、口粮和清晨后果完成后显示“我们活下来了……”报告，包含战果、人口、耐久、探索与逐项实际库存变化；待确认报告连同日初基线保存，确认只关闭展示，不重复结算，存档版本升为 11，旧版本 10 及更早版本仍可恢复。

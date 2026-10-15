@@ -29,6 +29,7 @@ static func run(tree: SceneTree, viewport: Viewport, game: VillageGame, check: C
 			break
 	await tree.process_frame
 	await tree.process_frame
+	SurvivalTestSetup.force_drill_result(game.state, true)
 	await _click(tree, viewport, dashboard.detail.get_node("%ExecuteButton") as Button)
 	check.call(game.state.buildings[GameTypes.Building.WELL] == 1, "Actual confirmation successfully constructs a surveyed well")
 	var notice: ActionResultNotice = dashboard.get_node("%ActionResultNotice") as ActionResultNotice
@@ -42,6 +43,20 @@ static func run(tree: SceneTree, viewport: Viewport, game: VillageGame, check: C
 	check.call(inventory.displayed_text(GameTypes.Stock.WATER, 2) == "+8", "Inventory displays the well's actual daily water production")
 	check.call(inventory.displayed_text(GameTypes.Stock.WATER, 3) == "−5", "Inventory separately shows daily drinking consumption")
 	check.call(inventory.displayed_text(GameTypes.Stock.PARTS, 1) == str(game.state.resources[GameTypes.Stock.PARTS]), "Hidden top-bar materials remain available in the full inventory")
+	var scroll: ScrollContainer = inventory.get_node("Scroll") as ScrollContainer
+	var header: Control = inventory.get_node("HeaderMargin/Header") as Control
+	var header_rect: Rect2 = header.get_global_rect()
+	scroll.scroll_vertical = 180
+	await tree.process_frame
+	await tree.process_frame
+	check.call(scroll.scroll_vertical > 0, "Inventory body actually scrolls")
+	check.call(header.get_global_rect().is_equal_approx(header_rect), "Inventory headings remain fixed while rows scroll")
+	var table: GridContainer = inventory.get_node("Scroll/ContentMargin/Body/Table") as GridContainer
+	for column: int in 6:
+		var heading: Control = header.get_child(column) as Control
+		var value: Control = table.get_child(column) as Control
+		check.call(absf(heading.get_global_rect().end.x - value.get_global_rect().end.x) <= 1.0, "Inventory header and value columns align")
+	scroll.scroll_vertical = 0
 	dashboard.overlay.close_modal()
 	await _click(tree, viewport, dashboard.get_node("%InventoryButton") as Button)
 	check.call(inventory.is_visible_in_tree(), "Independent inventory button opens all resources")

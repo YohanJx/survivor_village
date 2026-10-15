@@ -9,6 +9,7 @@ extends Resource
 @export var events: Array[DailyEvent] = []
 @export var day_end_events: Array[DailyEvent] = []
 @export var night_threat: NightThreatRules
+@export var combat_balance: CombatBalanceRules
 @export var portable_storage: PackedInt32Array = [30, 30, 0]
 @export_range(0.0, 1.0) var frustration_cost: float = 0.15
 @export_range(1, 10) var max_frustration: int = 5

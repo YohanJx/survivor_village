@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ProgressionRules" load_steps=47 format=3]
+[gd_resource type="Resource" script_class="ProgressionRules" load_steps=48 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/progression_rules.gd" id="s"]
 [ext_resource type="Script" path="res://scripts/resources/map_definition.gd" id="map"]
@@ -57,6 +57,8 @@
 
 [ext_resource type="Resource" path="res://data/night_threat_rules.tres" id="night_threat"]
 
+[ext_resource type="Resource" path="res://data/combat_balance_rules.tres" id="combat_balance"]
+
 [resource]
 script = ExtResource("s")
 night_threat = ExtResource("night_threat")
@@ -69,3 +71,4 @@ units = Array[ExtResource("unit_script")]([ExtResource("units_0"), ExtResource("
 enemies = Array[ExtResource("enemy_script")]([ExtResource("enemies_0"), ExtResource("enemies_1"), ExtResource("enemies_2"), ExtResource("enemies_3"), ExtResource("enemies_4"), ExtResource("enemies_5"), ExtResource("enemies_6"), ExtResource("enemies_7"), ExtResource("enemies_8")])
 
 day_end_events = Array[ExtResource("event")]([ExtResource("de_salvage"), ExtResource("de_ration"), ExtResource("de_repair"), ExtResource("de_dispute"), ExtResource("de_traveler"), ExtResource("de_trader"), ExtResource("de_hunger"), ExtResource("de_hunger_severe"), ExtResource("de_thirst"), ExtResource("de_thirst_severe"), ExtResource("de_generator"), ExtResource("de_store")])
+combat_balance = ExtResource("combat_balance")

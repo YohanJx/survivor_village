@@ -1,0 +1,45 @@
+[gd_resource type="Resource" script_class="BuildingDefinition" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/building_definition.gd" id="definition"]
+
+[ext_resource type="Script" path="res://scripts/resources/production_profile.gd" id="production"]
+
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="flow"]
+
+[ext_resource type="Script" path="res://scripts/resources/synergies/sustainable_production_synergy.gd" id="synergy"]
+
+[ext_resource type="Texture2D" path="res://assets/map/facilities/fletcher.png" id="map_art"]
+
+[sub_resource type="Resource" id="out_11"]
+script = ExtResource("flow")
+key = 11
+amount = 8
+
+[sub_resource type="Resource" id="in_7"]
+script = ExtResource("flow")
+key = 7
+amount = 2
+
+[sub_resource type="Resource" id="production"]
+script = ExtResource("production")
+operator = 2
+noise = 1
+pollution = 0
+outputs = Array[ExtResource("flow")]([SubResource("out_11")])
+inputs = Array[ExtResource("flow")]([SubResource("in_7")])
+
+[sub_resource type="Resource" id="synergy"]
+script = ExtResource("synergy")
+building = 27
+priority = 15
+
+[resource]
+script = ExtResource("definition")
+id = 27
+display_name = "箭矢工房"
+max_level = 1
+footprint = Rect2i(19, 10, 1, 1)
+production = SubResource("production")
+synergy = SubResource("synergy")
+map_texture = ExtResource("map_art")
+map_label = "箭矢工房"

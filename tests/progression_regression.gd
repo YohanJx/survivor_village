@@ -136,6 +136,7 @@ static func _test_events(check: Callable) -> void:
 	)
 	var old_save: VillageSaveData = state.snapshot()
 	old_save.version = 7
+	old_save.buildings.resize(VillageSaveData.PREVIOUS_BUILDING_COUNT)
 	old_save.progress.event_id = "low_mood"
 	old_save.progress.event_choice = -1
 	var restored: VillageState = _fresh()
@@ -345,6 +346,7 @@ static func _test_migration(check: Callable) -> void:
 	var state: VillageState = _fresh()
 	var saved: VillageSaveData = state.snapshot()
 	saved.version = 4
+	saved.buildings.resize(13)
 	saved.resources = [70, 24, 24, 0, 18, 0, 0]
 	saved.progress = null
 	check.call(state.restore(saved), "Version four seven-stock save migrates")

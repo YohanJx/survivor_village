@@ -1,5 +1,7 @@
 # 开发指南
 
+当前存档版本 13：新增持续生产设施，见 [持续发展路线](sustainable_development.md)。版本 12 引入具体井位、无水排除与旧累计勘探记录迁移见 [生存发展 · 地下水路线](survival_progression.md#地下水路线)。井位选择由 VillageState 接收，WellRules 负责准入与单次结果，WellSiteRecord 保存每格的独立状态，UI 仅展示与发起选格请求。
+
 夜战环境当前配置、存档 10 与 9 版迁移见 [夜战与环境平衡](night_threat_balance.md)。普通事件使用原生 skippable，隐藏使用 CardDefinition.conceals 与独立运行时状态，不从卡牌文本匹配。
 
 macOS 默认入口为仓库根目录的 `余烬村庄.app`，是依赖完整项目与本机 Godot 的薄启动器，不是独立导出包。Contents/MacOS/launch 调用原 `run_macos.command`，输出写系统临时日志，标准输入关闭；成功退出、游戏继续运行，失败以原生对话框提供日志。保留可执行权限，分发时保持 app 与项目相邻。`.command` 仍用于排查，自动关闭仅针对 TTY 匹配的单标签空闲窗口，失败日志保留，不修改用户 Terminal 配置或关闭其他会话。
@@ -59,7 +61,7 @@ run_windows.bat "D:\Applications\Godot\Godot_v4.5-stable_win64.exe"
 | `scripts/ui/map_atmosphere.gd` | 地图光照、雨幕、闪电与雾层，仅负责展示 |
 | `data/progression_rules.tres`、`data/maps/`、`data/events/`、`data/units/`、`data/enemies/` | 地图、每日事件与职业/敌人原生配置 |
 | `scripts/progression/`、`scripts/combat/` | 劳动/人口发展规则、夜战辅助与有限区域 |
-| `data/cards/*.tres` | 47 张卡牌的名称、分类、费用、正负说明、前置、效果和标签 |
+| `data/cards/*.tres` | 69 张卡牌的名称、分类、费用、正负说明、前置、效果和标签 |
 | `data/buildings/*.tres` | 建筑等级上限、占地、产出、修正器和联动配置 |
 | `scripts/resources/` | 类型化资源定义、运行时快照及设施联动规则 |
 | `scripts/card_catalog.gd` | 全库校验后发布的卡牌与建筑索引 |
@@ -99,7 +101,7 @@ run_windows.bat "D:\Applications\Godot\Godot_v4.5-stable_win64.exe"
 
 每次决策与战后自动保存；顶部可手动保存和继续。启动时展示新村庄，点击“继续”恢复原有存档。未开始新决策前不会覆盖旧存档。
 
-存档版本为 9，保存当前和剩余事件队列、口粮和到期标记、连续缺粮缺水天数、最近两次普通遭遇、种子、已探索路线、待勘探目标和完成记录；地图在内存重新生成，先验证再提交。版本 8 保留原待处理事件与库存，不重抽或提前结算。版本 6 没有坐标，按已有发现迁移；2–5 版继续既有库存、岗位、工具和建筑迁移，详见 [生存逻辑顺序](survival_progression.md)。版本 7 及以前的战后奖励存档验证后转换成当日日终事件，不赠送旧奖励；已有手牌保留。旧版未选择的黎明事件按原计划继续，已选择的当日影响保留到下一黎明。旧事件资源仅用于兼容。读档不改写旧文件，1 版仍拒绝；夜间从原黄昏预算重演，不复扣电力。临时写入后替换，恢复失败不改变原局。
+当前存档版本为 13；版本 9 引入并保存当前和剩余事件队列、口粮和到期标记、连续缺粮缺水天数、最近两次普通遭遇、种子、已探索路线、待勘探目标和完成记录；地图在内存重新生成，先验证再提交。版本 8 保留原待处理事件与库存，不重抽或提前结算。版本 6 没有坐标，按已有发现迁移；2–5 版继续既有库存、岗位、工具和建筑迁移，详见 [生存逻辑顺序](survival_progression.md)。版本 7 及以前的战后奖励存档验证后转换成当日日终事件，不赠送旧奖励；已有手牌保留。旧版未选择的黎明事件按原计划继续，已选择的当日影响保留到下一黎明。旧事件资源仅用于兼容。读档不改写旧文件，1 版仍拒绝；夜间从原黄昏预算重演，不复扣电力。临时写入后替换，恢复失败不改变原局。
 
 分工界面由原生 `workforce_row.tscn` 与 `VillageInfoPanel` 展示草案；增减通过 `WorkforceRules.adjusted_allocation()` 在通用村民与专业间调配，确认后才提交，不能自由输入任意人数。人口职业配置在 [workforce_rules.tres](../data/workforce_rules.tres)，卡牌通过 `profession` 指定职业，通过 `labor` 指定劳动类别。新人补齐岗位，实际战损按身份删除。现代地图的稳定身份、装备与夜间作用见 [发展系统](progression_system.md)。
 
@@ -164,6 +166,10 @@ ActionDock脚本仅为该固定分区添加光标、提示和双击复位，没�
 
 ### 独立卡牌图片与阅读布局
 
-47 张发展卡通过 `CardDefinition.illustration: Texture2D` 与各自 `.tres` 绑定独立图片，位于 `assets/cards/individual/`，原生导入边长限制 512。`ResourceValidation.library_error()` 拒绝缺图的注册定义；临时事件定义允许分类图回退。卡面、选中方案、右键详解共用一个查询，刷新不加载图片。图像与提示集见 [卡牌视觉设计](card_visual_design.md)；字段是只读显示配置，存档结构仍为版本 9。
+69 张发展卡通过 `CardDefinition.illustration: Texture2D` 与各自 `.tres` 绑定独立图片，位于 `assets/cards/individual/`，原生导入边长限制 512。`ResourceValidation.library_error()` 拒绝缺图的注册定义；临时事件定义允许分类图回退。卡面、选中方案、右键详解共用一个查询，刷新不加载图片。图像与提示集见 [卡牌视觉设计](card_visual_design.md)；字段是只读显示配置，当前存档结构为版本 13。
 
 手牌使用原生深色平面底板和细边框，突出名称与主体，保留收益、风险、所有统一费用和词条。文字不叠加复杂材质。选中方案同样使用安静背景，确认按钮仍固定在费用后。`tests/card_gallery_capture.gd` 将全部真实卡面分三页离屏检查，覆盖独立图片与费用/词条的框内布局；由 `tools/capture_ui.py` 隐藏副本入口调用，不操作玩家存档。
+
+## 持续生产与替代前置（2026-10-15）
+
+新增原生 ProductionProfile 输出/原料/操作职业，SustainableProductionSynergy 负责批次准入，EffectResolver 派生并冻结共享原料预算。BuildingDefinition.map_texture 绑定新增设施地图图形，无贴图时沿用原有图集；不在绘制路径加载资源。CardDefinition.any_prerequisites 与 required_cards/共同 prerequisites 一起统一验证与展示。CombatBalanceRules 原生资源管理敌人基础与压力能力。存档 13 新增设施索引追加至 33，按旧版本实际数组长度先校验再补零。具体机制、数值、测试与限制见 [持续发展路线](sustainable_development.md) 与 [验收记录](validation_report.md)。

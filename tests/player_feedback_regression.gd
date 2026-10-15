@@ -5,7 +5,7 @@ extends RefCounted
 
 const SECOND_DAY: PackedStringArray = ["workshop", "bows", "forage"]
 const THIRD_DAY: PackedStringArray = ["woodcut", "wall", "arrows"]
-const FOURTH_DAY: PackedStringArray = ["well_tools", "well_survey", "well_survey"]
+const FOURTH_DAY: PackedStringArray = ["well_tools", "well_survey", "well"]
 const SIXTH_DAY: PackedStringArray = ["well", "forage", "arrows"]
 
 
@@ -70,7 +70,7 @@ static func _test_late_progression(check: Callable) -> void:
 	var well: CardDefinition = state.catalog.get_card("well")
 	check.call(not SurvivalRules.unlock_error(state, well).is_empty(), "A successful well blocks repeated drilling at the same site")
 	state.buildings[GameTypes.Building.WELL] = 0
-	check.call(SurvivalRules.unlock_error(state, well).is_empty(), "A failed well can be retried after surveying")
+	check.call(SurvivalRules.unlock_error(state, well).is_empty(), "A new pending surveyed position can be drilled")
 	state.progress.last_recruited_day = state.day
 	check.call(not SurvivalRules.unlock_error(state, state.catalog.get_card("survivors")).is_empty(), "Survivors can be recruited only once per day")
 	state.day += 1
@@ -90,6 +90,8 @@ static func _test_six_days(region: GameTypes.Region, seed_value: int, check: Cal
 			var id: String = _planned_card(day, slot)
 			if id == "explore":
 				SurvivalTestSetup.select_frontier(state, GameTypes.Discovery.WOODLAND if slot == 0 else GameTypes.Discovery.FORAGE)
+			if id == "well_survey":
+				SurvivalTestSetup.select_well_candidate(state)
 			var uid: int = _uid(state, id)
 			if uid < 0 or not state.can_play(uid).is_empty():
 				print("OPENING PLAN BLOCKED: region=%d seed=%d day=%d card=%s error=%s" % [region, seed_value, day, id, "not granted" if uid < 0 else state.can_play(uid)])
@@ -130,7 +132,7 @@ static func _planned_card(day: int, slot: int) -> String:
 		4:
 			return FOURTH_DAY[slot]
 		5:
-			return "well_survey"
+			return "well_survey" if slot == 0 else "well" if slot == 1 else "forage"
 		_:
 			return SIXTH_DAY[slot]
 

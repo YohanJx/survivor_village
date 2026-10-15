@@ -37,7 +37,10 @@ func update_view(state: VillageState, uid: int) -> void:
 	if card.effects.any(
 		func(effect: CardEffect) -> bool: return effect.type == CardEffect.Type.DRILL
 	):
-		_risk.text += "\n打井成功率 %d%%；失败仍扣费并消耗行动。" % roundi(SurvivalRules.well_chance(state) * 100)
+		_risk.text += (
+			"\n有水概率 %d%%；此位置仅可打井一次，无水须勘探另一个位置。"
+			% roundi(SurvivalRules.well_chance(state) * 100)
+		)
 	_requirement.text = KeywordText.format_text(state.catalog.requirement_text(card))
 	_labor.text = LaborRules.summary(state, card)
 	var reason: String = state.can_play(uid)

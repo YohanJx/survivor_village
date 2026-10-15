@@ -22,6 +22,8 @@ func _run() -> void:
 	_game.state.save_path = UI_SAVE_PATH
 	root.add_child(_game)
 	_dashboard = _game.get_node("Dashboard") as VillageDashboard
+	await SustainableUiRegression.run(self, root, _game, _check, _capture)
+	await WellSiteUiRegression.run(self, root, _game, _check, _capture)
 	await PlayerFeedbackUiRegression.run(self, root, _game, _check)
 	_test_font_settings()
 	await SurvivalUiRegression.run(self, _game, _check, _capture)

@@ -124,6 +124,7 @@ static func _test_saves(check: Callable) -> void:
 	var state: VillageState = _fresh()
 	var data: VillageSaveData = state.snapshot()
 	data.version = VillageSaveData.LEGACY_VERSION
+	data.buildings.resize(13)
 	data.profession_counts.clear()
 	check.call(
 		state.restore(data) and state.snapshot().version == VillageSaveData.CURRENT_VERSION,

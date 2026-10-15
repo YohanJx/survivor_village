@@ -131,7 +131,7 @@ static func card_error(card: CardDefinition, buildings: Array[BuildingDefinition
 			return "费用为空或资源枚举非法"
 		if cost.amount < 0 or cost.amount > GameTypes.STOCK_LIMITS[cost.key]:
 			return "费用超出合法范围"
-	for requirement: BuildingRequirement in card.prerequisites:
+	for requirement: BuildingRequirement in card.prerequisites + card.any_prerequisites:
 		if requirement == null or not _registered(requirement.building, buildings):
 			return "前置引用未注册建筑"
 		if requirement.level < 1 or requirement.level > requirement.building.max_level:
@@ -145,6 +145,7 @@ static func card_error(card: CardDefinition, buildings: Array[BuildingDefinition
 				or not card.required_cards.is_empty()
 				or card.keywords.any(_is_requirement_keyword)
 				or not card.prerequisites.is_empty()
+				or not card.any_prerequisites.is_empty()
 			):
 				return "地形勘探必须是无职业限制的独立可复用行动"
 		var error: String = _effect_error(effect, buildings)
@@ -247,6 +248,18 @@ static func _buildings_error(buildings: Array[BuildingDefinition]) -> String:
 				return building.display_name + "：" + error
 		if building.production != null and not _valid_production(building.production):
 			return building.display_name + "：产出配置非法"
+		if building.synergy is SustainableProductionSynergy:
+			var automatic: SustainableProductionSynergy = building.synergy as SustainableProductionSynergy
+			if automatic.building != building.id or building.production == null:
+				return "自动生产绑定的设施或产出缺失"
+			var flow: ProductionProfile = building.production
+			if flow.outputs.is_empty():
+				return "自动生产必须配置实际产出"
+			if (flow.food + flow.water + flow.power + flow.materials
+				+ flow.food_upkeep + flow.water_upkeep + flow.materials_upkeep) != 0:
+				return "自动生产不得同时使用旧版固定收支字段"
+		elif building.production != null and not building.production.outputs.is_empty():
+			return "自动生产必须使用统一运行联动"
 		if building.synergy != null:
 			var error: String = building.synergy.configuration_error()
 			if not error.is_empty():
@@ -270,20 +283,7 @@ static func _buildings_error(buildings: Array[BuildingDefinition]) -> String:
 
 
 static func _valid_production(flow: ProductionProfile) -> bool:
-	for value: int in [
-		flow.food,
-		flow.water,
-		flow.power,
-		flow.materials,
-		flow.food_upkeep,
-		flow.water_upkeep,
-		flow.materials_upkeep,
-		flow.noise,
-		flow.pollution,
-	]:
-		if value < 0 or value > 99:
-			return false
-	return true
+	return flow.validation_error().is_empty()
 
 
 static func _technology_error(library: CardLibrary) -> String:
@@ -297,6 +297,11 @@ static func _technology_error(library: CardLibrary) -> String:
 			for requirement: BuildingRequirement in card.prerequisites:
 				if reachable[requirement.building.id] < requirement.level:
 					eligible = false
+			if not card.any_prerequisites.is_empty():
+				var alternative: bool = false
+				for requirement: BuildingRequirement in card.any_prerequisites:
+					alternative = alternative or reachable[requirement.building.id] >= requirement.level
+				eligible = eligible and alternative
 			if not eligible:
 				continue
 			for effect: CardEffect in card.effects:
@@ -316,6 +321,12 @@ static func _technology_error(library: CardLibrary) -> String:
 		for requirement: BuildingRequirement in card.prerequisites:
 			if reachable[requirement.building.id] < requirement.level:
 				return "不可达技术前置：" + card.id
+		if not card.any_prerequisites.is_empty():
+			var alternative: bool = false
+			for requirement: BuildingRequirement in card.any_prerequisites:
+				alternative = alternative or reachable[requirement.building.id] >= requirement.level
+			if not alternative:
+				return "不可达替代设施前置：" + card.id
 		for effect: CardEffect in card.effects:
 			if effect.required_building != null and reachable[effect.required_building.id] == 0:
 				return "不可达条件建筑：" + card.id

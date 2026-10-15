@@ -118,18 +118,19 @@ static func run(tree: SceneTree, game: VillageGame, check: Callable, capture: Ca
 	await CardUiRegression.click(tree, well)
 	var preview: Label = dashboard.detail.get_node("%Preview") as Label
 	check.call(
-		preview.text.contains("100%") and preview.text.contains("成功时预览"),
+		preview.text.contains("40%") and preview.text.contains("成功时预览"),
 		"Drill decision shows chance and conditional preview"
 	)
 	check.call(
-		(dashboard.detail.get_node("%Negative") as RichTextLabel).text.contains("100%"),
+		(dashboard.detail.get_node("%Negative") as RichTextLabel).text.contains("40%"),
 		"Drill chance is fixed above confirmation without scrolling"
 	)
+	SurvivalTestSetup.force_drill_result(game.state, true)
 	await capture.call("ui_survival_drill")
 	await CardUiRegression.click(tree, dashboard.detail.get_node("%ExecuteButton") as Control)
 	check.call(
 		game.state.buildings[GameTypes.Building.WELL] == 1,
-		"Real drill confirmation constructs a fully surveyed well"
+		"Real drill confirmation constructs a water-bearing surveyed well"
 	)
 	await CardUiRegression.click(tree, dashboard.get_node("%VillageInfoButton") as Control)
 	(info.get_node("%VillageTabs") as TabContainer).current_tab = 1

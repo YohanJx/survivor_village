@@ -16,11 +16,45 @@ static func developed(state: VillageState) -> void:
 		state.terrain_grid, state.progress.explored_cells
 	)
 	state.progress.well_tools = true
-	state.progress.well_surveys = 5
+	state.progress.well_sites.clear()
+	state.progress.well_target = -1
+	state.progress.legacy_well = false
+	state.progress.well_surveys = 0
+	state.progress.well_drill_attempts = 0
+	select_well_candidate(state)
+	if state.progress.well_target >= 0:
+		WellRules.survey(state)
 	state.progress.completed_cards.clear()
 	for card: CardDefinition in state.catalog.library.cards:
 		state.progress.completed_cards.append(card.id)
 	SurvivalRules.grant_available(state)
+
+
+static func select_well_candidate(state: VillageState) -> Vector2i:
+	for value: int in state.progress.explored_cells:
+		var cell: Vector2i = TerrainGrid.position(value)
+		if WellRules.candidate_error(state, cell).is_empty():
+			state.select_well_site(cell)
+			return cell
+	return Vector2i(-1, -1)
+
+
+static func force_drill_result(state: VillageState, has_water: bool) -> void:
+	var generator: RandomNumberGenerator = RandomNumberGenerator.new()
+	for seed_value: int in range(1, 1000):
+		generator.seed = seed_value
+		if (generator.randf() < WellRules.chance(state)) == has_water:
+			state.rng.seed = seed_value
+			return
+
+
+## 非井位专项通过此入口准备真实成井记录，避免仅改设施造成无效测试存档。
+static func complete_well(state: VillageState) -> void:
+	var site: WellSiteRecord = WellRules.pending_site(state.progress)
+	if site != null:
+		site.outcome = WellSiteRecord.Outcome.WATER
+		state.progress.well_drill_attempts += 1
+	state.buildings[GameTypes.Building.WELL] = 1
 
 
 static func select_frontier(

@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="BuildingDefinition" load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/building_definition.gd" id="definition"]
+
+[ext_resource type="Script" path="res://scripts/resources/production_profile.gd" id="production"]
+
+[ext_resource type="Script" path="res://scripts/resources/resource_cost.gd" id="flow"]
+
+[ext_resource type="Script" path="res://scripts/resources/synergies/sustainable_production_synergy.gd" id="synergy"]
+
+[ext_resource type="Texture2D" path="res://assets/map/facilities/biofuel_workshop.png" id="map_art"]
+
+[sub_resource type="Resource" id="out_10"]
+script = ExtResource("flow")
+key = 10
+amount = 2
+
+[sub_resource type="Resource" id="in_1"]
+script = ExtResource("flow")
+key = 1
+amount = 2
+
+[sub_resource type="Resource" id="in_2"]
+script = ExtResource("flow")
+key = 2
+amount = 1
+
+[sub_resource type="Resource" id="production"]
+script = ExtResource("production")
+operator = 3
+noise = 1
+pollution = 1
+outputs = Array[ExtResource("flow")]([SubResource("out_10")])
+inputs = Array[ExtResource("flow")]([SubResource("in_1"), SubResource("in_2")])
+
+[sub_resource type="Resource" id="synergy"]
+script = ExtResource("synergy")
+building = 25
+priority = 15
+
+[resource]
+script = ExtResource("definition")
+id = 25
+display_name = "生物燃料作坊"
+max_level = 1
+footprint = Rect2i(24, 9, 1, 1)
+production = SubResource("production")
+synergy = SubResource("synergy")
+map_texture = ExtResource("map_art")
+map_label = "生物燃料"

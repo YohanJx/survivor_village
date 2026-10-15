@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CardLibrary" load_steps=71 format=3]
+[gd_resource type="Resource" script_class="CardLibrary" load_steps=110 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/card_library.gd" id="s_card_library"]
 [ext_resource type="Script" path="res://scripts/resources/card_definition.gd" id="s_card_definition"]
@@ -76,6 +76,46 @@
 
 [ext_resource type="Resource" path="res://data/cards/well_water.tres" id="c_well_water"]
 
+[ext_resource type="Resource" path="res://data/cards/river_windmill.tres" id="c_river_windmill"]
+[ext_resource type="Resource" path="res://data/cards/well_windpump.tres" id="c_well_windpump"]
+[ext_resource type="Resource" path="res://data/cards/rain_collector.tres" id="c_rain_collector"]
+[ext_resource type="Resource" path="res://data/cards/solar_still.tres" id="c_solar_still"]
+[ext_resource type="Resource" path="res://data/cards/foraging_camp.tres" id="c_foraging_camp"]
+[ext_resource type="Resource" path="res://data/cards/fishery.tres" id="c_fishery"]
+[ext_resource type="Resource" path="res://data/cards/sawmill.tres" id="c_sawmill"]
+[ext_resource type="Resource" path="res://data/cards/quarry_camp.tres" id="c_quarry_camp"]
+[ext_resource type="Resource" path="res://data/cards/salvage_yard.tres" id="c_salvage_yard"]
+[ext_resource type="Resource" path="res://data/cards/biofuel_workshop.tres" id="c_biofuel_workshop"]
+[ext_resource type="Resource" path="res://data/cards/fuel_refinery.tres" id="c_fuel_refinery"]
+[ext_resource type="Resource" path="res://data/cards/fletcher.tres" id="c_fletcher"]
+[ext_resource type="Resource" path="res://data/cards/herb_garden.tres" id="c_herb_garden"]
+[ext_resource type="Resource" path="res://data/cards/barter_post.tres" id="c_barter_post"]
+[ext_resource type="Resource" path="res://data/cards/wind_generator.tres" id="c_wind_generator"]
+[ext_resource type="Resource" path="res://data/cards/spear_rack.tres" id="c_spear_rack"]
+[ext_resource type="Resource" path="res://data/cards/guard_tower.tres" id="c_guard_tower"]
+[ext_resource type="Resource" path="res://data/cards/water_channel.tres" id="c_water_channel"]
+[ext_resource type="Resource" path="res://data/cards/forest_rotation.tres" id="c_forest_rotation"]
+[ext_resource type="Resource" path="res://data/cards/saw_upgrade.tres" id="c_saw_upgrade"]
+[ext_resource type="Resource" path="res://data/cards/quarry_upgrade.tres" id="c_quarry_upgrade"]
+[ext_resource type="Resource" path="res://data/cards/sorting_upgrade.tres" id="c_sorting_upgrade"]
+[ext_resource type="Resource" path="res://data/buildings/river_windmill.tres" id="b_river_windmill"]
+[ext_resource type="Resource" path="res://data/buildings/well_windpump.tres" id="b_well_windpump"]
+[ext_resource type="Resource" path="res://data/buildings/rain_collector.tres" id="b_rain_collector"]
+[ext_resource type="Resource" path="res://data/buildings/solar_still.tres" id="b_solar_still"]
+[ext_resource type="Resource" path="res://data/buildings/foraging_camp.tres" id="b_foraging_camp"]
+[ext_resource type="Resource" path="res://data/buildings/fishery.tres" id="b_fishery"]
+[ext_resource type="Resource" path="res://data/buildings/sawmill.tres" id="b_sawmill"]
+[ext_resource type="Resource" path="res://data/buildings/quarry_camp.tres" id="b_quarry_camp"]
+[ext_resource type="Resource" path="res://data/buildings/salvage_yard.tres" id="b_salvage_yard"]
+[ext_resource type="Resource" path="res://data/buildings/biofuel_workshop.tres" id="b_biofuel_workshop"]
+[ext_resource type="Resource" path="res://data/buildings/fuel_refinery.tres" id="b_fuel_refinery"]
+[ext_resource type="Resource" path="res://data/buildings/fletcher.tres" id="b_fletcher"]
+[ext_resource type="Resource" path="res://data/buildings/herb_garden.tres" id="b_herb_garden"]
+[ext_resource type="Resource" path="res://data/buildings/barter_post.tres" id="b_barter_post"]
+[ext_resource type="Resource" path="res://data/buildings/wind_generator.tres" id="b_wind_generator"]
+[ext_resource type="Resource" path="res://data/buildings/spear_rack.tres" id="b_spear_rack"]
+[ext_resource type="Resource" path="res://data/buildings/guard_tower.tres" id="b_guard_tower"]
+
 [resource]
 script = ExtResource("s_card_library")
 weather_rules = ExtResource("weather")
@@ -83,6 +123,6 @@ keyword_library = ExtResource("keywords")
 progression_rules = ExtResource("progression")
 workforce_rules = ExtResource("workforce")
 
-cards = Array[ExtResource("s_card_definition")]([ExtResource("c_forage"), ExtResource("c_water"), ExtResource("c_rest"), ExtResource("c_salvage"), ExtResource("c_repair"), ExtResource("c_wall"), ExtResource("c_bows"), ExtResource("c_farm"), ExtResource("c_well"), ExtResource("c_generator"), ExtResource("c_lights"), ExtResource("c_filter"), ExtResource("c_workshop"), ExtResource("c_clinic"), ExtResource("c_traps"), ExtResource("c_training"), ExtResource("c_quiet"), ExtResource("c_survivors"), ExtResource("c_cache"), ExtResource("c_greenhouse"), ExtResource("c_forced_march"), ExtResource("c_emergency_rations"), ExtResource("c_lure"), ExtResource("c_overcharge"), ExtResource("c_hold_position"), ExtResource("c_rotation"), ExtResource("c_chant"), ExtResource("c_practice"), ExtResource("c_vent"), ExtResource("c_woodcut"), ExtResource("c_quarry"), ExtResource("c_oil"), ExtResource("c_arrows"), ExtResource("c_medicine"), ExtResource("c_torch"), ExtResource("c_piercing"), ExtResource("c_stoneworks"), ExtResource("c_canal"), ExtResource("c_exchange"), ExtResource("c_trade"), ExtResource("c_explore"), ExtResource("c_well_tools"), ExtResource("c_well_survey"), ExtResource("c_food_store"), ExtResource("c_water_tank"), ExtResource("c_battery"), ExtResource("c_well_water")])
-buildings = Array[ExtResource("s_building_definition")]([ExtResource("b_core"), ExtResource("b_hut"), ExtResource("b_wall"), ExtResource("b_bows"), ExtResource("b_farm"), ExtResource("b_well"), ExtResource("b_generator"), ExtResource("b_lights"), ExtResource("b_filter"), ExtResource("b_workshop"), ExtResource("b_clinic"), ExtResource("b_traps"), ExtResource("b_greenhouse"), ExtResource("b_food_store"), ExtResource("b_water_tank"), ExtResource("b_battery")])
-starting_cards = Array[ExtResource("s_card_definition")]([ExtResource("c_quiet"), ExtResource("c_forage"), ExtResource("c_water"), ExtResource("c_emergency_rations"), ExtResource("c_salvage"), ExtResource("c_rest"), ExtResource("c_forced_march"), ExtResource("c_repair"), ExtResource("c_wall"), ExtResource("c_bows"), ExtResource("c_farm"), ExtResource("c_well"), ExtResource("c_vent"), ExtResource("c_woodcut"), ExtResource("c_quarry"), ExtResource("c_oil"), ExtResource("c_arrows"), ExtResource("c_medicine"), ExtResource("c_torch"), ExtResource("c_exchange"), ExtResource("c_trade"), ExtResource("c_explore"), ExtResource("c_well_tools"), ExtResource("c_well_survey"), ExtResource("c_food_store"), ExtResource("c_water_tank"), ExtResource("c_battery"), ExtResource("c_generator"), ExtResource("c_workshop"), ExtResource("c_well_water"), ExtResource("c_lights"), ExtResource("c_filter"), ExtResource("c_clinic"), ExtResource("c_traps"), ExtResource("c_training"), ExtResource("c_survivors"), ExtResource("c_cache"), ExtResource("c_greenhouse"), ExtResource("c_lure"), ExtResource("c_overcharge"), ExtResource("c_hold_position"), ExtResource("c_rotation"), ExtResource("c_chant"), ExtResource("c_practice"), ExtResource("c_piercing"), ExtResource("c_stoneworks"), ExtResource("c_canal")])
+cards = Array[ExtResource("s_card_definition")]([ExtResource("c_forage"), ExtResource("c_water"), ExtResource("c_rest"), ExtResource("c_salvage"), ExtResource("c_repair"), ExtResource("c_wall"), ExtResource("c_bows"), ExtResource("c_farm"), ExtResource("c_well"), ExtResource("c_generator"), ExtResource("c_lights"), ExtResource("c_filter"), ExtResource("c_workshop"), ExtResource("c_clinic"), ExtResource("c_traps"), ExtResource("c_training"), ExtResource("c_quiet"), ExtResource("c_survivors"), ExtResource("c_cache"), ExtResource("c_greenhouse"), ExtResource("c_forced_march"), ExtResource("c_emergency_rations"), ExtResource("c_lure"), ExtResource("c_overcharge"), ExtResource("c_hold_position"), ExtResource("c_rotation"), ExtResource("c_chant"), ExtResource("c_practice"), ExtResource("c_vent"), ExtResource("c_woodcut"), ExtResource("c_quarry"), ExtResource("c_oil"), ExtResource("c_arrows"), ExtResource("c_medicine"), ExtResource("c_torch"), ExtResource("c_piercing"), ExtResource("c_stoneworks"), ExtResource("c_canal"), ExtResource("c_exchange"), ExtResource("c_trade"), ExtResource("c_explore"), ExtResource("c_well_tools"), ExtResource("c_well_survey"), ExtResource("c_food_store"), ExtResource("c_water_tank"), ExtResource("c_battery"), ExtResource("c_well_water"), ExtResource("c_river_windmill"), ExtResource("c_well_windpump"), ExtResource("c_rain_collector"), ExtResource("c_solar_still"), ExtResource("c_foraging_camp"), ExtResource("c_fishery"), ExtResource("c_sawmill"), ExtResource("c_quarry_camp"), ExtResource("c_salvage_yard"), ExtResource("c_biofuel_workshop"), ExtResource("c_fuel_refinery"), ExtResource("c_fletcher"), ExtResource("c_herb_garden"), ExtResource("c_barter_post"), ExtResource("c_wind_generator"), ExtResource("c_spear_rack"), ExtResource("c_guard_tower"), ExtResource("c_water_channel"), ExtResource("c_forest_rotation"), ExtResource("c_saw_upgrade"), ExtResource("c_quarry_upgrade"), ExtResource("c_sorting_upgrade")])
+buildings = Array[ExtResource("s_building_definition")]([ExtResource("b_core"), ExtResource("b_hut"), ExtResource("b_wall"), ExtResource("b_bows"), ExtResource("b_farm"), ExtResource("b_well"), ExtResource("b_generator"), ExtResource("b_lights"), ExtResource("b_filter"), ExtResource("b_workshop"), ExtResource("b_clinic"), ExtResource("b_traps"), ExtResource("b_greenhouse"), ExtResource("b_food_store"), ExtResource("b_water_tank"), ExtResource("b_battery"), ExtResource("b_river_windmill"), ExtResource("b_well_windpump"), ExtResource("b_rain_collector"), ExtResource("b_solar_still"), ExtResource("b_foraging_camp"), ExtResource("b_fishery"), ExtResource("b_sawmill"), ExtResource("b_quarry_camp"), ExtResource("b_salvage_yard"), ExtResource("b_biofuel_workshop"), ExtResource("b_fuel_refinery"), ExtResource("b_fletcher"), ExtResource("b_herb_garden"), ExtResource("b_barter_post"), ExtResource("b_wind_generator"), ExtResource("b_spear_rack"), ExtResource("b_guard_tower")])
+starting_cards = Array[ExtResource("s_card_definition")]([ExtResource("c_quiet"), ExtResource("c_forage"), ExtResource("c_water"), ExtResource("c_emergency_rations"), ExtResource("c_salvage"), ExtResource("c_rest"), ExtResource("c_forced_march"), ExtResource("c_repair"), ExtResource("c_wall"), ExtResource("c_bows"), ExtResource("c_farm"), ExtResource("c_well"), ExtResource("c_vent"), ExtResource("c_woodcut"), ExtResource("c_quarry"), ExtResource("c_oil"), ExtResource("c_arrows"), ExtResource("c_medicine"), ExtResource("c_torch"), ExtResource("c_exchange"), ExtResource("c_trade"), ExtResource("c_explore"), ExtResource("c_well_tools"), ExtResource("c_well_survey"), ExtResource("c_food_store"), ExtResource("c_water_tank"), ExtResource("c_battery"), ExtResource("c_generator"), ExtResource("c_workshop"), ExtResource("c_well_water"), ExtResource("c_lights"), ExtResource("c_filter"), ExtResource("c_clinic"), ExtResource("c_traps"), ExtResource("c_training"), ExtResource("c_survivors"), ExtResource("c_cache"), ExtResource("c_greenhouse"), ExtResource("c_lure"), ExtResource("c_overcharge"), ExtResource("c_hold_position"), ExtResource("c_rotation"), ExtResource("c_chant"), ExtResource("c_practice"), ExtResource("c_piercing"), ExtResource("c_stoneworks"), ExtResource("c_canal"), ExtResource("c_river_windmill"), ExtResource("c_well_windpump"), ExtResource("c_rain_collector"), ExtResource("c_solar_still"), ExtResource("c_foraging_camp"), ExtResource("c_fishery"), ExtResource("c_sawmill"), ExtResource("c_quarry_camp"), ExtResource("c_salvage_yard"), ExtResource("c_biofuel_workshop"), ExtResource("c_fuel_refinery"), ExtResource("c_fletcher"), ExtResource("c_herb_garden"), ExtResource("c_barter_post"), ExtResource("c_wind_generator"), ExtResource("c_spear_rack"), ExtResource("c_guard_tower"), ExtResource("c_water_channel"), ExtResource("c_forest_rotation"), ExtResource("c_saw_upgrade"), ExtResource("c_quarry_upgrade"), ExtResource("c_sorting_upgrade")])

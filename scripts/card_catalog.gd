@@ -52,4 +52,9 @@ func requirement_text(card: CardDefinition) -> String:
 		parts.append("已完成" + get_card(id).display_name)
 	for requirement: BuildingRequirement in card.prerequisites:
 		parts.append("%s Lv.%d" % [requirement.building.display_name, requirement.level])
+	if not card.any_prerequisites.is_empty():
+		var alternatives: PackedStringArray = []
+		for requirement: BuildingRequirement in card.any_prerequisites:
+			alternatives.append("%s Lv.%d" % [requirement.building.display_name, requirement.level])
+		parts.append("任选其一：" + " / ".join(alternatives))
 	return "、".join(parts)

@@ -6,7 +6,7 @@
 script = ExtResource("1")
 kind = 0
 attack_multiplier = 1.0
-health_multiplier = 1.0
+health_multiplier = 1.25
 speed_multiplier = 1.0
 range_multiplier = 1.0
 

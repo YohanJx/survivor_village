@@ -8,13 +8,14 @@ static func run(tree: SceneTree, viewport: Viewport, game: VillageGame, check: C
 	var bar: CardCategoryBar = dashboard.get_node("%CardCategoryBar") as CardCategoryBar
 	var dock: ActionDock = dashboard.get_node("%ActionSplit") as ActionDock
 	var row: HBoxContainer = dashboard.hand_panel.get_node("%HandContainer") as HBoxContainer
-	check.call(bar.get_parent() == dashboard, "Category navigation floats above the main layout")
-	check.call(bar.mouse_filter == Control.MOUSE_FILTER_IGNORE, "Navigation gaps pass map input")
+	check.call(bar.get_parent() == dashboard, "Category navigation remains independent of card popup layout")
+	check.call(bar.mouse_filter == Control.MOUSE_FILTER_IGNORE, "Navigation container does not intercept button input")
 	dashboard.card_selected.emit(-1)
 	await tree.process_frame
 	await tree.process_frame
 	var map: VillageMap = dashboard.get_node("%VillageMap") as VillageMap
 	var map_rect: Rect2 = map.get_global_rect()
+	check.call(not map_rect.intersects(bar.get_global_rect()), "Map viewport never extends beneath action navigation")
 	var before: int = game.state.actions_used
 	var resources: PackedInt32Array = game.state.resources.duplicate()
 	for index: int in 5:

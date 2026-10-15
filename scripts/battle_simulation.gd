@@ -91,7 +91,8 @@ func step(delta: float) -> void:
 	_spawn_timer -= delta
 	if spawned < total_to_spawn and _spawn_timer <= 0:
 		_spawn_enemy()
-		_spawn_timer = lerpf(1.5, 0.55, stats.threat_level)
+		var balance: CombatBalanceRules = state.catalog.library.progression_rules.combat_balance
+		_spawn_timer = lerpf(balance.spawn_interval_low, balance.spawn_interval_high, stats.threat_level)
 	if stats.modern_combat:
 		support.update(self, delta)
 		special.update(self, delta)
@@ -215,9 +216,10 @@ func _spawn_enemy() -> void:
 			kind = GameTypes.Enemy.WALKER
 			definition = state.catalog.library.progression_rules.enemies[kind]
 		total_to_spawn -= definition.threat_cost - 1
-		hp = (28 + stats.threat_level * 20.0) * definition.health_multiplier
-		speed = (24.0 + stats.threat_level * 9.0) * definition.speed_multiplier
-		damage = (4.0 + stats.threat_level * 6.0) * definition.damage_multiplier
+		var balance: CombatBalanceRules = state.catalog.library.progression_rules.combat_balance
+		hp = (balance.enemy_health + stats.threat_level * balance.pressure_health) * definition.health_multiplier
+		speed = (balance.enemy_speed + stats.threat_level * balance.pressure_speed) * definition.speed_multiplier
+		damage = (balance.enemy_damage + stats.threat_level * balance.pressure_damage) * definition.damage_multiplier
 	var enemy: CombatActor = CombatActor.new()
 	enemy.id = _next_id
 	enemy.pos = point
@@ -287,7 +289,8 @@ func _update_enemies(delta: float) -> void:
 					target.flash = 0.18
 					if enemy.kind == GameTypes.Enemy.SPITTER:
 						special.add_hazard(target.pos)
-				enemy.cooldown = 1.1 if enemy.kind != GameTypes.Enemy.BOSS else 1.4
+				var balance: CombatBalanceRules = state.catalog.library.progression_rules.combat_balance
+				enemy.cooldown = balance.boss_attack_interval if enemy.kind == GameTypes.Enemy.BOSS else balance.attack_interval
 		else:
 			if enemy.repath <= 0:
 				_request_path(enemy, target_pos, enemy_grid)
@@ -347,7 +350,7 @@ func _move_along_path(actor: CombatActor, distance: float, zombie: bool) -> void
 		var key: Vector2i = WorldLayout.to_cell(goal)
 		if walls.has(key) and walls[key].hp > 0 and actor.pos.distance_to(goal) < 30:
 			if actor.cooldown <= 0:
-				walls[key].hp = maxf(0, walls[key].hp - actor.damage * 2.0)
+				walls[key].hp = maxf(0, walls[key].hp - actor.damage * state.catalog.library.progression_rules.combat_balance.wall_damage_multiplier)
 				actor.cooldown = 1.0
 				particles.append(CombatParticle.new(goal, 0.3, Color("dca06e")))
 				if walls[key].hp <= 0:

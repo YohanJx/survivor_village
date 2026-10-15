@@ -18,6 +18,9 @@ func _run() -> void:
 	KeywordRegression.run(_check)
 	TerrainRegression.run(_check)
 	SurvivalRegression.run(_check)
+	WellSiteRegression.run(_check)
+	SustainableRegression.run(_check)
+	SustainableProgressionRegression.run(_check)
 	ValidationRegression.run(_check)
 	WorkforceRegression.run(_check)
 	WeatherRegression.run(_check)
@@ -79,7 +82,7 @@ func _hand_ids(hand: Array[CardInstance]) -> PackedStringArray:
 func _test_catalog() -> void:
 	var state: VillageState = _fresh()
 	_check(state.catalog.library is CardLibrary, "Native Resource library loaded")
-	_check(state.catalog.library.cards.size() == 47, "All 47 authored cards registered")
+	_check(state.catalog.library.cards.size() == 69, "All 69 authored development cards registered")
 	_check(
 		state.catalog.library.buildings.size() == GameTypes.Building.COUNT,
 		"Building enum registration complete"
@@ -289,6 +292,7 @@ func _test_dawn() -> void:
 		GameTypes.Building.GREENHOUSE
 	]:
 		state.buildings[building] = 1
+	SurvivalTestSetup.complete_well(state)
 	state.begin_night()
 	_check(state.resources[GameTypes.Stock.POWER] == 0, "Electricity charged once at dusk")
 	var loaded: VillageState = _fresh()

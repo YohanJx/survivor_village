@@ -2,8 +2,10 @@ class_name VillageMap
 extends Control
 
 signal exploration_requested(cell: Vector2i)
+signal well_site_requested(cell: Vector2i)
 
 var exploration_mode: bool = false
+var well_survey_mode: bool = false
 var view_camera: MapViewCamera = MapViewCamera.new()
 var state: VillageState
 var battle: BattleSimulation
@@ -69,7 +71,7 @@ func _draw() -> void:
 	_art.draw_backdrop(self)
 	draw_set_transform_matrix(view_camera.get_view_transform(size))
 	var night: bool = state.phase == GameTypes.Phase.NIGHT
-	if exploration_mode and not night:
+	if (exploration_mode or well_survey_mode) and not night:
 		TerrainMapRenderer.draw_survey(self, state, view_camera, _art)
 		_draw_compass()
 		draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
@@ -165,7 +167,20 @@ func set_exploration_mode(enabled: bool) -> void:
 		fit_world()
 	else:
 		focus_village()
-	tooltip_text = "点击亮边未知格选择目标 · 右侧确认勘探 · 拖动查看 · 滚轮缩放" if enabled else "拖动查看 · 滚轮缩放 · 双击回到村庄"
+	tooltip_text = "点击亮边未知格选择目标 · 地图边缘确认勘探 · 拖动查看 · 滚轮缩放" if enabled else "拖动查看 · 滚轮缩放 · 双击回到村庄"
+	queue_redraw()
+
+
+func set_well_survey_mode(enabled: bool) -> void:
+	if well_survey_mode == enabled:
+		return
+	well_survey_mode = enabled
+	if enabled:
+		fit_world()
+	tooltip_text = (
+		"点击亮边的已探索草甸选择新井位 · 每个位置只打井一次 · 拖动查看 · 滚轮缩放"
+		if enabled else "拖动查看 · 滚轮缩放 · 双击回到村庄"
+	)
 	queue_redraw()
 
 
@@ -183,17 +198,13 @@ func _handle_mouse_button(event: InputEventMouseButton) -> void:
 				if (
 					event.button_index == MOUSE_BUTTON_LEFT
 					and _drag_distance < 6.0
-					and exploration_mode
+					and (exploration_mode or well_survey_mode)
 				):
 					var point: Vector2 = view_camera.view_to_world(_press_position, size)
 					var cell: Vector2i = Vector2i(
 						floori(point.x / TerrainGrid.CELL), floori(point.y / TerrainGrid.CELL)
 					)
-					if (
-						state.phase == GameTypes.Phase.DAY
-						and TerrainGrid.is_frontier(cell, state.progress.explored_cells)
-					):
-						exploration_requested.emit(cell)
+					_request_map_cell(cell)
 				_stop_drag()
 		MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN:
 			if event.pressed:
@@ -204,6 +215,16 @@ func _handle_mouse_button(event: InputEventMouseButton) -> void:
 		_:
 			return
 	accept_event()
+
+
+func _request_map_cell(cell: Vector2i) -> void:
+	if state.phase != GameTypes.Phase.DAY:
+		return
+	if well_survey_mode:
+		if WellRules.candidate_error(state, cell).is_empty():
+			well_site_requested.emit(cell)
+	elif TerrainGrid.is_frontier(cell, state.progress.explored_cells):
+		exploration_requested.emit(cell)
 
 
 func _stop_drag() -> void:
@@ -255,12 +276,13 @@ func _draw_structure_labels() -> void:
 			Vector2(structure.rect.position) * WorldLayout.CELL,
 			Vector2(structure.rect.size) * WorldLayout.CELL
 		)
+		var compact: bool = not structure.definition.map_label.is_empty()
 		TerrainMapRenderer.draw_label(
 			self,
 			transform,
-			Vector2(rect.get_center().x, rect.end.y + 12),
-			structure.display_name,
-			14,
+			Vector2(rect.get_center().x, rect.end.y + (1 if compact else 12)),
+			structure.definition.map_label if compact else structure.display_name,
+			12 if compact else 14,
 			UiElements.TEXT_PRIMARY
 		)
 

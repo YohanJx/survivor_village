@@ -14,63 +14,76 @@ text = "库存"
 [node name="CloseButton" type="Button" parent="Heading"]
 layout_mode = 2
 text = "关闭 / Esc"
-[node name="Scroll" type="ScrollContainer" parent="."]
+[node name="HeaderMargin" type="MarginContainer" parent="."]
 layout_mode = 2
-custom_minimum_size = Vector2(0, 330)
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-[node name="ContentMargin" type="MarginContainer" parent="Scroll"]
+theme_override_constants/margin_right = 36
+[node name="Header" type="GridContainer" parent="HeaderMargin"]
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/margin_right = 24
-
-[node name="Table" type="GridContainer" parent="Scroll/ContentMargin"]
-layout_mode = 2
-size_flags_horizontal = 3
 columns = 6
 theme_override_constants/h_separation = 18
-theme_override_constants/v_separation = 10
-[node name="Header0" type="Label" parent="Scroll/ContentMargin/Table"]
+[node name="Header0" type="Label" parent="HeaderMargin/Header"]
 layout_mode = 2
 text = "资源"
 theme_override_font_sizes/font_size = 14
 size_flags_horizontal = 3
 horizontal_alignment = 0
-[node name="Header1" type="Label" parent="Scroll/ContentMargin/Table"]
+[node name="Header1" type="Label" parent="HeaderMargin/Header"]
 layout_mode = 2
 text = "当前库存"
 theme_override_font_sizes/font_size = 14
 size_flags_horizontal = 3
 horizontal_alignment = 2
-[node name="Header2" type="Label" parent="Scroll/ContentMargin/Table"]
+[node name="Header2" type="Label" parent="HeaderMargin/Header"]
 layout_mode = 2
 text = "每日生产"
 theme_override_font_sizes/font_size = 14
 size_flags_horizontal = 3
 horizontal_alignment = 2
-[node name="Header3" type="Label" parent="Scroll/ContentMargin/Table"]
+[node name="Header3" type="Label" parent="HeaderMargin/Header"]
 layout_mode = 2
 text = "每日消耗"
 theme_override_font_sizes/font_size = 14
 size_flags_horizontal = 3
 horizontal_alignment = 2
-[node name="Header4" type="Label" parent="Scroll/ContentMargin/Table"]
+[node name="Header4" type="Label" parent="HeaderMargin/Header"]
 layout_mode = 2
 text = "净变化"
 theme_override_font_sizes/font_size = 14
 size_flags_horizontal = 3
 horizontal_alignment = 2
-[node name="Header5" type="Label" parent="Scroll/ContentMargin/Table"]
+[node name="Header5" type="Label" parent="HeaderMargin/Header"]
 layout_mode = 2
 text = "跨日容量"
 theme_override_font_sizes/font_size = 14
 size_flags_horizontal = 3
 horizontal_alignment = 2
+[node name="Scroll" type="ScrollContainer" parent="."]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 280)
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 2
+[node name="ContentMargin" type="MarginContainer" parent="Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_right = 24
+
+[node name="Body" type="VBoxContainer" parent="Scroll/ContentMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 18
+
+[node name="Table" type="GridContainer" parent="Scroll/ContentMargin/Body"]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 6
+theme_override_constants/h_separation = 18
+theme_override_constants/v_separation = 10
 [node name="Note" type="Label" parent="."]
 layout_mode = 2
 autowrap_mode = 3
 theme_override_font_sizes/font_size = 14
-[node name="Effects" type="Label" parent="."]
+[node name="Effects" type="Label" parent="Scroll/ContentMargin/Body"]
 layout_mode = 2
 autowrap_mode = 3
 theme_override_font_sizes/font_size = 14
